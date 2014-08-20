@@ -1,0 +1,6 @@
+{
+    "require": {
+        "3rdpartyeve/phealng": "1.2.0",
+        "twig/twig": "1.16.0"
+    }
+}
