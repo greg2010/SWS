@@ -13,4 +13,4 @@ function autoload($class_name)
     }
 }
 
-require_once dirname(__FILE__) . '/vendor/Autoloader.php';
+require_once dirname(__FILE__) . '/vendor/autoload.php';

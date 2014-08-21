@@ -1,45 +1,26 @@
 <?php
 
-//require_once dirname(__FILE__) . '/../db_con.php';
 class db {
     private $connection;
     private $selectdb;
     private $lastQuery;
-    private $config;
+    private $config = array();
     private static $_instance = null;
     
-    static public function getInstance($config = NULL) {
+    static public function getInstance() {
         if(is_null(self::$_instance)) {
-            self::$_instance = new self($config);
+            self::$_instance = new self();
         }
         return self::$_instance;
     }
 
-    private function __construct($config) {
-        $this->config = $config;
-    }
-    
-    /**
-     * 
-     * @param array $data
-     * @param string $separator
-     * @return string
-     */
-    
-    private function dataAsQuery($data, $separator = ",") {
-        $query = '';
-        $i=0;
-        foreach ($data as $key => $value) {
-            $i++;
-            if ($i === count($data)) {
-                $value = $this->sanitizeString($value);
-                $query .= "`$key` = '$value'";
-            } else {
-                $value = $this->sanitizeString($value);
-                $query .= "`$key` = '$value' " . $separator . " ";
-            }
-        }
-        return $query;
+    private function __construct() {
+        $this->config = array (
+                'hostname' => config::hostname,
+                'username' => config::username,
+                'password' => config::password,
+                'database' => config::database
+        );
     }
     
     /**
@@ -47,7 +28,6 @@ class db {
      * @param string $var
      * @return string
      */
-    
     public function sanitizeString($var) {
         if(empty($this->connection)) {
             $this->openConnection();
@@ -67,8 +47,8 @@ class db {
     
     public function openConnection() {
         try {
-            $this->connection = mysqli_connect($this->config->hostname, $this->config->username, $this->config->password);
-            $this->selectdb = mysqli_select_db($this->connection, $this->config->database);
+            $this->connection = mysqli_connect($this->config[hostname], $this->config[username], $this->config[password]);
+            $this->selectdb = mysqli_select_db($this->connection, $this->config[database]);
             if (mysqli_connect_error()) {
                 throw new mysqli_sql_exception(mysqli_connect_error(), mysqli_connect_errno());
             }
@@ -104,7 +84,7 @@ class db {
                     $error = "ERROR:" . mysqli_connect_error() . " Error number:" . mysqli_connect_errno();
                     return $error;
                 }
-                $this->lastQuery = mysqli_query($this->connection, $this->$query);
+                $this->lastQuery = mysqli_query($this->connection, $query);
                 if (mysqli_error($this->connection)) {
                     $error = "ERROR:" . mysqli_error($this->connection) . " Error number:" . mysqli_errno($this->connection);
                     return $error;
@@ -180,7 +160,11 @@ class db {
     
     public function fetchAssoc($result) {
         try {
-            return mysqli_fetch_assoc($result);
+            $assoc = array();
+            while ($array = mysqli_fetch_assoc($result)) {
+                $assoc[] = $array;
+            }
+            return $assoc;
         } catch (Exception $e) {
             return $e;
         }
@@ -194,7 +178,11 @@ class db {
     
     public function fetchArray($result) {
         try {
-            return mysqli_fetch_array($result);
+            $arrays = array();
+            while ($array = mysqli_fetch_array($result)) {
+                $arrays[] = $array;
+            }
+            return $arrays;
         } catch (Exception $e) {
             return $e;
         }
@@ -208,7 +196,11 @@ class db {
     
     public function fetchRow($result) {
         try {
-            return mysqli_fetch_row($result);
+            $rows = array();
+            while ($array = mysqli_fetch_row($result)) {
+                $rows[] = $array;
+            }
+            return $rows;
         } catch (Exception $e) {
             return $e;
         }

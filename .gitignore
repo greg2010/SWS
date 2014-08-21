@@ -1,3 +1,5 @@
 /nbproject
 .htaccess
 /db_con.php
+/cache
+/test.php
