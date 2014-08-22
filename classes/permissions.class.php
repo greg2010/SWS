@@ -51,6 +51,10 @@ class permissions {
             return $ex->getMessage();
         }
     }
+    
+    protected function returnUserMask() {
+        return $this->userMask;
+    }
 
     private function getUserPermissions() {
         try {

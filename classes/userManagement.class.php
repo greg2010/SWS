@@ -5,6 +5,7 @@ interface IuserManagement {
     function getUserCorpName();
     function getUserAllianceName();
     function setNewPassword();
+    function setUserInfo();
 }
 /**
  * Description of userManagement
