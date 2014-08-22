@@ -5,22 +5,21 @@
  * @author greg2010
  */
 class permissions {
-    private $id;
-    private $db;
-    private $bitMap;
+    protected $id;
+    protected $db;
+    protected $bitMap;
+    
     private $userMask;
     private $maskLength;
-    
     private $userPermissions = array();
     
-    public function __construct($id) {
+    function __construct($id) {
         try {
             $this->id = $id;
             $this->db = db::getInstance();
             $this->getBitMap();
             $this->getUserMask();
             $this->getUserPermissions();
-            
         } catch (Exception $ex) {
             return $ex->getMessage();
         }
@@ -159,6 +158,28 @@ class permissions {
             }
             foreach ($newBits as $setBit) {
                 $this->userMask = ($this->userMask |  pow(2, $setBit));
+            }
+            if ($userMaskBeforeChanges === $this->userMask) {
+                throw new Exception("No changes are needed!");
+            }
+            $this->updateUserMask();
+            $this->getUserPermissions();
+        } catch (Exception $ex) {
+            return $ex->getMessage();
+        }
+    }
+    public function unsetPermissions($remPermissions = array()) {
+        try {
+            $userMaskBeforeChanges = $this->userMask;
+            if (count($remPermissions) < 1) {
+                throw new Exception("No permissions to set!");
+            }
+            $remBits = array();
+            foreach ($remPermissions as $permission) {
+                $remBits[] = array_search($permission, $this->bitMap);
+            }
+            foreach ($remBits as $unsetBit) {
+                $this->userMask = ($this->userMask & ~(pow(2, $unsetBit)));
             }
             if ($userMaskBeforeChanges === $this->userMask) {
                 throw new Exception("No changes are needed!");
