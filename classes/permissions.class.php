@@ -14,17 +14,21 @@ class permissions {
     
     function __construct($id) {
         try {
-            $this->id = $id;
             $this->db = db::getInstance();
-            $this->getBitMap();
-            $this->getUserMask();
-            $this->getUserPermissions();
+            $this->getBitMapFromDb();
+            if (!isset($id)) {
+                $this->id = -1;
+            } else {
+                $this->id = $id;
+                $this->getUserMask();
+                $this->getUserPermissions();
+            }
         } catch (Exception $ex) {
             return $ex->getMessage();
         }
     }
     
-    private function getBitMap() {
+    private function getBitMapFromDb() {
         try {
             $query = "SELECT * FROM `bitMap`";
             $result = $this->db->query($query);
@@ -42,7 +46,7 @@ class permissions {
     private function getUserMask() {
         try {
             $query = "SELECT `accessMask` FROM `users` WHERE `id` = '$this->id'";
-            $result = $this->db ->query($db);
+            $result = $this->db->query($query);
             $this->userMask = $this->db->getMysqlResult($result);
 //            $this->userMask = 15731715; //Temp full mask for debug
             $this->maskLength = floor(log($this->userMask)/log(2)) + 1;
@@ -192,5 +196,9 @@ class permissions {
         } catch (Exception $ex) {
             return $ex->getMessage();
         }
+    }
+    
+    public function getBitMap() {
+        return $this->bitMap;
     }
 }

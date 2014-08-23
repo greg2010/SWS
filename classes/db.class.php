@@ -161,8 +161,13 @@ class db {
     public function fetchAssoc($result) {
         try {
             $assoc = array();
-            while ($array = mysqli_fetch_assoc($result)) {
-                $assoc[] = $array;
+            $numRows =$this->countRows($result);
+            if ($numRows === 1) {
+                $assoc = mysqli_fetch_assoc($result);
+            } else {
+                while ($array = mysqli_fetch_assoc($result)) {
+                    $assoc[] = $array;
+                }
             }
             return $assoc;
         } catch (Exception $e) {
@@ -197,8 +202,13 @@ class db {
     public function fetchRow($result) {
         try {
             $rows = array();
-            while ($array = mysqli_fetch_row($result)) {
-                $rows[] = $array;
+            $numRows =$this->countRows($result);
+            if ($numRows === 1) {
+                $rows = mysqli_fetch_row($result);
+            }  else {
+                while ($array = mysqli_fetch_row($result)) {
+                    $rows[] = $array;
+                }
             }
             return $rows;
         } catch (Exception $e) {
@@ -265,6 +275,45 @@ class db {
                 $results[] = $row;
             }
             return $results;
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+    
+    public function getUserLogin($login, $passwordHash) {
+        try {
+            if(empty($this->connection)) {
+                $this->openConnection();
+                if (mysqli_connect_error()) {
+                    $error = "ERROR:" . mysqli_connect_error() . " Error number:" . mysqli_connect_errno();
+                    return $error;
+                } else {
+                    $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `users` WHERE `login`=? AND `passwordHash`=?");
+                    mysqli_stmt_bind_param($stmt, "ss", $login, $passwordHash);
+                    mysqli_stmt_execute($stmt);
+                    mysqli_stmt_bind_result($stmt, $id);
+                    $success = mysqli_stmt_fetch($stmt);
+                    if ($success === True) {
+                        return $id;
+                    } else {
+                        $id = False;
+                        return $id;
+                    }
+                    $this->closeConnection();
+                }
+            } else {
+                $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `users` WHERE `login`=? AND `passwordHash`=?");
+                mysqli_stmt_bind_param($stmt, "ss", $login, $passwordHash);
+                mysqli_stmt_execute($stmt);
+                mysqli_stmt_bind_result($stmt, $id);
+                $success = mysqli_stmt_fetch($stmt);
+                if ($success === True) {
+                    return $id;
+                } else {
+                    $id = False;
+                    return $id;
+                }
+            }
         } catch (Exception $e) {
             return $e;
         }
