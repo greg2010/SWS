@@ -9,9 +9,9 @@ class permissions {
     protected $db;
     protected $bitMap;
     
-    private $userMask;
-    private $maskLength;
-    private $userPermissions = array();
+    protected $userMask;
+    protected $maskLength;
+    protected $userPermissions = array();
     
     function __construct($id) {
         try {
