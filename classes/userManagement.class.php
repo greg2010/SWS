@@ -12,7 +12,7 @@ interface IuserManagement {
  *
  * @author greg02010
  */
-class userManagement extends APIUserManagement implements IuserManagement {
+class userManagement implements IuserManagement {
     
     protected $pilotInfo;
     protected $permissions;
@@ -23,11 +23,41 @@ class userManagement extends APIUserManagement implements IuserManagement {
         $this->db = db::getInstance();
         $this->permissions = new permissions($id);
         $this->APIUserManagement = new APIUserManagement($id);
-        $this->pilotInfo = $this->getPilotInfo();
+        $this->pilotInfo = $this->getDbPilotInfo();
     }
     
     public function getUserInfo() {
         
+    }
+    
+    private function getDbPilotInfo() {
+        //Populates $dbPilotInfo
+        try {
+            $query = "SELECT * FROM `pilotInfo` WHERE `id` = '$this->id'";
+            $result = $this->db->query($db);
+            $dbPilotInfo = $this->db->fetchArray($result);
+        } catch (Exception $ex) {
+            return $ex->getMessage();
+        }
+    }
+    
+    public function getPilotInfo() {
+        return $this->pilotInfo;
+    }
+    
+    public function getApiKey($keyStatus) {
+        try {
+            $query = "SELECT `keyID`, `vCode`, `characterID` FROM `apiList` WHERE `id` = '$this->id' AND `keyStatus` = '$keyStatus'";
+            $result = $this->db->query($db);
+            $apiKey = $this->db->fetchRow($result);
+            return $apiKey;
+        } catch (Exception $ex) {
+            return $ex->getMessage();
+        }
+    }
+    
+    protected function getAllowedList() {
+        //Save to $this->allowedList
     }
     
     public function getUserCorpName() {

@@ -16,43 +16,22 @@ class APIUserManagement implements IAPIUserManagement {
     protected $pilotInfo;
     protected $id;
     
+    private $permissions;
+    private $userManagement;
     private $dbPilotInfo;
     private $apiPilotInfo;
     private $apiKey;
     
     public function __construct($id, $accessMask = NULL) {
-        parent::__construct($id);
         if ($accessMask) {
         $this->accessMask = $accessMask;
         }
+        $this->id = $id;
         $this->db = db::getInstance();
         $this->permissions = new permissions($id);
-        $this->UserManagement = new APIUserManagement($id);
-    }
-
-    protected function getPilotInfo() {
-        return $this->dbPilotInfo;
-    }
-    
-    private function getDbPilotInfo() {
-        //Populates $dbPilotInfo
-        try {
-            $query = "SELECT * FROM `pilotInfo` WHERE `id` = '$this->id'";
-            $result = $this->db->query($db);
-            $dbPilotInfo = $this->db->fetchArray($result);
-        } catch (Exception $ex) {
-            return $ex->getMessage();
-        }
-    }
-    
-    private function getApiKey() {
-        try {
-            $query = "SELECT `keyID`, `vCode`, `characterID` FROM `apiList` WHERE `id` = '$this->id' AND `keyStatus` = '1'";
-            $result = $this->db->query($db);
-            $apiKey = $this->db->fetchRow($result);
-        } catch (Exception $ex) {
-            return $ex->getMessage();
-        }
+        $this->userManagement = new APIUserManagement($id);
+        $this->dbPilotInfo = $this->userManagement->getPilotInfo();
+        $this->apiKey = $this->userManagement->getApiKey(1);
     }
 
     private function getApiPilotInfo() {
@@ -76,10 +55,6 @@ class APIUserManagement implements IAPIUserManagement {
     private function comparePilotInfo () {
         //Compare IDs, if not compare with AllowedList
     }
-    
-    protected function getAllowedList() {
-        //Save to $this->allowedList
-    }
 
     public function changeUserApiKey($keyID, $vCode) {
         
@@ -93,5 +68,3 @@ class APIUserManagement implements IAPIUserManagement {
         
     }
 }
-
-?>
