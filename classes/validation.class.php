@@ -14,7 +14,7 @@ class validation implements Ivalidation {
     private $db;    
     private $permissions;
     private $userManagement;
-    private $APIUserManagement;
+    private $apiUserManagement;
     private $dbPilotInfo;
     private $apiPilotInfo;
     private $apiKey;
@@ -33,12 +33,13 @@ class validation implements Ivalidation {
     }
 
     private function comparePilotInfo(){
-    	if($apiPilotInfo[characterID] == $apiPilotInfo[characterID] && $apiPilotInfo[corporationID] == $apiPilotInfo[corporationID] && $apiPilotInfo[allianceID] == $apiPilotInfo[allianceID]){
+    	if($this->apiPilotInfo[characterID] == $this->dbPilotInfo[characterID] && $this->apiPilotInfo[corporationID] == $this->dbPilotInfo[corporationID] && $this->apiPilotInfo[allianceID] == $this->dbPilotInfo[allianceID]){
     		return false;
     	}
     	else{
     		try {
-            	$query = "UPDATE `pilotInfo` SET `characterID` = '$apiPilotInfo[characterID]', `corporationID` = '$apiPilotInfo[corporationID]', `allianceID` = '$$apiPilotInfo[allianceID]' WHERE `id` = '$this->id'";
+            	$query = "UPDATE `pilotInfo` SET `characterID` = '{$this->apiPilotInfo[characterID]}', `characterName` = '{$this->apiPilotInfo[characterName]}', `corporationID` = '{$this->apiPilotInfo[corporationID]}',
+            	 `corporationName` = '{$this->apiPilotInfo[corporationName]}', `allianceID` = '{$this->apiPilotInfo[allianceID]}', `allianceName` = '{$this->apiPilotInfo[allianceName]}' WHERE `id` = '$this->id'";
             	$this->db->query($query);
             	return true;
         	} catch (Exception $ex) {
@@ -50,9 +51,9 @@ class validation implements Ivalidation {
     public function verifyApiInfo(){
         if($this->comparePilotInfo()){
         	$cMask = $this->userManagement->getAllowedListMask();
-        	if($cMask != $this->$accessMask){
+        	if($cMask != $this->accessMask){
         		try {
-            		$query = "UPDATE `users` SET `accessMask` = '$cMask' WHERE `id` = '$this->id'";
+            		$query = "UPDATE `users` SET `accessMask` = '$this->cMask' WHERE `id` = '$this->id'";
             		$this->db->query($query);
         		} catch (Exception $ex) {
             		return $ex->getMessage();

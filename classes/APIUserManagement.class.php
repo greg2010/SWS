@@ -33,18 +33,19 @@ class APIUserManagement implements IAPIUserManagement {
 
     private function getApiPilotInfo() {
         //Populates $apiPrivateInfo
-        $pheal = new Pheal($apiKey[0], $apiKey[1]);
+        $pheal = new Pheal($this->apiKey[0], $this->apiKey[1]);
         try {
             $response = $pheal->APIKeyInfo();
             // $response->key->accessMask == 0
             // $response->key->type == Account
             // $this->unsetPermissions(array('webReg_Valid'))
             for($i=0; $i<sizeof($response->key->characters); $i++){
-                if($response->key->characters[$i]->characterID === $apiKey[2]){
-                    $apiPilotInfo = $response->key->characters[$i];
+                if($response->key->characters[$i]->characterID === $this->apiKey[2]){
+                    $this->apiPilotInfo = $response->key->characters[$i];
                 }
             }
         } catch (\Pheal\Exceptions\PhealException $e) {
+            //Authentication failure etc
             return $e->getMessage();
         }
     }
