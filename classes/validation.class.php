@@ -53,7 +53,7 @@ class validation implements Ivalidation {
         	$cMask = $this->userManagement->getAllowedListMask();
         	if($cMask != $this->accessMask){
         		try {
-            		$query = "UPDATE `users` SET `accessMask` = '$this->cMask' WHERE `id` = '$this->id'";
+            		$query = "UPDATE `users` SET `accessMask` = '$cMask' WHERE `id` = '$this->id'";
             		$this->db->query($query);
         		} catch (Exception $ex) {
             		return $ex->getMessage();
