@@ -1,37 +1,34 @@
 <?php
 
+use Pheal\Pheal;
+
 interface IAPIUserManagement {
-    
+    function getPilotInfo();
     function getUserKeyMask();
     function changeUserApiKey($keyID, $vCode);
     
 }
 
 class APIUserManagement implements IAPIUserManagement {
-
-    use Pheal\Pheal;
     
     protected $accessMask;
     protected $allowedList;
-    protected $pilotInfo;
     protected $id;
-    
+    private $db;    
     private $permissions;
     private $userManagement;
     private $dbPilotInfo;
     private $apiPilotInfo;
     private $apiKey;
     
-    public function __construct($id, $accessMask = NULL) {
-        if ($accessMask) {
-        $this->accessMask = $accessMask;
-        }
+    public function __construct($id) {
         $this->id = $id;
         $this->db = db::getInstance();
         $this->permissions = new permissions($id);
-        $this->userManagement = new APIUserManagement($id);
+        $this->userManagement = new UserManagement($id);
         $this->dbPilotInfo = $this->userManagement->getPilotInfo();
         $this->apiKey = $this->userManagement->getApiKey(1);
+        $this->getApiPilotInfo();
     }
 
     private function getApiPilotInfo() {
@@ -51,9 +48,9 @@ class APIUserManagement implements IAPIUserManagement {
             return $e->getMessage();
         }
     }
-    
-    private function comparePilotInfo () {
-        //Compare IDs, if not compare with AllowedList
+
+    public function getPilotInfo() {
+        return $this->apiPilotInfo;
     }
 
     public function changeUserApiKey($keyID, $vCode) {
@@ -61,10 +58,6 @@ class APIUserManagement implements IAPIUserManagement {
     }
     
     public function getUserKeyMask() {
-        
-    }
-    
-    private function verifyApiInfo() {
         
     }
 }
