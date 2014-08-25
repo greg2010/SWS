@@ -22,13 +22,17 @@ class APIUserManagement implements IAPIUserManagement {
     private $apiKey;
     
     public function __construct($id) {
-        $this->id = $id;
         $this->db = db::getInstance();
         $this->permissions = new permissions($id);
-        $this->userManagement = new UserManagement($id);
-        $this->dbPilotInfo = $this->userManagement->getPilotInfo();
-        $this->apiKey = $this->userManagement->getApiKey(1);
-        $this->getApiPilotInfo();
+        $this->userManagement = new userManagement($id);
+        if(!isset($id)) {
+            $this->id = -1;
+        } else {
+            $this->id = $id;
+            $this->dbPilotInfo = $this->userManagement->getPilotInfo();
+            $this->apiKey = $this->userManagement->getApiKey(1);
+            $this->getApiPilotInfo();
+        }
     }
 
     private function getApiPilotInfo() {
@@ -49,7 +53,7 @@ class APIUserManagement implements IAPIUserManagement {
             return $e->getMessage();
         }
     }
-
+    
     public function getPilotInfo() {
         return $this->apiPilotInfo;
     }
