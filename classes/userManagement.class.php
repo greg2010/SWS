@@ -14,18 +14,21 @@ interface IuserManagement {
  */
 class userManagement implements IuserManagement {
     
+    
     protected $id;
     protected $db;
     protected $permissions;
-    protected $APIUserManagement;
     protected $pilotInfo;
 
     public function __construct($id) {
-        $this->id = $id;
         $this->db = db::getInstance();
         $this->permissions = new permissions($id);
-//        $this->APIUserManagement = new APIUserManagement($id);
-        $this->getDbPilotInfo();
+         if (!isset($id)) {
+                $this->id = -1;
+            } else {
+                $this->id = $id;
+                $this->getDbPilotInfo();
+            }
     }
 
     private function getDbPilotInfo() {
@@ -42,10 +45,6 @@ class userManagement implements IuserManagement {
     public function getPilotInfo() {
         return $this->pilotInfo;
     }
-    
-    public function setPilotInfo($characterID, $corporationID, $allianceID) {
-        $query = "UPDATE ";
-    }
 
     public function getApiKey($keyStatus) {
         try {
@@ -58,17 +57,40 @@ class userManagement implements IuserManagement {
         }
     }
     
-    public function getAllowedListMask() {
+    public function getAllowedListMask($maskOwner = NULL) {
         try {
-            $characterID = $this->pilotInfo[characterID];
-            $corporationID = $this->pilotInfo[corporationID];
-            $allianceID = $this->pilotInfo[allianceID];
-            $query = "SELECT `accessMask` FROM `allowedList`"
-                    . " WHERE `characterID` = '$characterID' OR `corporationID` = '$corporationID' OR `allianceID` = '$allianceID'";
+            if (isset($maskOwner)) {
+                $characterID = $maskOwner[characterID];
+                $corporationID = $maskOwner[corporationID];
+                $allianceID = $maskOwner[allianceID];
+            } else {
+                $characterID = $this->pilotInfo[characterID];
+                $corporationID = $this->pilotInfo[corporationID];
+                $allianceID = $this->pilotInfo[allianceID];
+            }
+            $query = "SELECT `accessMask` FROM `allowedList` WHERE "
+                    . "(`characterID` = '$characterID' AND `corporationID` IS NULL AND `allianceID` IS NULL)"
+                    . " OR "
+                    . "(`characterID` IS NULL AND `corporationID` = '$corporationID' AND `allianceID` IS NULL)"
+                    . " OR "
+                    . "(`characterID` IS NULL AND `corporationID` IS NULL AND `allianceID` = '$allianceID')"
+                    . " OR "
+                    . "(`characterID` = '$characterID' AND `corporationID` = '$corporationID' AND `allianceID` IS NULL)"
+                    . " OR "
+                    . "(`characterID` = '$characterID' AND `corporationID` IS NULL AND `allianceID` = '$allianceID')"
+                    . " OR "
+                    . "(`characterID` IS NULL AND `corporationID` = '$corporationID' AND `allianceID` = '$allianceID')"
+                    . " OR "
+                    . "(`characterID` = '$characterID' AND `corporationID` = '$corporationID' AND `allianceID` IS NULL)"
+                    . " OR "
+                    . "(`characterID` = '$characterID' AND `corporationID` = '$corporationID' AND `allianceID` = '$allianceID')";
             $result = $this->db->query($query);
             $userMasks = $this->db->fetchRow($result);
             foreach ($userMasks as $userMask) {
                 $accessMask = $accessMask | $userMask;
+            }
+            if ($accessMask == '') {
+                $accessMask = 0;
             }
             return $accessMask;
         } catch (Exception $ex) {

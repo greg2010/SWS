@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head %}
+        <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
+        <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script> {#TODO: FIX JQUERY LIB#}
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+            <title>{% block title %}{% endblock %} - {# Main title name #}</title>
+        {% endblock %}
+    </head>
+    <body>
+        {% block header %}{% include 'header.twig' %}{% endblock %}
+        <h1>{% block pageName %}{% endblock %}</h1>
+        {% if loggedIN > 0 %}
+            {% block content %}
+            {% endblock %}
+            <hr>
+        {% else %}
+            <hr>
+            <div class="alert alert-danger" role="alert">Access denied. Autorization required.</div>
+        {% endif %}
+        {% block footer %}
+            <div class="row">
+                <div class="col-xs-12">
+                    <footer>
+                        <div class="container">
+                        © {# FOOTER MESSAGE #}
+                        </div>
+                    </footer>
+                </div>
+            </div>
+        {% endblock %}
+    </body>
+</html>
