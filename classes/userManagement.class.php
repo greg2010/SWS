@@ -7,11 +7,7 @@ interface IuserManagement {
     function setNewPassword();
     function setUserInfo();
 }
-/**
- * Description of userManagement
- *
- * @author greg02010
- */
+
 class userManagement implements IuserManagement {
     
     
@@ -19,9 +15,11 @@ class userManagement implements IuserManagement {
     protected $db;
     protected $permissions;
     protected $pilotInfo;
+    public $log;
 
     public function __construct($id) {
         $this->db = db::getInstance();
+        $this->log = new logging();
         $this->permissions = new permissions($id);
          if (!isset($id)) {
                 $this->id = -1;
@@ -37,8 +35,9 @@ class userManagement implements IuserManagement {
             $query = "SELECT * FROM `pilotInfo` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
             $this->pilotInfo = $this->db->fetchAssoc($result);
+            $this->log->put("Select from pilotInfo [ok]");
         } catch (Exception $ex) {
-            return $ex->getMessage();
+            $this->log->put("Select from pilotInfo [fail]: " . $ex->getMessage());
         }
     }
     
@@ -51,9 +50,10 @@ class userManagement implements IuserManagement {
             $query = "SELECT `keyID`, `vCode`, `characterID` FROM `apiList` WHERE `id` = '$this->id' AND `keyStatus` = '$keyStatus'";
             $result = $this->db->query($query);
             $apiKey = $this->db->fetchRow($result);
+            $this->log->put("Select from apiList [ok]");
             return $apiKey;
         } catch (Exception $ex) {
-            return $ex->getMessage();
+            $this->log->put("Select from apiList [fail]: " . $ex->getMessage());
         }
     }
     
@@ -92,9 +92,10 @@ class userManagement implements IuserManagement {
             if ($accessMask == '') {
                 $accessMask = 0;
             }
+            $this->log->put("Select from allowedList [ok]");
             return $accessMask;
         } catch (Exception $ex) {
-            return $ex->getMessage();
+            $this->log->put("Select from allowedList [fail]: " . $ex->getMessage());
         }
     }
     

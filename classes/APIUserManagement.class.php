@@ -14,6 +14,7 @@ class APIUserManagement implements IAPIUserManagement {
     protected $accessMask;
     protected $allowedList;
     protected $id;
+    public $log; 
     private $db;    
     private $permissions;
     private $userManagement;
@@ -23,6 +24,7 @@ class APIUserManagement implements IAPIUserManagement {
     
     public function __construct($id) {
         $this->db = db::getInstance();
+        $this->log = new logging();
         $this->permissions = new permissions($id);
         $this->userManagement = new userManagement($id);
         if(!isset($id)) {
@@ -35,22 +37,39 @@ class APIUserManagement implements IAPIUserManagement {
         }
     }
 
-    private function getApiPilotInfo() {
-        //Populates $apiPrivateInfo
+    private function getApiPilotInfo(){
         $pheal = new Pheal($this->apiKey[0], $this->apiKey[1]);
+        $correctKeyMask = 0;
         try {
             $response = $pheal->APIKeyInfo();
-            // $response->key->accessMask == 0
-            // $response->key->type == Account
-            // $this->unsetPermissions(array('webReg_Valid'))
-            for($i=0; $i<sizeof($response->key->characters); $i++){
-                if($response->key->characters[$i]->characterID === $this->apiKey[2]){
-                    $this->apiPilotInfo = $response->key->characters[$i];
+            if($correctKeyMask > 0 && ($response->key->accessMask & $correctKeyMask) == 0){
+                $this->log->put("Error: incorrect api key mask; " . $this->permissions->unsetPermissions(array('webReg_Valid')));
+            } elseif($response->key->type != "Account"){
+                $this->log->put("Error: not account api key; " . $this->permissions->unsetPermissions(array('webReg_Valid')));
+            } else{
+                // 
+                for($i=0; $i<sizeof($response->key->characters); $i++){
+                    if($response->key->characters[$i]->characterID === $this->apiKey[2]){
+                        $isChar = true;
+                        $this->apiPilotInfo = $response->key->characters[$i];
+                        $this->log->put("Character " . $response->key->characters[$i]->characterName . " found");
+                        break;
+                    } else{
+                        $isChar = false;
+                    }
                 }
+                if(!$isChar){
+                    $this->log->put("Error: not found the right character; " . $this->permissions->unsetPermissions(array('webReg_Valid')));
+                }
+
             }
-        } catch (\Pheal\Exceptions\PhealException $e) {
-            //Authentication failure etc
-            return $e->getMessage();
+        } catch (\Pheal\Exceptions\PhealException $e){
+            $this->log->put("Parsing eve api error: " . $e->getMessage());
+            $c = $e->getCode();
+            if($c == 105 || $c == 106 || $c == 108 || $c == 112 || $c == 201 || $c == 202 || $c == 203 || $c == 204 || $c == 205 || $c == 210
+             || $c == 211 || $c == 212 || $c == 221 || $c == 222 || $c == 223 || $c == 516 || $c == 522){
+                $this->log->put($this->permissions->unsetPermissions(array('webReg_Valid')));
+            }
         }
     }
     

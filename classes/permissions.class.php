@@ -61,15 +61,11 @@ class permissions {
 
     private function getUserPermissions() {
         try {
-            if ($this->maskLength > 0) {
-                for ($i = 0; $i <= $this->maskLength; $i++) {
-                    $isSet = (($this->userMask >> $i)&1);
-                    if ($isSet) {
-                        $this->userPermissions[$i] = $this->bitMap[$i];
-                    }
+            for ($i = 0; $i <= $this->maskLength; $i++) {
+                $isSet = (($this->userMask >> $i)&1);
+                if ($isSet) {
+                    $this->userPermissions[$i] = $this->bitMap[$i];
                 }
-            } else {
-                $this->userPermissions = array();
             }
         } catch (Exception $ex) {
             return $ex->getMessage();
@@ -197,6 +193,7 @@ class permissions {
             }
             $this->updateUserMask();
             $this->getUserPermissions();
+            return "Permissions removed";
         } catch (Exception $ex) {
             return $ex->getMessage();
         }
@@ -204,18 +201,5 @@ class permissions {
     
     public function getBitMap() {
         return $this->bitMap;
-    }
-    
-    public function setCustomMask($mask) {
-        try {
-            if ($this->id <> -1) {
-                throw new Exception('This method is available if class was created without ID!');
-            }
-            $this->userMask = $mask;
-            $this->maskLength = floor(log($this->userMask)/log(2)) + 1;
-            $this->getUserPermissions();
-        } catch (Exception $ex) {
-            return $ex->getMessage();
-        }
     }
 }
