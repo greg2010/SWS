@@ -9,3 +9,4 @@ $twig = new Twig_Environment($loader, array(
 ));
 $template = $twig->loadTemplate( 'exampleLogIn.twig');
 echo $template->render($toTemplate);
+;
