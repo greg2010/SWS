@@ -6,7 +6,6 @@ use Pheal\Pheal;
 class registerNewUser {
     
     private $apiPilotInfo = array();
-    private $userPermissionsInfo = array();
     
     protected $id;
     protected $db;
