@@ -2,8 +2,6 @@
 
 interface Ivalidation {
     function verifyApiInfo();
-
-    
 }
 
 class validation implements Ivalidation {
@@ -11,8 +9,9 @@ class validation implements Ivalidation {
     protected $accessMask;
     protected $allowedList;
     protected $id;
+    private $log;
     private $db;    
-    private $permissions;
+    //private $permissions;
     private $userManagement;
     private $apiUserManagement;
     private $dbPilotInfo;
@@ -25,7 +24,8 @@ class validation implements Ivalidation {
         }
         $this->id = $id;
         $this->db = db::getInstance();
-        $this->permissions = new permissions($id);
+        $this->log = new logging();
+        //$this->permissions = new permissions($id);
         $this->userManagement = new userManagement($id);
         $this->apiUserManagement = new APIUserManagement($id);
         $this->dbPilotInfo = $this->userManagement->getPilotInfo();
@@ -34,6 +34,7 @@ class validation implements Ivalidation {
 
     private function comparePilotInfo(){
     	if($this->apiPilotInfo[characterID] == $this->dbPilotInfo[characterID] && $this->apiPilotInfo[corporationID] == $this->dbPilotInfo[corporationID] && $this->apiPilotInfo[allianceID] == $this->dbPilotInfo[allianceID]){
+            $this->log->put("all ids match");
     		return false;
     	}
     	else{
@@ -41,9 +42,11 @@ class validation implements Ivalidation {
             	$query = "UPDATE `pilotInfo` SET `characterID` = '{$this->apiPilotInfo[characterID]}', `characterName` = '{$this->apiPilotInfo[characterName]}', `corporationID` = '{$this->apiPilotInfo[corporationID]}',
             	 `corporationName` = '{$this->apiPilotInfo[corporationName]}', `allianceID` = '{$this->apiPilotInfo[allianceID]}', `allianceName` = '{$this->apiPilotInfo[allianceName]}' WHERE `id` = '$this->id'";
             	$this->db->query($query);
+                $this->log->put("ids don't match, db table updated");
             	return true;
         	} catch (Exception $ex) {
-            	return $ex->getMessage();
+                $this->log->put("ids don't match, db table update fail: " . $ex->getMessage());
+                return false;
         	}
     	}
     }
@@ -53,13 +56,18 @@ class validation implements Ivalidation {
         	$cMask = $this->userManagement->getAllowedListMask();
         	if($cMask != $this->accessMask){
         		try {
-            		$query = "UPDATE `users` SET `accessMask` = '$this->cMask' WHERE `id` = '$this->id'";
+            		$query = "UPDATE `users` SET `accessMask` = '$cMask' WHERE `id` = '$this->id'";
             		$this->db->query($query);
+                    $this->log->put("access mask updated");
         		} catch (Exception $ex) {
-            		return $ex->getMessage();
+            		$this->log->put("access mask don't match, db table update fail: " . $ex->getMessage());
         		}
         	}
+            else{
+                $this->log->put("access mask match");
+            }
         }
+        return $this->log->get();
     }
 
 }
