@@ -81,7 +81,7 @@ class userSession {
     }
     
     public function logUserByLoginPass($login, $password) {
-        $passwordHash = hash(sha1, $password);
+        $passwordHash = hash(sha512, $password);
         $this->id = $this->db->getUserLogin($login, $passwordHash);
         if ($this->id === FALSE) {
             $this->isLoggedIn = FALSE;
