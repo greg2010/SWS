@@ -52,50 +52,6 @@ class validation implements Ivalidation {
     	}
     }
 
-    /*private function getMainTSGroupID($allianceID){
-        try {
-            $query = "SELECT `TSGroupID` FROM `mainTSGroupID` WHERE `allianceID` = '$allianceID'";
-            $result = $this->db->query($query);
-            $this->log->put("mainTSGroupID", "selection success");
-            return $this->db->getMysqlResult($result);
-        } catch (Exception $ex) {
-            $this->log->put("mainTSGroupID", "selection failed: " . $ex->getMessage());
-        }
-    }
-
-    private function getAdditionalTSGroupID(){
-        try {
-            $permissions = $this->permissions->getTSPermissions();
-            $query = "SELECT `TSGroupID` FROM `additionalTSGroupID` WHERE";
-            for($i=0; $i<count($permissions); $i++){
-                $query .= " `bitName` = '" . $permissions[$i] . "'";
-                if($i<(count($permissions)-1)) $query .= " OR";
-            }
-            $result = $this->db->query($query);
-            $this->log->put("additionalTSGroupID", "selection success");
-            return $this->db->fetchRow($result);
-        } catch (Exception $ex) {
-            $this->log->put("additionalTSGroupID", "selection failed: " . $ex->getMessage());
-        }
-    }
-
-    private function EditTSRoles($mainTSGroup, $additionalTSGroup){
-        if($mainTSGroup != NULL){
-            $ts3 = new ts3;
-            if($additionalTSGroup != NULL){
-                $sgid = $additionalTSGroup;
-                $sgid[] = $mainTSGroup;
-            } else $sgid = $mainTSGroup;
-            if($ts3->delGruser($sgid,$this->id)){
-                $this->log->put("TS3", "roles removed");
-            } else{
-               $this->log->put("TS3", "roles removing faild");
-            }
-        } else{
-            $this->log->put("TS3", "roles removing faild: input group empty");
-        }
-    }*/
-
     public function verifyApiInfo(){
         if($this->apiUserManagement->log->get() != NULL){
             $this->log->initSub("APIUserManagement");
@@ -115,6 +71,7 @@ class validation implements Ivalidation {
         		} catch (Exception $ex) {
             		$this->log->put("verifyApiInfo", "err: " . $ex->getMessage());
         		}
+                // TS ban method
         	}
             else{
                 $this->log->put("verifyApiInfo", "ok: mask " . $cMask . " match");
@@ -127,7 +84,6 @@ class validation implements Ivalidation {
             if($this->permissions->hasPermission("TS_Valid") == false){
                 $ban_list .= "TS3, ";
                 // TS ban method
-                //$this->EditTSRoles($this->getMainTSGroupID($this->apiPilotInfo[allianceID]), $this->getAdditionalTSGroupID());
             }
             if($this->permissions->hasPermission("XMPP_Valid") == false){
                 $ban_list .= "Jabber, ";
@@ -141,7 +97,6 @@ class validation implements Ivalidation {
         }
         return $this->log->get();
     }
-
 }
 
 ?>
