@@ -193,9 +193,9 @@ class permissions {
             }
             $this->updateUserMask();
             $this->getUserPermissions();
-            return "Permissions removed";
+            return "success";
         } catch (Exception $ex) {
-            return $ex->getMessage();
+            return "error: " . $ex->getMessage();
         }
     }
     

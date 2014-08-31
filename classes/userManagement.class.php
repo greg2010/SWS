@@ -35,9 +35,9 @@ class userManagement implements IuserManagement {
             $query = "SELECT * FROM `pilotInfo` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
             $this->pilotInfo = $this->db->fetchAssoc($result);
-            $this->log->put("Select from pilotInfo [ok]");
+            $this->log->put("pilotInfo", "selection success");
         } catch (Exception $ex) {
-            $this->log->put("Select from pilotInfo [fail]: " . $ex->getMessage());
+            $this->log->put("pilotInfo", "selection failed: " . $ex->getMessage());
         }
     }
     
@@ -50,10 +50,10 @@ class userManagement implements IuserManagement {
             $query = "SELECT `keyID`, `vCode`, `characterID` FROM `apiList` WHERE `id` = '$this->id' AND `keyStatus` = '$keyStatus'";
             $result = $this->db->query($query);
             $apiKey = $this->db->fetchRow($result);
-            $this->log->put("Select from apiList [ok]");
+            $this->log->put("apiList", "selection success");
             return $apiKey;
         } catch (Exception $ex) {
-            $this->log->put("Select from apiList [fail]: " . $ex->getMessage());
+            $this->log->put("apiList", "selection failed: " . $ex->getMessage());
         }
     }
     
@@ -92,10 +92,10 @@ class userManagement implements IuserManagement {
             if ($accessMask == '') {
                 $accessMask = 0;
             }
-            $this->log->put("Select from allowedList [ok]");
+            $this->log->put("allowedList", "selection success");
             return $accessMask;
         } catch (Exception $ex) {
-            $this->log->put("Select from allowedList [fail]: " . $ex->getMessage());
+            $this->log->put("allowedList", "selection failed: " . $ex->getMessage());
         }
     }
     

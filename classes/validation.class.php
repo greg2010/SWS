@@ -36,17 +36,17 @@ class validation implements Ivalidation {
     	if($this->apiPilotInfo[characterID] == NULL){
             return false;
         } elseif($this->apiPilotInfo[characterID] == $this->dbPilotInfo[characterID] && $this->apiPilotInfo[corporationID] == $this->dbPilotInfo[corporationID] && $this->apiPilotInfo[allianceID] == $this->dbPilotInfo[allianceID]){
-            $this->log->put("All IDs match (char: " . $this->apiPilotInfo[characterID] . ", corp: " . $this->apiPilotInfo[corporationID] . ", alli: " . $this->apiPilotInfo[allianceID] . ")");
+            $this->log->put("IDs", "match (char: " . $this->apiPilotInfo[characterID] . ", corp: " . $this->apiPilotInfo[corporationID] . ", alli: " . $this->apiPilotInfo[allianceID] . ")");
     		return true;
     	} else{
     		try {
             	$query = "UPDATE `pilotInfo` SET `characterID` = '{$this->apiPilotInfo[characterID]}', `characterName` = '{$this->apiPilotInfo[characterName]}', `corporationID` = '{$this->apiPilotInfo[corporationID]}',
             	 `corporationName` = '{$this->apiPilotInfo[corporationName]}', `allianceID` = '{$this->apiPilotInfo[allianceID]}', `allianceName` = '{$this->apiPilotInfo[allianceName]}' WHERE `id` = '$this->id'";
             	$this->db->query($query);
-                $this->log->put("IDs don't match, db table updated");
+                $this->log->put("IDs", "don't match, db table updated");
             	return true;
         	} catch (Exception $ex) {
-                $this->log->put("IDs don't match, db table update fail: " . $ex->getMessage());
+                $this->log->put("IDs", "don't match, db table update fail: " . $ex->getMessage());
                 return false;
         	}
     	}
@@ -63,24 +63,24 @@ class validation implements Ivalidation {
     }*/
 
     public function verifyApiInfo(){
-        $this->log->put($this->apiUserManagement->log->get(), false);
-        $this->log->put($this->userManagement->log->get(), false);
-        $this->userManagement->log->rm();
+        $this->log->merge($this->apiUserManagement->log->get());
+        $this->log->merge($this->userManagement->log->get());
+        //$this->userManagement->log->rm();
         if($this->comparePilotInfo()){
         	$cMask = $this->userManagement->getAllowedListMask();
-            $this->log->put($this->userManagement->log->get(), false);
+            $this->log->merge($this->userManagement->log->get());
         	if($cMask != $this->accessMask){
         		try {
             		$query = "UPDATE `users` SET `accessMask` = '$cMask' WHERE `id` = '$this->id'";
             		$this->db->query($query);
-                    $this->log->put("Access mask " . $cMask . " updated");
+                    $this->log->put("accessMask", "don't match, db table updated, correct mask: " . $cMask);
         		} catch (Exception $ex) {
-            		$this->log->put("Access mask don't match, db table update fail: " . $ex->getMessage());
+            		$this->log->put("accessMask", "don't match, db table update fail: " . $ex->getMessage());
         		}
                 //RemoveTSRoles();
         	}
             else{
-                $this->log->put("Access mask " . $cMask . " match");
+                $this->log->put("accessMask", "mask " . $cMask . " match");
             }
         }
         return $this->log->get();

@@ -7,28 +7,25 @@ $smta = round(microtime(1)*1000);
 $db = db::getInstance();
 
 $log = new logging();
-$log->init();
-
 try{
 	$query = "SELECT * FROM `users`";
 	$result = $db->query($query);
 	$userList = $db->fetchAssoc($result);
-	$log->put("Select " . count($userList) . " users");
+	$log->put("users", "select " . count($userList) . " users");
 } catch (Exception $ex){
-    $log->put("Select fail: " . $ex->getMessage());
+    $log->put("users", "select fail: " . $ex->getMessage());
 }
 for($i=0; $i<count($userList); $i++){
 	$smt = round(microtime(1)*1000);
-	$log->addN();
-	$log->put("User: " . $userList[$i][login] . " (id: " . $userList[$i][id] . ")");
+	$log->initSub($userList[$i][id]);
+	$log->put("user", $userList[$i][login] . " (id: " . $userList[$i][id] . ")", $userList[$i][id]);
 	$user = new validation($userList[$i][id], $userList[$i][accessMask]);
-	$log->put($user->verifyApiInfo(), false);
+	$log->merge($user->verifyApiInfo(), $userList[$i][id]);
 	$emt = round(microtime(1)*1000) - $smt;
-	$log->put("Spent " . $emt . " microseconds.");
+	$log->put("spent", $emt . " microseconds", $userList[$i][id]);
 }
 $emta = round(microtime(1)*1000) - $smta;
-$log->addN();
-$log->put("Total spent " . $emta . " microseconds.");
-echo $log->get();
-
+$log->put("total spent", $emta . " microseconds");
+//var_dump($log->get());
+$log->record("log.validator");
 ?>

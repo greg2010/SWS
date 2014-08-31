@@ -43,32 +43,32 @@ class APIUserManagement implements IAPIUserManagement {
         try {
             $response = $pheal->APIKeyInfo();
             if($correctKeyMask > 0 && ($response->key->accessMask & $correctKeyMask) == 0){
-                $this->log->put("Error: incorrect api key mask; " . $this->permissions->unsetPermissions(array('webReg_Valid')));
+                $this->log->put("eve api", "incorrect key mask; " . $this->permissions->unsetPermissions(array('webReg_Valid')));
             } elseif($response->key->type != "Account"){
-                $this->log->put("Error: not account api key; " . $this->permissions->unsetPermissions(array('webReg_Valid')));
+                $this->log->put("eve api", "not account key; " . $this->permissions->unsetPermissions(array('webReg_Valid')));
             } else{
                 // 
                 for($i=0; $i<sizeof($response->key->characters); $i++){
                     if($response->key->characters[$i]->characterID === $this->apiKey[2]){
                         $isChar = true;
                         $this->apiPilotInfo = $response->key->characters[$i];
-                        $this->log->put("Character " . $response->key->characters[$i]->characterName . " found");
+                        $this->log->put("eve api", "character " . $response->key->characters[$i]->characterName . " found");
                         break;
                     } else{
                         $isChar = false;
                     }
                 }
                 if(!$isChar){
-                    $this->log->put("Error: not found the right character; " . $this->permissions->unsetPermissions(array('webReg_Valid')));
+                    $this->log->put("eve api", "not found the right character; " . $this->permissions->unsetPermissions(array('webReg_Valid')));
                 }
 
             }
         } catch (\Pheal\Exceptions\PhealException $e){
-            $this->log->put("Parsing eve api error: " . $e->getMessage());
+            $this->log->put("eve api", "parsing error: " . $e->getMessage());
             $c = $e->getCode();
             if($c == 105 || $c == 106 || $c == 108 || $c == 112 || $c == 201 || $c == 202 || $c == 203 || $c == 204 || $c == 205 || $c == 210
              || $c == 211 || $c == 212 || $c == 221 || $c == 222 || $c == 223 || $c == 516 || $c == 522){
-                $this->log->put($this->permissions->unsetPermissions(array('webReg_Valid')));
+                $this->log->put("permissions removing", $this->permissions->unsetPermissions(array('webReg_Valid')));
             }
         }
     }
