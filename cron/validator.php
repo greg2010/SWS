@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__) . '/../init.php';
 
-$smta = round(microtime(1)*1000);
+$smta = round(microtime(1));
 
 $db = db::getInstance();
 
@@ -24,8 +24,8 @@ for($i=0; $i<count($userList); $i++){
 	$emt = round(microtime(1)*1000) - $smt;
 	$log->put("spent", $emt . " microseconds", $userList[$i][id]);
 }
-$emta = round(microtime(1)*1000) - $smta;
-$log->put("total spent", $emta . " microseconds");
-//var_dump($log->get());
+$emta = round(microtime(1)) - $smta;
+$log->put("total spent", $emta . " seconds");
+var_dump($log->get());
 $log->record("log.validator");
 ?>

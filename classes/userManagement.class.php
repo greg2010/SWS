@@ -35,9 +35,10 @@ class userManagement implements IuserManagement {
             $query = "SELECT * FROM `pilotInfo` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
             $this->pilotInfo = $this->db->fetchAssoc($result);
-            $this->log->put("pilotInfo", "selection success");
+            return true;
         } catch (Exception $ex) {
-            $this->log->put("pilotInfo", "selection failed: " . $ex->getMessage());
+            $this->log->put("getDbPilotInfo", "err: " . $ex->getMessage());
+            return false;
         }
     }
     
@@ -50,10 +51,9 @@ class userManagement implements IuserManagement {
             $query = "SELECT `keyID`, `vCode`, `characterID` FROM `apiList` WHERE `id` = '$this->id' AND `keyStatus` = '$keyStatus'";
             $result = $this->db->query($query);
             $apiKey = $this->db->fetchRow($result);
-            $this->log->put("apiList", "selection success");
             return $apiKey;
         } catch (Exception $ex) {
-            $this->log->put("apiList", "selection failed: " . $ex->getMessage());
+            $this->log->put("getApiKey", "err: " . $ex->getMessage());
         }
     }
     
@@ -92,10 +92,9 @@ class userManagement implements IuserManagement {
             if ($accessMask == '') {
                 $accessMask = 0;
             }
-            $this->log->put("allowedList", "selection success");
             return $accessMask;
         } catch (Exception $ex) {
-            $this->log->put("allowedList", "selection failed: " . $ex->getMessage());
+            $this->log->put("getAllowedListMask", "err: " . $ex->getMessage());
         }
     }
     
