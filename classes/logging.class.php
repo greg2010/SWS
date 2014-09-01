@@ -30,8 +30,10 @@ class logging {//implements Ilogging {
     	}
     }
 
-    public function get(){
-    	return $this->log;
+    public function get($rm=false){
+    	$lg = $this->log;
+    	if($rm) $this->log = NULL;
+    	return $lg;
     }
 
     public function record($table){

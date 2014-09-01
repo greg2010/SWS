@@ -53,9 +53,9 @@ class validation implements Ivalidation {
     }
 
     public function verifyApiInfo(){
-        if($this->apiUserManagement->log->get() != NULL) $this->log->merge($this->apiUserManagement->log->get(), "APIUserManagement");
+        if($this->apiUserManagement->log->get() != NULL) $this->log->merge($this->apiUserManagement->log->get(true), "APIUserManagement");
         $cMask = $this->userManagement->getAllowedListMask();
-        if($this->userManagement->log->get() != NULL) $this->log->merge($this->userManagement->log->get(), "userManagement");
+        if($this->userManagement->log->get() != NULL) $this->log->merge($this->userManagement->log->get(true), "userManagement");
         if($this->comparePilotInfo()){
         	if($cMask != $this->accessMask){
         		try {
@@ -84,7 +84,7 @@ class validation implements Ivalidation {
                 // XMPP ban method
             }
             if($ban_list != "") $this->log->put("verifyApiInfo", "ok: user banned in " . $ban_list . "db table updated");
-            if($this->apiUserManagement->log->get() != NULL) $this->log->merge($this->apiUserManagement->log->get(), "permissions");
+            if($this->apiUserManagement->log->get() != NULL) $this->log->merge($this->apiUserManagement->log->get(true), "permissions");
         }
         return $this->log->get();
     }
