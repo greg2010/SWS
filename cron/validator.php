@@ -17,7 +17,6 @@ try{
 }
 for($i=0; $i<count($userList); $i++){
 	$smt = round(microtime(1)*1000);
-	$log->initSub($userList[$i][id]);
 	$log->put("user", $userList[$i][login] . " (id: " . $userList[$i][id] . ")", $userList[$i][id]);
 	$user = new validation($userList[$i][id], $userList[$i][accessMask]);
 	$log->merge($user->verifyApiInfo(), $userList[$i][id]);

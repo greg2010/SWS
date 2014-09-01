@@ -73,10 +73,7 @@ class APIUserManagement implements IAPIUserManagement {
                 $this->permissions->unsetPermissions(array('webReg_Valid', 'TS_Valid', 'XMPP_Valid'));
             }
         }
-        if($this->permissions->log->get() != NULL){
-            $this->log->initSub("permissions");
-            $this->log->merge($this->permissions->log->get(), "permissions");
-        }
+        if($this->permissions->log->get() != NULL) $this->log->merge($this->permissions->log->get(), "permissions");
         return false;
     }
     

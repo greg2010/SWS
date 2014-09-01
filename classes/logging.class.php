@@ -13,19 +13,21 @@ class logging {//implements Ilogging {
     }*/
 
     public function put($key, $value, $sub=NULL){
-    	($sub) ? ($this->log[$sub][$key] = $value) : ($this->log[$key] = $value);
+    	if($sub){
+    		if($this->log[$sub] == NULL) $this->log[$sub] = array();
+    		$this->log[$sub][$key] = $value;
+    	} else{
+    		$this->log[$key] = $value;
+    	}
 	}
 
     public function merge($arr, $sub=NULL){
-    	($sub) ? ($this->log[$sub] = array_merge($arr, $this->log[$sub])) : ($this->log = array_merge($arr, $this->log));
-    }
-
-    public function initSub($key){
-    	$this->log[$key] = array();
-    }
-
-    public function rm(){
-    	$this->log = NULL;
+    	if($sub){
+    		if($this->log[$sub] == NULL) $this->log[$sub] = array();
+    		$this->log[$sub] = array_merge($arr, $this->log[$sub]);
+    	} else{
+    		$this->log = array_merge($arr, $this->log);
+    	}
     }
 
     public function get(){
