@@ -1,35 +1,5 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        {% block head %}
-        <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
-        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
-        <link rel="stylesheet" type="text/css" href="css/custom.css">
-        <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script> {#TODO: FIX JQUERY LIB#}
-        <script type="text/javascript" src="js/bootstrap.min.js"></script>
-            <title>{% block title %}{% endblock %} - {# Main title name #}</title>
-        {% endblock %}
-    </head>
-    <body>
-        {% block header %}{% include 'header.twig' %}{% endblock %}
-        <div class="container">
-        <div class="page-header">
-        <h1>{% block pageName %}{% endblock %}</h1>
-        </div>
-            {% block content %}
-            {% endblock %}
-        <hr>
-        </div>
-        {% block footer %}
-            <div class="row">
-                <div class="col-xs-12">
-                    <footer>
-                        <div class="container">
-                        © {# FOOTER MESSAGE #}
-                        </div>
-                </div>
-            </div>
-        {% endblock %}
-    </body>
-</html>
+{% extends "superBase.twig" %}
+{% block superContent %}
+{% block content %}
+{% endblock %}
+{% endblock %}
