@@ -18,6 +18,17 @@ body {
         margin-left: 100px;
 }
 
+.navbar-inverse .navbar-nav > li > a 
+{
+        color: #ccc;
+}
+.navbar-inverse .navbar-nav > li > a:hover,
+.navbar-inverse .navbar-nav > li > a:focus 
+{
+        color: #f6d000;
+        background-color: transparent;
+}
+
 a:link {
         color:#ccc
 }

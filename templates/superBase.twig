@@ -12,13 +12,13 @@
     </head>
     <body>
         {% block header %}{% include 'header.twig' %}{% endblock %}
-        <div class="container">{#
-        <div class="page-header">
-        <h1>{% block pageName %}{% endblock %}</h1>
-        </div>
-        #}
+            <div class="container">{#
+            <div class="page-header">
+            <h1>{% block pageName %}{% endblock %}</h1>
+            </div>
+            #}
         {% block superContent %}{% endblock %}
-        </div>
+            </div>
         {% block footer %}
             <div class="row">
                 <div class="col-xs-12">
