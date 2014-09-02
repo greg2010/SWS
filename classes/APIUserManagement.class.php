@@ -51,7 +51,7 @@ class APIUserManagement implements IAPIUserManagement {
             } else{
                 // 
                 for($i=0; $i<sizeof($response->key->characters); $i++){
-                    if($response->key->characters[$i]->characterID === $this->apiKey[2]){
+                    if($response->key->characters[$i]->characterID == $this->apiKey[2]){
                         $isChar = true;
                         $this->apiPilotInfo = $response->key->characters[$i];
                         return true;
