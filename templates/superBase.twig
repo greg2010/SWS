@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script> {#TODO: FIX JQUERY LIB#}
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+    <title>{% block title %}{% endblock %} - {#TITLE TEXT#}</title>
+    </head>
+    <body>
+        {% block header %}{% include 'header.twig' %}{% endblock %}
+            <div class="container">{#
+            <div class="page-header">
+            <h1>{% block pageName %}{% endblock %}</h1>
+            </div>
+            #}
+        {% block superContent %}{% endblock %}
+            </div>
+        {% block footer %}
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="container">
+                        FOOTER MESSAGE {# FOOTER MESSAGE #}
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    </body>
+</html>
