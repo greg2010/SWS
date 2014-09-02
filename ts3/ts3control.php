@@ -5,16 +5,29 @@ $date_now = date("Y-m-d H:i:s");
 require_once 'config.php';
 require_once("../classes/ts3admin.class.php");
 require_once("../classes/permissions.class.php");
+require_once("../classes/db.class.php");
+require_once("../classes/config.class.php");
 $tsAdmin = new ts3admin($ts3_ip, $ts3_queryport);
 if($tsAdmin->getElement('success', $tsAdmin->connect())) {
 $tsAdmin->login($ts3_user, $ts3_pass);
 }else{
-file_put_contents ("$path/error_connect.txt", "error date: $date_now $ts3_queryport  \n", FILE_APPEND);
-}
+file_put_contents ("$path/error_connect.txt", "error date: $date_now $ts3_ip:$ts3_queryport  \n", FILE_APPEND);
+sleep(1);
+
+	$tsAdmin = new ts3admin($ts3_ip, $ts3_queryport);
+	if($tsAdmin->getElement('success', $tsAdmin->connect())) {
+	$tsAdmin->login($ts3_user, $ts3_pass);
+	}else{
+	file_put_contents ("$path/error_connect.txt", "error date2: $date_now $ts3_ip:$ts3_queryport  \n", FILE_APPEND);
+	sleep(1);
+        }
+
+    
+    }
 
 class ts3{
 
-protected $id;
+#protected $id;
 public $log;
 private $db;
 private $permissions;
@@ -42,7 +55,8 @@ private $permissions;
     public function grAdditDbTs($id){
     $permissions = new permissions($id);
     $test=$permissions->getTSPermissions();
-    var_dump($test);
+#    var_dump($test);
+    return $test;
     }
 
 
@@ -148,6 +162,11 @@ foreach($clid as $val){
 echo ("$val[name] -> $val[sgid] \n");
 }
 
+$cl_p_d=$ts3->grAdditDbTs('1');
+foreach ($cl_p_d as $v){
+echo("\n $v \n");
+
+}
 #$sgid=array(44,41);
 #$sgid=array('tmp','Allies');
 
