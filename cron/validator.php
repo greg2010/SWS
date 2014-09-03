@@ -17,7 +17,7 @@ if($pid == -2){
 
         $users_count = count($userList);
         if($users_count > $max_users){
-        	$thread_count = round($users_count / $users_max);
+        	$thread_count = ($users_count < $users_max) ? 1 : round($users_count / $users_max);
         	if($thread_count > $thread_max){
         		$thread_count = $thread_max;
         		$users_in_thread = round($users_count / $thread_count);
