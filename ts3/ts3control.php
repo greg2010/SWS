@@ -25,9 +25,11 @@ sleep(1);
     
     }
 
+
+
 class ts3{
 
-#protected $id;
+protected $id;
 public $log;
 private $db;
 private $permissions;
@@ -44,19 +46,100 @@ private $permissions;
     $tsAdmin->logout();
     }    
     
-    public function hostinfo(){
+    private function hostinfo(){
     global $tsAdmin;
     $info=$tsAdmin->clientDbList(0);
     $cl_list=$info[data];
     return $cl_list;
     }
 
+    public function validate($id){
+    
+    $ar1a=$this->grAdditDbTs($id);
+    $ar1m=array($this->grMaDbTs($id));
+    $ar1=array_merge($ar1a,$ar1m);
+    $ar2t=$this->perm_user($this->getTsUid($id));
+    foreach($ar2t as $ar2_v){
+    $i2v++;
+    $ar2[$i2v]=$ar2_v[sgid];
+    }
+    $validDb_Ts=array_diff($ar1, $ar2);
+    $validTs_Db=array_diff($ar2, $ar1);
 
-    public function grAdditDbTs($id){
+    if (count($validDb_Ts)!='0'){
+
+	foreach($validDb_Ts as $sgids){
+	echo ("set:$sgids\n");
+	
+        $set=$this->setGruser($sgids,$this->getTsUid($id));
+	}
+    }
+
+    if (count($validTs_Db)!='0'){
+    
+    	foreach($validTs_Db as $sgidd){
+	echo ("del:$sgidd\n");
+        $del=$this->delGruser($sgidd,$this->getTsUid($id));
+	}
+    }
+
+
+    return true;
+    
+    }
+
+
+
+
+    private function getGrMainDbTs($allianceID){
+	    $this->db=db::getInstance();
+            $query = "SELECT `TSGroupID` FROM `mainTSGroupID` WHERE `allianceID` = '$allianceID'";
+            $result = $this->db->query($query);
+            return $this->db->getMysqlResult($result);
+    }
+
+    private function alliUser($id){
+	    $this->db=db::getInstance();
+            $query = "SELECT `allianceID` FROM `pilotInfo` WHERE `id`=$id";
+            $result = $this->db->query($query);
+            return $this->db->getMysqlResult($result);
+    }
+
+    private function getTsUid($id){
+	    $this->db=db::getInstance();
+            $query = "SELECT `uniqueID` FROM `teamspeak` WHERE `id`=$id";
+            $result = $this->db->query($query);
+            return $this->db->getMysqlResult($result);
+    }
+
+
+    private function grMaDbTs($id){
+#	    $this->db=db::getInstance();
+            return $this->getGrMainDbTs($this->alliUser($id));
+    }
+
+
+    private function grAdditDbTs($id){
     $permissions = new permissions($id);
-    $test=$permissions->getTSPermissions();
-#    var_dump($test);
-    return $test;
+    $this->db=db::getInstance();
+    $lable_ar=$permissions->getTSPermissions();
+    if(in_array('TS_Valid', $lable_ar)){
+    foreach ($lable_ar as $lable_str){
+    $i++;
+	    $query = "SELECT `TSGroupID` FROM `additionalTSGroupID` WHERE `bitName` = '$lable_str'";
+#	    echo ("\n $query \n");
+	    $result = $this->db->query($query);
+	    $r_tmp=$this->db->fetchRow($result);
+		if($r_tmp[0]!=''){
+		$row[$i]=$r_tmp[0];
+		}
+	    }
+
+    return $row=array_values($row);
+	}else{
+    
+    return $row=array('not_validate');
+	}
     }
 
 
@@ -78,19 +161,19 @@ private $permissions;
 	}
     }
 
-    public function perm_user($nick){
+    private function perm_user($nick){
     global $tsAdmin;
-#    $info=$tsAdmin->clientDbFind("$nick",'-uid');
-    $info=$tsAdmin->clientDbFind("$nick");
+    $info=$tsAdmin->clientDbFind("$nick",'-uid');
+#    $info=$tsAdmin->clientDbFind("$nick");
     $cl_id=$info['data'][0]['cldbid'];
     $s_gr_clid=$tsAdmin->serverGroupsByClientID("$cl_id");
     $perm=$s_gr_clid['data'];
     return $perm;
     }
     
-    public function setGrUser($sgid,$nick){
+    private function setGrUser($sgid,$nick){
     global $tsAdmin;
-    $cl_id_tmp=$tsAdmin->clientDbFind("$nick");
+    $cl_id_tmp=$tsAdmin->clientDbFind("$nick", '-uid');
     $cl_id=$cl_id_tmp['data'][0]['cldbid'];
     if(is_array($sgid)){
         foreach($sgid as $val){
@@ -119,9 +202,9 @@ private $permissions;
     }
     
 
-    public function delGrUser($sgid,$nick){
+    private function delGrUser($sgid,$nick){
     global $tsAdmin;
-    $cl_id_tmp=$tsAdmin->clientDbFind("$nick");
+    $cl_id_tmp=$tsAdmin->clientDbFind("$nick", '-uid');
     $cl_id=$cl_id_tmp['data'][0]['cldbid'];
     if(is_array($sgid)){
         foreach($sgid as $val){
@@ -157,16 +240,26 @@ private $permissions;
 $ts3 = new ts3;
 
 #$clid=$ts3->perm_user('ttc6PcBp8ufxl6zo3JGU/P5jejE=');
-$clid=$ts3->perm_user('RED | AND. | Dark Angel66');
-foreach($clid as $val){
-echo ("$val[name] -> $val[sgid] \n");
-}
+#$clid=$ts3->perm_user('RED | AND. | Dark Angel66');
+#$clid=$ts3->perm_user('RED-BUACO-atap');
+#foreach($clid as $val){
+#echo ("$val[name] -> $val[sgid] \n");
+#}
 
-$cl_p_d=$ts3->grAdditDbTs('1');
-foreach ($cl_p_d as $v){
-echo("\n $v \n");
+#$cl_p_d=$ts3->grAdditDbTs('3');
+#echo $cl_p_d[4][0];
+#var_dump ($cl_p_d);
+#foreach ($cl_p_d as $v){
+#echo("\n $v \n");
 
-}
+#}
+
+$wow=$ts3->validate('1');
+var_dump($wow);
+
+
+#$wow2=$ts3->grMaDbTs('2');
+#var_dump($wow2);
 #$sgid=array(44,41);
 #$sgid=array('tmp','Allies');
 
