@@ -2,8 +2,8 @@
 
 require_once dirname(__FILE__) . '/../init.php';
 
-$thread_max = 4; //max threads (4)
-$users_max = 100; //max users in thread (100)
+$thread_max = config::num_of_threads; //max threads (4)
+$users_max = config::ops_in_thread; //max users in thread (100)
 
 $pid = -2;
 if($pid == -2){
@@ -17,7 +17,7 @@ if($pid == -2){
 
         $users_count = count($userList);
         if($users_count > $max_users){
-        	$thread_count = round($users_count / $users_max);
+        	$thread_count = ($users_count < $users_max) ? 1 : round($users_count / $users_max);
         	if($thread_count > $thread_max){
         		$thread_count = $thread_max;
         		$users_in_thread = round($users_count / $thread_count);

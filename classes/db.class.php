@@ -112,7 +112,7 @@ class db {
      * @return \Exception|boolean
      */
     
-    public function hasRows() {
+    public function hasRows($result) {
         try {
             if(mysqli_num_rows($result)>0) {
                 return true;
