@@ -8,4 +8,6 @@ class config {
 
     const num_of_threads = 4;
     const ops_in_thread = 100;
+
+    const correctKeyMask = 0;
 }

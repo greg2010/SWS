@@ -39,7 +39,7 @@ class APIUserManagement implements IAPIUserManagement {
 
     private function getApiPilotInfo(){
         $pheal = new Pheal($this->apiKey[0], $this->apiKey[1]);
-        $correctKeyMask = 0;
+        $correctKeyMask = config::correctKeyMask;
         try {
             $response = $pheal->APIKeyInfo();
             if($correctKeyMask > 0 && ($response->key->accessMask & $correctKeyMask) == 0){
