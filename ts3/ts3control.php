@@ -237,44 +237,17 @@ private $permissions;
 }
 
 
+/*
+
+######example validate user
 $ts3 = new ts3;
 
-#$clid=$ts3->perm_user('ttc6PcBp8ufxl6zo3JGU/P5jejE=');
-#$clid=$ts3->perm_user('RED | AND. | Dark Angel66');
-#$clid=$ts3->perm_user('RED-BUACO-atap');
-#foreach($clid as $val){
-#echo ("$val[name] -> $val[sgid] \n");
-#}
-
-#$cl_p_d=$ts3->grAdditDbTs('3');
-#echo $cl_p_d[4][0];
-#var_dump ($cl_p_d);
-#foreach ($cl_p_d as $v){
-#echo("\n $v \n");
-
-#}
 
 $wow=$ts3->validate('1');
 var_dump($wow);
 
 
-#$wow2=$ts3->grMaDbTs('2');
-#var_dump($wow2);
-#$sgid=array(44,41);
-#$sgid=array('tmp','Allies');
 
-#$sgid='41';
-#$sgid='Allies';
-#$set=$ts3->setGruser($sgid,'RED | AND. | Dark Angel66');
-#$del=$ts3->delGruser($sgid,'RED | AND. | Dark Angel66');
-#echo ("\n $set[success] \n");
-#echo ("\n $del[success] \n");
-#var_dump($set);
-#var_dump($sgid);
-
-
-#echo $ts3->gr_convert('Server Admin');
-
-
+*/
 
 ?>
