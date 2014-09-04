@@ -66,10 +66,12 @@ private $permissions;
     $validDb_Ts=array_diff($ar1, $ar2);
     $validTs_Db=array_diff($ar2, $ar1);
 
+    if (!in_array('not_validate', $ar1)){
+
     if (count($validDb_Ts)!='0'){
 
 	foreach($validDb_Ts as $sgids){
-	echo ("set:$sgids\n");
+#	echo ("set:$sgids\n");
 	
         $set=$this->setGruser($sgids,$this->getTsUid($id));
 	}
@@ -78,11 +80,19 @@ private $permissions;
     if (count($validTs_Db)!='0'){
     
     	foreach($validTs_Db as $sgidd){
-	echo ("del:$sgidd\n");
+#	echo ("del:$sgidd\n");
         $del=$this->delGruser($sgidd,$this->getTsUid($id));
 	}
     }
 
+    }else{
+
+    foreach($ar2 as $sgiddnv){
+#	echo ("del:$sgiddnv\n");
+        $del=$this->delGruser($sgiddnv,$this->getTsUid($id));
+				}
+
+        }
 
     return true;
     
@@ -237,17 +247,18 @@ private $permissions;
 }
 
 
-/*
+
 
 ######example validate user
 $ts3 = new ts3;
 
 
 $wow=$ts3->validate('1');
+#$wow=$ts3->perm_user('ttc6PcBp8ufxl6zo3JGU/P5jejE=');
 var_dump($wow);
 
 
 
-*/
+
 
 ?>
