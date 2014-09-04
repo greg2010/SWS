@@ -27,6 +27,8 @@ private $tsAdmin;
     $ts3_pass = config::ts3_pass;
     $date_now = date("Y-m-d H:i:s");
     $tsAdmin = new ts3admin($ts3_ip, $ts3_queryport);
+    gt:
+    $gt++;
     if($tsAdmin->getElement('success', $tsAdmin->connect())) {
 	    $tsAdmin->login($ts3_user, $ts3_pass);
     }else{
@@ -38,6 +40,9 @@ private $tsAdmin;
 		    }else{
 			    file_put_contents ("error_connect.txt", "error date2: $date_now $ts3_ip:$ts3_queryport  \n", FILE_APPEND);
 			    sleep(1);
+			    if ($gt<'4'){
+			    goto gt;
+			    }
     			}
     	}
 
