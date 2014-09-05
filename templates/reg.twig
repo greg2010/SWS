@@ -3,39 +3,60 @@
 {% block title %}Registration{% endblock %}
 
 {% block content %}
+
+  {#{% if fromPost == '1' %} {# Проверка что юзер действительно пришел из формы. #}
+    {#{% if success == '1' %} {# Проверка на успешность логина #}
+        {# Вывод сообщения об успешной регистрации и редиректим (куда?) #}
+    {#{% elseif %}
+        {# Вывод сообщения о неудачной попытке регистрации (на стороне сервера). #}
+    {#{% endif %}
+{#{% elseif %} #}
+    
 <form>
-   <h1>REGISTRATION</h1>
-     <div class="inset">
-        <p>
-            <label for="username">KEY ID</label>
-            <input type="text" name="usermane" id="username">
-        </p>
-        <p>
-            <label for="vCode">VERIFICATION CODE</label>
-            <input type="text" name="vCode" id="vCode">
-        </p>
-        <p class="p-container">
-               <a href="https://support.eveonline.com/api/key/createpredefined/8">Get Key ID & vCode</a>                         
-               <input type="submit" name="go" id="go" value="Get Characters">
-        </p>
+    <h1>REGISTRATION</h1>
+        <div class="inset">
+            <p>
+                <label for="username">KEY ID</label>
+                <input type="text" name="usermane" id="username">
+            </p>
+            <p>
+                <label for="vCode">VERIFICATION CODE</label>
+                <input type="text" name="vCode" id="vCode">
+            </p>
+        <div class="alert alert-danger" role="alert">Sorry, but key ID or vCode incorrect!</div>
+            <p class="p-container">
+                <input type="submit" name="go" id="go" value="Get Characters">
+                <a href="https://support.eveonline.com/api/key/createpredefined/8">Get Key ID & vCode</a>                         
+            </p>
         <hr />
-        <p>
-            <label for="email">E-MAIL (OPTIONAL)</label>
-            <input type="text" name="email" id="email">
-        </p>
+            <p class="p-container">
+               <select name="Select character">
+                    <option value="#">first char</option>
+                    <option value="#">second char</option>
+                    <option value="#">third char</option>
+               </select>
+               <input type="Submit" value="OK">
+            </p>
         <hr />
-        <p>
-            <label for="password">PASSWORD</label>
-            <input type="password" name="password" id="password">
-        </p>
-        <p>
-            <label for="password">REPEAT PASSWORD</label>
-            <input type="password" name="password" id="password">
-        </p>
+            <p>
+                <label for="email">E-MAIL (OPTIONAL)</label>
+                <input type="text" name="email" id="email">
+            </p>
         <hr />
-        <p class="p-container">
-            <input type="submit" name="go" id="go" value="SUBMIT">
-        </p>
-      </div>
+            <p>
+                <label for="password">PASSWORD</label>
+                <input type="password" name="password" id="password">
+            </p>
+            <p>
+                <label for="password">REPEAT PASSWORD</label>
+                <input type="password" name="password" id="password">
+            </p>
+        <hr />
+            <p class="p-container">
+                <input type="submit" name="go" id="go" value="SUBMIT">
+            </p>
+        </div>
 </form>
+    
+     
 {% endblock %}

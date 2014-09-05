@@ -14,10 +14,25 @@ body {
         padding: 0;
 }
 
+.alert {
+        color: #f6c000;
+        background:linear-gradient(#222222, #2d2d2d);
+        border-color: #f6c000;
+        text-align: center;
+}
+
+
+hr {
+        border-color: #f6c000;
+}
+
+select {
+        background-color: #333;
+}
+
 #logo {
-        background:url(../images/Logo.png) no-repeat top left;
-        width:600px;
-        height:100px;
+        background:url(../images/Logo1.png) no-repeat top left;
+        width:200px;
         margin-left: 100px;
 }
 
