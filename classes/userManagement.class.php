@@ -1,7 +1,6 @@
 <?php
 
 interface IuserManagement {
-    function getUserInfo();
     function getUserCorpName();
     function getUserAllianceName();
     function setNewPassword();
@@ -98,20 +97,25 @@ class userManagement implements IuserManagement {
         }
     }
     
-    public function getUserInfo() {
-        
+    public function getUserName() {
+        return $this->pilotInfo[characterName];
     }
     
     public function getUserCorpName() {
-        
+        return $this->pilotInfo[corporationName];
     }
     
     public function getUserAllianceName(){
-        
+        return $this->pilotInfo[allianceName];
     }
     
-    public function setNewPassword(){
-        
+    public function setNewPassword($password){
+        if ($id<>-1) {
+            $passwordHash = hash(sha512, $password);
+            $query = "UPDATE `users` SET `passwordHash` = '$passwordHash'";
+        } else {
+            return "Object created in fake user mode. Can't change password.";
+        }
     }
     
     public function setUserInfo() {

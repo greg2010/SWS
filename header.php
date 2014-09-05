@@ -18,14 +18,28 @@ if ($_SESSION[user]->isLoggedIn() === FALSE) {
         $toTemplate['isAbout'] = '';
     }
 } else {
+    $permissions = $_SESSION[user]->permissions->getWebPermissions();
     if ($thisPage === 'index') {
         $toTemplate['isIndex'] = $active;
     } else {
         $toTemplate['isIndex'] = '';
     }
+    
+    if ($thisPage === 'admin') {
+        $toTemplate['isadmin'] = $active;
+    } else {
+        $toTemplate['isadmin'] = '';
+    }
+    if (in_array('webReg_AdminPanel', $permissions)) {
+        $toTemplate['hasAdminAccess'] = 1;
+    } else {
+        $toTemplate['hasAdminAccess'] = 0;
+    }
+    
     if ($thisPage === 'about') {
         $toTemplate['isAbout'] = $active;
     } else {
         $toTemplate['isAbout'] = '';
     }
+    
 }

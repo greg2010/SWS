@@ -81,7 +81,7 @@ class APIUserManagement implements IAPIUserManagement {
         return $this->apiPilotInfo;
     }
 
-    public function changeUserApiKey($keyID, $vCode) {
+    public function changeUserApiKey($keyID, $vCode, $characterID) {
         
     }
     

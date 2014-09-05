@@ -7,12 +7,14 @@ class registerNewUser {
     
     private $apiPilotInfo = array();
     
+    private $error;
+    private $errorType;
+    
     protected $id;
     protected $db;
     protected $permissions;
     protected $APIUserManagement;
     protected $userManagement;
-
 
     public function __construct() {
         $this->db = db::getInstance();
@@ -28,9 +30,16 @@ class registerNewUser {
             for($i=0; $i<sizeof($response->key->characters); $i++){
                 $this->apiPilotInfo[] = $response->key->characters[$i];
             }
+            $this->error = False;
         } catch (\Pheal\Exceptions\PhealException $e) {
-            //Authentication failure etc
-            return $e->getMessage();
+            $c = $e->getCode();
+            $this->error = $e->getMessage();
+            if($c == 105 || $c == 106 || $c == 108 || $c == 112 || $c == 201 || $c == 202 || $c == 203 || $c == 204 || $c == 205 || $c == 210
+             || $c == 211 || $c == 212 || $c == 221 || $c == 222 || $c == 223 || $c == 516 || $c == 522){
+                $this->errorType = "user";
+            } else {
+                $this->errorType = "CCP";
+            }
         }
     }
     
@@ -51,7 +60,8 @@ class registerNewUser {
             $this->passwordHash = hash(sha512, $password);
             $this->apiKey = $apiKey;
             $this->vCode = $vCode;
-            $apiError = $this->getInfoFromKey();
+            $this->getInfoFromKey();
+            $apiError = $this->error;
             if ($apiError) {
                 throw new Exception('Here is problem with your api: ' . $apiError);
             }
@@ -62,5 +72,13 @@ class registerNewUser {
     
     public function registerNewUser () {
         $regCheck = $this->makeRegisterArray();
+    }
+    
+    public function getError() {
+        return $this->error;
+    }
+    
+    public function getErrorType() {
+        return $this->errorType;
     }
 }
