@@ -1,0 +1,39 @@
+{% extends "baseNoAuth.twig" %}
+
+{% block title %}Registration{% endblock %}
+
+{% block content %}
+
+  {#{% if fromPost == '1' %} {# Проверка что юзер действительно пришел из формы. #}
+    {#{% if success == '1' %} {# Проверка на успешность логина #}
+        {# Вывод сообщения об успешной регистрации и редиректим (куда?) #}
+    {#{% elseif %}
+        {# Вывод сообщения о неудачной попытке регистрации (на стороне сервера). #}
+    {#{% endif %}
+{#{% elseif %} #}
+    
+ <form>
+   <div class="inset">
+      <p>
+        <label for="email">USERNAME</label>
+        <input type="text" name="email" id="email">
+      </p>
+      <p>
+        <label for="password">PASSWORD</label>
+        <input type="password" name="password" id="password" style="color: #f6c000;">
+      </p>
+      {# Нижеследующее предупреждение будет выскакивать, если логин и/или пасс оказались некорректными #}
+        <div class="alert alert-danger" role="alert">Sorry, but login or password incorrect!</div>
+      <p>
+        <input type="checkbox" name="remember" id="remember">
+        <label for="remember">Remember me</label>
+      </p>
+  </div>
+      <p class="p-container">
+        <span><a href="#">Forgot password ?</a></span>
+        <input type="submit" name="go" id="go" value="Log in">
+      </p>
+</form>
+    
+     
+{% endblock %}
