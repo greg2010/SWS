@@ -83,25 +83,31 @@ class userSession {
     }
     
     private function getCookies() {
-        $cookieNumber = 4;
-        for ($i = 0; $i<=$cookieNumber; $i++) {
-            $fields .= '`cookie' . $i;
-            if ($i<$cookieNumber) {
-                $fields .= '`, ';
-            } else {
-                $fields .= '` ';
+        try {
+            $cookieNumber = config::cookieNumber;
+            for ($i = 0; $i<=$cookieNumber; $i++) {
+                $fields .= '`cookie' . $i;
+                if ($i<$cookieNumber) {
+                    $fields .= '`, ';
+                } else {
+                    $fields .= '` ';
+                }
             }
-        }
-        $query = "SELECT $fields FROM `userCookies` WHERE `id` = $this->id";
-        $result = $this->db->query($query);
-        if ($this->db->hasRows($result) === FALSE) {
-            $query = "INSERT INTO `userCookies` SET `id` = $this->id";
-            $result = $this->db->query($query);
-            
             $query = "SELECT $fields FROM `userCookies` WHERE `id` = $this->id";
             $result = $this->db->query($query);
+            if(gettype($result) == "string") throw new Exception($result);
+            if ($this->db->hasRows($result) === FALSE) {
+                $query = "INSERT INTO `userCookies` SET `id` = $this->id";
+                $result = $this->db->query($query);
+                if(gettype($result) == "string") throw new Exception($result);
+                $query = "SELECT $fields FROM `userCookies` WHERE `id` = $this->id";
+                $result = $this->db->query($query);
+                if(gettype($result) == "string") throw new Exception($result);
+            }
+            $this->cookiesArray = $this->db->fetchAssoc($result);
+        } catch (Exception $ex) {
+            //handle mysql errors
         }
-        $this->cookiesArray = $this->db->fetchAssoc($result);
     }
     
     private function setCookie() {
@@ -122,6 +128,7 @@ class userSession {
             if (!$cookiePush) {
                 $query = "SELECT `pointer` FROM `userCookies` WHERE `id` = '$this->id'";
                 $result = $this->db->query($query);
+                if(gettype($result) == "string") throw new Exception($result, 1);
                 $pointer = $this->db->getMysqlResult($result);
                 if ($pointer === NULL) {
                     $pointer = 0;
@@ -136,12 +143,25 @@ class userSession {
             }
             $query = "UPDATE `userCookies` SET `$cookiePush` = '$newCookieValue', `pointer` = '$pointer'";
             $result = $this->db->query($query);
+            if(gettype($result) == "string") throw new Exception($result, 1);
             $this->getCookies();
         } catch (Exception $ex) {
-            
+            //handle mysql errors
+            //0 - Cookie already exists, 1 - mysql error
         }
-        setcookie('SSID', $newCookieValue, time()-config::cookie_lifetime);
         setcookie('SSID', $newCookieValue, time()+config::cookie_lifetime);
+    }
+    
+    private function initialize() {
+        $this->permissions = new permissions($this->id);
+        try {
+            $query = "SELECT `salt` FROM `users` WHERE `id` = '$this->id'";
+            $result = $this->db->query($query);
+            if(gettype($result) == "string") throw new Exception($result);
+            $this->userSalt = $this->db->getMysqlResult($result);
+        } catch (Exception $ex) {
+            //handle mysql errors
+        }
     }
     
     public function logUserByLoginPass($login, $password) {
@@ -154,13 +174,6 @@ class userSession {
             $this->setCookie();
             $this->initialize();
         }
-    }
-    
-    private function initialize() {
-        $this->permissions = new permissions($this->id);
-        
-        $query = "SELECT `salt` FROM `users` WHERE `id` = '$this->id'";
-        $this->userSalt = $this->db->getMysqlResult($this->db->query($query));
     }
     
     public function preparePage($permissions = array()) {

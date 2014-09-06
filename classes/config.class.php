@@ -15,6 +15,7 @@ class config {
 
     const password_hash_type = "sha512";
     const cookie_hash_type = "sha256";
+    const cookieNumber = 4;
     const cookie_lifetime = 604800; //7 days
     
     const ts3_ip = '213.134.207.130';
