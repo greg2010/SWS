@@ -30,6 +30,7 @@ class userSession {
     private function __construct() {
         $this->sessionStart();
         $this->db = db::getInstance();
+        $this->logUserByCookie();
     }
     
     private function sessionStart() {
@@ -166,13 +167,25 @@ class userSession {
     
     public function logUserByLoginPass($login, $password) {
         $passwordHash = hash(config::password_hash_type, $password);
-        $this->id = $this->db->getUserLogin($login, $passwordHash);
+        $this->id = $this->db->getUserByLogin($login, $passwordHash);
         if ($this->id === FALSE) {
             $this->isLoggedIn = FALSE;
         } else {
             $this->isLoggedIn = TRUE;
-            $this->setCookie();
             $this->initialize();
+            $this->setCookie();
+        }
+    }
+    
+    public function logUserByCookie() {
+        $cookie = $_COOKIE[SSID];
+        $this->id = $this->db->getUserByCookie($cookie);
+        if ($this->id === FALSE) {
+            $this->isLoggedIn = FALSE;
+        } else {
+            $this->isLoggedIn = TRUE;
+            $this->initialize();
+            $this->setCookie();
         }
     }
     
@@ -187,5 +200,10 @@ class userSession {
     
     public function hasPermission() {
         return $this->hasAccessToCurrentPage;
+    }
+    
+    public function removeCookie() {
+        $cookieValue = $this->generateCookieForCurrentUser();
+        setcookie('SSID', $cookieValue, time()-config::cookie_lifetime);
     }
 }

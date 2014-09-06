@@ -280,42 +280,56 @@ class db {
         }
     }
     
-    public function getUserLogin($login, $passwordHash) {
-        try {
-            if(empty($this->connection)) {
-                $this->openConnection();
-                if (mysqli_connect_error()) {
-                    $error = "ERROR:" . mysqli_connect_error() . " Error number:" . mysqli_connect_errno();
-                    return $error;
-                } else {
-                    $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `users` WHERE `login`=? AND `passwordHash`=?");
-                    mysqli_stmt_bind_param($stmt, "ss", $login, $passwordHash);
-                    mysqli_stmt_execute($stmt);
-                    mysqli_stmt_bind_result($stmt, $id);
-                    $success = mysqli_stmt_fetch($stmt);
-                    if ($success === True) {
-                        return $id;
-                    } else {
-                        $id = False;
-                        return $id;
-                    }
-                    $this->closeConnection();
-                }
-            } else {
-                $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `users` WHERE `login`=? AND `passwordHash`=?");
-                mysqli_stmt_bind_param($stmt, "ss", $login, $passwordHash);
-                mysqli_stmt_execute($stmt);
-                mysqli_stmt_bind_result($stmt, $id);
-                $success = mysqli_stmt_fetch($stmt);
-                if ($success === True) {
-                    return $id;
-                } else {
-                    $id = False;
-                    return $id;
-                }
-            }
-        } catch (Exception $e) {
-            return $e;
+    private function predefinedMySQLLogin($login, $passwordHash) {
+        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `users` WHERE `login`=? AND `passwordHash`=?");
+        mysqli_stmt_bind_param($stmt, "ss", $login, $passwordHash);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_bind_result($stmt, $id);
+        $success = mysqli_stmt_fetch($stmt);
+        mysqli_stmt_close($stmt);
+        if ($success === True) {
+            return $id;
+        } else {
+            $id = False;
+            return $id;
         }
+    }
+    
+    private function predefinedMySQLCookie($cookie) {
+        $query = "SELECT `id` FROM `userCookies` WHERE ";
+        $cookieNumber = config::cookieNumber;
+        for ($i = 0; $i<=$cookieNumber; $i++) {
+            $fields .= '`cookie' . $i . "`=?";
+            if ($i<$cookieNumber) {
+                $fields .= ' OR ';
+            } else {
+                $fields .= ' ';
+            }
+        }
+        $query .= $fields;
+        $stmt = mysqli_prepare($this->connection, $query);
+        mysqli_stmt_bind_param($stmt, "sssss", $cookie, $cookie, $cookie, $cookie, $cookie); //Repeat $cookie as many times as there cookies fields
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_bind_result($stmt, $id);
+        $success = mysqli_stmt_fetch($stmt);
+        mysqli_stmt_close($stmt);
+        if ($success === True) {
+            return $id;
+        } else {
+            $id = False;
+            return $id;
+        }
+    }
+    
+    public function getUserByLogin($login, $passwordHash) {
+        $this->openConnection();
+        $id = $this->predefinedMySQLLogin($login, $passwordHash);
+        return $id;
+    }
+    
+    public function getUserByCookie($cookie) {
+        $this->openConnection();
+        $id = $this->predefinedMySQLCookie($cookie);
+        return $id;
     }
 }
