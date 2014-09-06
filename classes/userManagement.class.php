@@ -33,6 +33,7 @@ class userManagement implements IuserManagement {
         try {
             $query = "SELECT * FROM `pilotInfo` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
+            if(gettype($result) == "string") throw new Exception($result);
             $this->pilotInfo = $this->db->fetchAssoc($result);
             return true;
         } catch (Exception $ex) {
@@ -49,6 +50,7 @@ class userManagement implements IuserManagement {
         try {
             $query = "SELECT `keyID`, `vCode`, `characterID` FROM `apiList` WHERE `id` = '$this->id' AND `keyStatus` = '$keyStatus'";
             $result = $this->db->query($query);
+            if(gettype($result) == "string") throw new Exception($result);
             $apiKey = $this->db->fetchRow($result);
             return $apiKey;
         } catch (Exception $ex) {
@@ -84,6 +86,7 @@ class userManagement implements IuserManagement {
                     . " OR "
                     . "(`characterID` = '$characterID' AND `corporationID` = '$corporationID' AND `allianceID` = '$allianceID')";
             $result = $this->db->query($query);
+            if(gettype($result) == "string") throw new Exception($result);
             $userMasks = $this->db->fetchRow($result);
             foreach ($userMasks as $userMask) {
                 $accessMask = $accessMask | $userMask;

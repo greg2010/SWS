@@ -42,7 +42,8 @@ class validation implements Ivalidation {
     		try {
             	$query = "UPDATE `pilotInfo` SET `characterID` = '{$this->apiPilotInfo[characterID]}', `characterName` = '{$this->apiPilotInfo[characterName]}', `corporationID` = '{$this->apiPilotInfo[corporationID]}',
             	 `corporationName` = '{$this->apiPilotInfo[corporationName]}', `allianceID` = '{$this->apiPilotInfo[allianceID]}', `allianceName` = '{$this->apiPilotInfo[allianceName]}' WHERE `id` = '$this->id'";
-            	$this->db->query($query);
+            	$result = $this->db->query($query);
+                if(gettype($result) == "string") throw new Exception($result);
                 $this->log->put("comparePilotInfo", "ok: don't match, db table updated");
             	return true;
         	} catch (Exception $ex) {
@@ -60,7 +61,8 @@ class validation implements Ivalidation {
         	if($cMask != $this->accessMask){
         		try {
             		$query = "UPDATE `users` SET `accessMask` = '$cMask' WHERE `id` = '$this->id'";
-            		$this->db->query($query);
+            		$result = $this->db->query($query);
+                    if(gettype($result) == "string") throw new Exception($result);
                     $this->log->put("verifyApiInfo", "ok: don't match, db table updated, correct mask: " . $cMask);
         		} catch (Exception $ex) {
             		$this->log->put("verifyApiInfo", "err: " . $ex->getMessage());
