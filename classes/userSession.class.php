@@ -17,8 +17,9 @@ class userSession {
     }
     
     private $sessionID;
+    private $cookiesArray;
     private $id;
-    
+    private $userSalt;
     private $permissions;
     private $db;
     
@@ -37,10 +38,6 @@ class userSession {
             die("Session hasn't started. Aborting...");
         }
         $this->sessionID = session_id();
-    }
-    
-    private function initialize() {
-        $this->permissions = new permissions($this->id);
     }
     
     private function setPagePermissions($permissions) {
@@ -80,15 +77,90 @@ class userSession {
         }
     }
     
+    private function generateCookieForCurrentUser() {
+        $cookie = hash(config::cookie_hash_type, $_SERVER[HTTP_USER_AGENT] . '@' . $_SERVER[REMOTE_ADDR] . "$this->userSalt");
+        return $cookie;
+    }
+    
+    private function getCookies() {
+        $cookieNumber = 4;
+        for ($i = 0; $i<=$cookieNumber; $i++) {
+            $fields .= '`cookie' . $i;
+            if ($i<$cookieNumber) {
+                $fields .= '`, ';
+            } else {
+                $fields .= '` ';
+            }
+        }
+        $query = "SELECT $fields FROM `userCookies` WHERE `id` = $this->id";
+        $result = $this->db->query($query);
+        if ($this->db->hasRows($result) === FALSE) {
+            $query = "INSERT INTO `userCookies` SET `id` = $this->id";
+            $result = $this->db->query($query);
+            
+            $query = "SELECT $fields FROM `userCookies` WHERE `id` = $this->id";
+            $result = $this->db->query($query);
+        }
+        $this->cookiesArray = $this->db->fetchAssoc($result);
+    }
+    
+    private function setCookie() {
+        try {
+            $newCookieValue = $this->generateCookieForCurrentUser();
+            if (!$this->cookiesArray) {
+                $this->getCookies();
+            }
+            foreach ($this->cookiesArray as $cookieNumber => $cookie) {
+                if ($cookie === $newCookieValue) {
+                    throw new Exception("Cookie has already been set. Cookie value: $cookie", 0);
+                }
+                if (!$cookie) {
+                    $cookiePush = $cookieNumber;
+                    break 1;
+                }
+            }
+            if (!$cookiePush) {
+                $query = "SELECT `pointer` FROM `userCookies` WHERE `id` = '$this->id'";
+                $result = $this->db->query($query);
+                $pointer = $this->db->getMysqlResult($result);
+                if ($pointer === NULL) {
+                    $pointer = 0;
+                } elseif ($pointer === 4) {
+                    $pointer = 0;
+                } else {
+                    $pointer++;
+                }
+                $cookiePush = 'cookie' . $pointer;
+            } else {
+                $pointer = NULL;
+            }
+            $query = "UPDATE `userCookies` SET `$cookiePush` = '$newCookieValue', `pointer` = '$pointer'";
+            $result = $this->db->query($query);
+            $this->getCookies();
+        } catch (Exception $ex) {
+            
+        }
+        setcookie('SSID', $newCookieValue, time()-config::cookie_lifetime);
+        setcookie('SSID', $newCookieValue, time()+config::cookie_lifetime);
+    }
+    
     public function logUserByLoginPass($login, $password) {
-        $passwordHash = hash(sha512, $password);
+        $passwordHash = hash(config::password_hash_type, $password);
         $this->id = $this->db->getUserLogin($login, $passwordHash);
         if ($this->id === FALSE) {
             $this->isLoggedIn = FALSE;
         } else {
             $this->isLoggedIn = TRUE;
+            $this->setCookie();
             $this->initialize();
         }
+    }
+    
+    private function initialize() {
+        $this->permissions = new permissions($this->id);
+        
+        $query = "SELECT `salt` FROM `users` WHERE `id` = '$this->id'";
+        $this->userSalt = $this->db->getMysqlResult($this->db->query($query));
     }
     
     public function preparePage($permissions = array()) {
