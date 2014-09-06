@@ -2,7 +2,7 @@
 {% set charname = 'sabercat' %}
 {% set characterID = '210383611' %}
 
-<div class="container"> 
+<div class="container" id="header"> 
     <div class="row">
         <div class="col-lg-8 col-md-8 col-sm-4 col-xs-4">
             <h1><img src="images/Logo2.png" style="margin-left: 40px; margin-top: 20px;"></h1>
@@ -11,12 +11,12 @@
         <div class="col-lg-2 col-md-2 col-sm-4 col-xs-4">
             <div class="user" style="float: right">
                 <p class="avatar">
-                    <img class="avatar" alt="" src="https://image.eveonline.com/Character/{{ characterID }}_128.jpg"  style="height: 100px; margin-top: 20px"></img>
+                    <img class="avatar" alt="" src="https://image.eveonline.com/Character/{{ characterID }}_128.jpg"  style="height: 100px; margin-top: 20px;"></img>
                 </p>
             </div>
         </div>
         <div class="col-lg-2 col-md-2 col-sm-4 col-xs-4">
-            <ul class="reset" type="none" style="margin-top: 20px">
+            <ul class="reset" type="none" style="margin-top: 20px;">
                 <li><span>Welcome,</span></li>
                 <li class="greeting"><span style="color: #f6c000">{{ charname }}</span></li>
                 <li class="#"><span></span></li>
@@ -45,17 +45,27 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li{{isIndex}}><a href="index.php">HOME</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">KILLBOARDS<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu"></a></li>
+                    <li><a href="http://kb.redalliance.ru/">Red Alliance</a></li>
+                    <li><a href="#">Southern Federation</a></li>
+                    <li><a href="#">....</a></li>
+                </ul>
+                </li>
                 <li{{isAdmin}}><a href="admin.php">ADMIN</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">SETTINGS<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu"></a></li>
                     <li><a href="#">PROFILE</a></li>
-                    <li><a href="#">SOMETHING ELSE :)</a></li>
+                    <li><a href="#">something</a></li>
                     <li class="divider"></li>
                     <li><a href="logout.php">LOGOUT</a></li>
                 </ul>
                 </li>
-            </ul>
+            </ul> 
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container -->
 </nav>
@@ -64,6 +74,14 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li{{isIndex}}><a href="../index.php">HOME</a></li>
+                 <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">KILLBOARDS<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu"></a></li>
+                    <li><a href="http://kb.redalliance.ru/">Red Alliance</a></li>
+                    <li><a href="#">Southern Federation</a></li>
+                    <li><a href="#">....</a></li>
+                </ul>
+                </li>
                 <li{{isLogin}}><a href="../login.php">LOGIN</a></li>
                 <li{{isReg}}><a href="../reg.php">REGISTRTION</a></li>
             </ul>
