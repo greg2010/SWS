@@ -43,6 +43,7 @@ class logging {//implements Ilogging {
     		$text = addslashes(yaml_emit($this->log));
     		$query = "INSERT INTO `$table` (`date`, `text`) VALUES ('$date','$text')";
 			$result = $db->query($query);
+            if(gettype($result) == "string") throw new Exception($result);
 		} catch (Exception $ex){
     		echo $ex->getMessage();
 		}

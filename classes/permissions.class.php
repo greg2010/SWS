@@ -36,6 +36,7 @@ class permissions {
         try {
             $query = "SELECT * FROM `bitMap`";
             $result = $this->db->query($query);
+            if(gettype($result) == "string") throw new Exception($result);
             $bitMapRaw = $this->db->fetchArray($result);
             $bitNames = array();
             foreach ($bitMapRaw as $rows) {
@@ -53,8 +54,9 @@ class permissions {
         try {
             $query = "SELECT `accessMask` FROM `users` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
+            if(gettype($result) == "string") throw new Exception($result);
             $this->userMask = $this->db->getMysqlResult($result);
-//            $this->userMask = 15731715; //Temp full mask for debug
+            //$this->userMask = 15731715; //Temp full mask for debug
             $this->maskLength = floor(log($this->userMask)/log(2)) + 1;
             return true;
         } catch (Exception $ex) {
@@ -102,7 +104,8 @@ class permissions {
     private function updateUserMask() {
         try {
             $query = "UPDATE `users` SET `accessMask` = '$this->userMask' WHERE `id` = '$this->id'";
-            $this->db->query($query);
+            $result = $this->db->query($query);
+            if(gettype($result) == "string") throw new Exception($result);
             return true;
         } catch (Exception $ex) {
             $this->log->put("updateUserMask", "err: " . $ex->getMessage());

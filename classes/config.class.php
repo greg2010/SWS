@@ -6,8 +6,8 @@ class config {
     const password = "root";
     const database = "auth";
 
-    const num_of_threads = 4;
-    const ops_in_thread = 100;
+    const num_of_threads = 4; // max threads (4)
+    const ops_in_thread = 100;  // max operations in thread (100)
 
     const correctKeyMask = 0;
 
