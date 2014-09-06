@@ -18,25 +18,25 @@ class validation implements Ivalidation {
     private $apiPilotInfo;
     private $apiKey;
 
-	public function __construct($id, $accessMask = NULL){
-        if ($accessMask){
-        $this->accessMask = $accessMask;
-        }
-        $this->id = $id;
+	public function __construct($id = NULL, $accessMask = NULL){
         $this->db = db::getInstance();
         $this->log = new logging();
-        $this->permissions = new permissions($id);
-        $this->userManagement = new userManagement($id);
         $this->apiUserManagement = new APIUserManagement($id);
-        $this->dbPilotInfo = $this->userManagement->getPilotInfo();
-        $this->apiPilotInfo = $this->apiUserManagement->getPilotInfo();
+        if(isset($accessMask)) $this->accessMask = $accessMask;
+        if(isset($id)){
+            $this->id = $id;
+            $this->permissions = new permissions($id);
+            $this->userManagement = new userManagement($id);
+            $this->dbPilotInfo = $this->userManagement->getPilotInfo();
+            $this->apiPilotInfo = $this->apiUserManagement->getPilotInfo();
+        }
     }
 
     private function comparePilotInfo(){
     	if($this->apiPilotInfo[characterID] == NULL){
             return false;
         } elseif($this->apiPilotInfo[characterID] == $this->dbPilotInfo[characterID] && $this->apiPilotInfo[corporationID] == $this->dbPilotInfo[corporationID] && $this->apiPilotInfo[allianceID] == $this->dbPilotInfo[allianceID]){
-            $this->log->put("comparePilotInfo", "ok: IDs match (char: " . $this->apiPilotInfo[characterID] . ", corp: " . $this->apiPilotInfo[corporationID] . ", alli: " . $this->apiPilotInfo[allianceID] . ")");
+            //$this->log->put("comparePilotInfo", "ok: IDs match (char: " . $this->apiPilotInfo[characterID] . ", corp: " . $this->apiPilotInfo[corporationID] . ", alli: " . $this->apiPilotInfo[allianceID] . ")");
     		return true;
     	} else{
     		try {
@@ -44,7 +44,7 @@ class validation implements Ivalidation {
             	 `corporationName` = '{$this->apiPilotInfo[corporationName]}', `allianceID` = '{$this->apiPilotInfo[allianceID]}', `allianceName` = '{$this->apiPilotInfo[allianceName]}' WHERE `id` = '$this->id'";
             	$result = $this->db->query($query);
                 if(gettype($result) == "string") throw new Exception($result);
-                $this->log->put("comparePilotInfo", "ok: don't match, db table updated");
+                $this->log->put("comparePilotInfo", "ok: db table updated");
             	return true;
         	} catch (Exception $ex) {
                 $this->log->put("comparePilotInfo", "err: " . $ex->getMessage());
@@ -63,15 +63,12 @@ class validation implements Ivalidation {
             		$query = "UPDATE `users` SET `accessMask` = '$cMask' WHERE `id` = '$this->id'";
             		$result = $this->db->query($query);
                     if(gettype($result) == "string") throw new Exception($result);
-                    $this->log->put("verifyApiInfo", "ok: don't match, db table updated, correct mask: " . $cMask);
+                    $this->log->put("verifyApiInfo", "ok: db table updated, correct mask: " . $cMask);
         		} catch (Exception $ex) {
             		$this->log->put("verifyApiInfo", "err: " . $ex->getMessage());
         		}
                 // TS ban method
-        	}
-            else{
-                $this->log->put("verifyApiInfo", "ok: mask " . $cMask . " match");
-            }
+        	}// else $this->log->put("verifyApiInfo", "ok: mask " . $cMask . " match");
         } else{
             $ban_list = "";
             if($this->permissions->hasPermission("webReg_Valid") == false){
@@ -88,6 +85,23 @@ class validation implements Ivalidation {
             if($ban_list != "") $this->log->put("verifyApiInfo", "ok: user banned in " . $ban_list . "db table updated");
             if($this->apiUserManagement->log->get() != NULL) $this->log->merge($this->apiUserManagement->log->get(true), "permissions");
         }
+        return $this->log->get();
+    }
+
+    public function verifyCorpApiInfo($dbCorp = array()){
+        $apiCorp = $this->apiUserManagement->getCorpInfo($dbCorp[keyID], $dbCorp[vCode]);
+        if($this->apiUserManagement->log->get() != NULL) $this->log->merge($this->apiUserManagement->log->get(true), "APIUserManagement");
+        if($dbCorp[accessMask] != $apiCorp[accessMask] || $dbCorp[corporationID] != $apiCorp[corporationID] || $dbCorp[allianceID] != $apiCorp[allianceID]){
+            try {
+                $query = "UPDATE `apiCorpList` SET `accessMask` = '{$apiCorp[accessMask]}', `corporationID` = '{$apiCorp[corporationID]}', `corporationName` = '{$apiCorp[corporationName]}', `allianceID` = '{$apiCorp[allianceID]}',
+                 `allianceName` = '{$apiCorp[allianceName]}' WHERE `keyID` = '{$dbCorp[keyID]}'";
+                $result = $this->db->query($query);
+                if(gettype($result) == "string") throw new Exception($result);
+                $this->log->put("verifyCorpApiInfo", "ok: db table updated");
+            } catch (Exception $ex) {
+                $this->log->put("verifyCorpApiInfo", "err: " . $ex->getMessage());
+            }
+        }// else $this->log->put("verifyCorpApiInfo", "ok: match");
         return $this->log->get();
     }
 }

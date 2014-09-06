@@ -13,18 +13,27 @@ if($pid == -2){
         $query = "SELECT * FROM `users`";
 		$result = mysqli_query($connection, $query);
 		while($array = mysqli_fetch_assoc($result)) $userList[] = $array;
+		$query = "SELECT * FROM `apiCorpList`";
+		$result = mysqli_query($connection, $query);
+		while($array = mysqli_fetch_assoc($result)) $apiCorpList[] = $array;
         mysqli_close($connection);
 
         $users_count = count($userList);
-        if($users_count > $max_users){
+        if($users_count > $users_max){
         	$thread_count = ($users_count < $users_max) ? 1 : round($users_count / $users_max);
         	if($thread_count > $thread_max){
         		$thread_count = $thread_max;
         		$users_in_thread = round($users_count / $thread_count);
         	} else $users_in_thread = $users_max;
-        } else $thread_count = 1;
+        } else{
+        	$thread_count = 1;
+        	$users_in_thread = $users_count;
+        }
 
-		$tolog = "select " . $users_count . " users, run " . $thread_count . " threads " . $users_in_thread . " users each";
+        $corp_count = count($apiCorpList);
+        $corp_in_thread = round($corp_count / $thread_count);
+
+		$tolog = "select " . $users_count . " users and " . $corp_count . " corps, run " . $thread_count . " threads " . ($users_in_thread + $corp_in_thread) . " api keys each";
 	} catch (Exception $ex){
     	$tolog = "select fail: " . $ex->getMessage();
 	}
@@ -35,7 +44,8 @@ for($t=0; $t<$thread_count; $t++){
 	if(!$pid){
 		$smta = round(microtime(1));
 		$log = new logging();
-		$log->put("users", $tolog);
+		$log->put("keys", $tolog);
+
 		$users_first = $t*$users_in_thread;
 		$users_last = ($t==($thread_count-1)) ? ($users_count) : (($t+1)*$users_in_thread);
 		for($i=$users_first; $i<$users_last; $i++){
@@ -46,6 +56,18 @@ for($t=0; $t<$thread_count; $t++){
 			$emt = round(microtime(1)*1000) - $smt;
 			$log->put("spent", $emt . " microseconds", $userList[$i][id]);
 		}
+
+		$corp_first = $t*$corp_in_thread;
+		$corp_last = ($t==($thread_count-1)) ? ($corp_count) : (($t+1)*$corp_in_thread);
+		for($i=$corp_first; $i<$corp_last; $i++){
+			$smt = round(microtime(1)*1000);
+			$log->put("corp", $apiCorpList[$i][corporationName] . " (id: " . $apiCorpList[$i][corporationID] . ")", $apiCorpList[$i][keyID]);
+			$corp = new validation();
+			$log->merge($corp->verifyCorpApiInfo($apiCorpList[$i]), $apiCorpList[$i][keyID]);
+			$emt = round(microtime(1)*1000) - $smt;
+			$log->put("spent", $emt . " microseconds", $apiCorpList[$i][keyID]);
+		}
+
 		$emta = round(microtime(1)) - $smta;
 		$log->put("total spent", $emta . " seconds");
 		$log->record("log.validator");

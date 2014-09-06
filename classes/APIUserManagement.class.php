@@ -6,7 +6,8 @@ interface IAPIUserManagement {
     function getPilotInfo();
     function getUserKeyMask();
     function changeUserApiKey($keyID, $vCode, $characterID);
-    function getCharsInfo($keyID, $vCode);    
+    function getCharsInfo($keyID, $vCode); 
+    function getCorpInfo($keyID, $vCode);   
 }
 
 class APIUserManagement implements IAPIUserManagement {
@@ -36,16 +37,23 @@ class APIUserManagement implements IAPIUserManagement {
         }
     }
 
-    private function getApiPilotInfo($keyID = NULL, $vCode = NULL){
+    private function getApiPilotInfo($keyID = NULL, $vCode = NULL, $corp = false){
         $pheal = (isset($keyID) && isset($vCode)) ? (new Pheal($keyID, $vCode)) : (new Pheal($this->apiKey[0], $this->apiKey[1]));
         $correctKeyMask = config::correctKeyMask;
         try {
             $response = $pheal->APIKeyInfo();
-            if($correctKeyMask > 0 && ($response->key->accessMask & $correctKeyMask) == 0) throw new \Pheal\Exceptions\PhealException("Incorrect key mask", -10);
-            if($response->key->type != "Account") throw new \Pheal\Exceptions\PhealException("Not account key", -20);
+            if($corp){
+                if($response->key->type != "Corporation") throw new \Pheal\Exceptions\PhealException("Not corporation key", -20);
+            } else{
+                if($correctKeyMask > 0 && ($response->key->accessMask & $correctKeyMask) == 0) throw new \Pheal\Exceptions\PhealException("Incorrect key mask", -10);
+                if($response->key->type != "Account") throw new \Pheal\Exceptions\PhealException("Not account key", -20);
+            }
             if(isset($keyID) && isset($vCode)){
-                foreach($response->key->characters as $char) {
-                    $this->apiCharsInfo[] = $char;
+                if($corp){
+                    $this->apiCharsInfo = $response->key->characters[0];
+                    $this->apiCharsInfo[accessMask] = $response->key->accessMask;
+                } else{
+                    foreach($response->key->characters as $char) $this->apiCharsInfo[] = $char;
                 }
                 return true;
             } else{
@@ -72,6 +80,10 @@ class APIUserManagement implements IAPIUserManagement {
         return false;
     }
     
+    public function getCorpInfo($keyID, $vCode) {
+        if($this->getApiPilotInfo($keyID, $vCode, true)) return $this->apiCharsInfo;
+    }
+
     public function getPilotInfo() {
         return $this->apiPilotInfo;
     }
