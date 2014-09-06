@@ -3,7 +3,7 @@
 interface IuserManagement {
     function getUserCorpName();
     function getUserAllianceName();
-    function setNewPassword();
+    function setNewPassword($password);
     function setUserInfo();
 }
 
