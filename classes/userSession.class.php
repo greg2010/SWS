@@ -96,14 +96,11 @@ class userSession {
             }
             $query = "SELECT $fields FROM `userCookies` WHERE `id` = $this->id";
             $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result);
             if ($this->db->hasRows($result) === FALSE) {
                 $query = "INSERT INTO `userCookies` SET `id` = $this->id";
                 $result = $this->db->query($query);
-                if(gettype($result) == "string") throw new Exception($result);
                 $query = "SELECT $fields FROM `userCookies` WHERE `id` = $this->id";
                 $result = $this->db->query($query);
-                if(gettype($result) == "string") throw new Exception($result);
             }
             $this->cookiesArray = $this->db->fetchAssoc($result);
         } catch (Exception $ex) {
@@ -129,7 +126,6 @@ class userSession {
             if (!$cookiePush) {
                 $query = "SELECT `pointer` FROM `userCookies` WHERE `id` = '$this->id'";
                 $result = $this->db->query($query);
-                if(gettype($result) == "string") throw new Exception($result, 1);
                 $pointer = $this->db->getMysqlResult($result);
                 if ($pointer === NULL) {
                     $pointer = 0;
@@ -144,7 +140,6 @@ class userSession {
             }
             $query = "UPDATE `userCookies` SET `$cookiePush` = '$newCookieValue', `pointer` = '$pointer'";
             $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result, 1);
             $this->getCookies();
         } catch (Exception $ex) {
             //handle mysql errors
@@ -158,7 +153,6 @@ class userSession {
         try {
             $query = "SELECT `salt` FROM `users` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result);
             $this->userSalt = $this->db->getMysqlResult($result);
         } catch (Exception $ex) {
             //handle mysql errors
@@ -167,25 +161,38 @@ class userSession {
     
     public function logUserByLoginPass($login, $password) {
         $passwordHash = hash(config::password_hash_type, $password);
-        $this->id = $this->db->getUserByLogin($login, $passwordHash);
-        if ($this->id === FALSE) {
-            $this->isLoggedIn = FALSE;
-        } else {
-            $this->isLoggedIn = TRUE;
-            $this->initialize();
-            $this->setCookie();
+        try {
+            $this->id = $this->db->getUserByLogin($login, $passwordHash);
+            if ($this->id === FALSE) {
+                $this->isLoggedIn = FALSE;
+            } else {
+                $this->isLoggedIn = TRUE;
+                $this->initialize();
+                $this->setCookie();
+            }
+            return TRUE;
+        } catch (Exception $ex) {
+            unset($this->id);
+            unset($this->isLoggedIn);
+            return FALSE;
         }
     }
     
     public function logUserByCookie() {
         $cookie = $_COOKIE[SSID];
-        $this->id = $this->db->getUserByCookie($cookie);
-        if ($this->id === FALSE) {
-            $this->isLoggedIn = FALSE;
-        } else {
-            $this->isLoggedIn = TRUE;
-            $this->initialize();
-            $this->setCookie();
+        try {
+            $this->id = $this->db->getUserByCookie($cookie);
+            if ($this->id === FALSE) {
+                $this->isLoggedIn = FALSE;
+            } else {
+                $this->isLoggedIn = TRUE;
+                $this->initialize();
+                $this->setCookie();
+            }
+        } catch (Exception $ex) {
+            unset($this->id);
+            unset($this->isLoggedIn);
+            return FALSE;
         }
     }
     

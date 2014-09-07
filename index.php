@@ -2,10 +2,7 @@
 require_once 'init.php';
 
 $toTemplate = array();
+$thisPage = "index";
+$templateName = $thisPage;
 
-$loader = new Twig_Loader_Filesystem(dirname(__FILE__) . '/templates');
-$twig = new Twig_Environment($loader, array(
-    'cache' => False
-));
-$template = $twig->loadTemplate( 'index.twig');
-echo $template->render($toTemplate);
+require 'twigRender.php';
