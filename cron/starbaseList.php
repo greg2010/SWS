@@ -12,7 +12,9 @@ if($pid == -2){
         $selectdb = mysqli_select_db($connection, config::database);
         $query = "SELECT * FROM `apiCorpList`";
 		$result = mysqli_query($connection, $query);
-		while($array = mysqli_fetch_assoc($result)) $userList[] = $array;
+		while($array = mysqli_fetch_assoc($result)) {
+			if(($array[accessMask] & 524288) > 0) $userList[] = $array;
+		}
         mysqli_close($connection);
 
         $users_count = count($userList);
@@ -41,7 +43,7 @@ for($t=0; $t<$thread_count; $t++){
 		for($i=$users_first; $i<$users_last; $i++){
 			$smt = round(microtime(1)*1000);
 			$starbase = new starbases($userList[$i][keyID], $userList[$i][vCode]);
-			$drake = $starbase->updateStarbaseList()
+			$drake = $starbase->updateStarbaseList();
 			if($drake != NULL){
 				$log->merge($drake, $userList[$i][keyID]);
 				$log->put("key", "id: " . $userList[$i][keyID] . ")", $userList[$i][keyID]);

@@ -12,7 +12,9 @@ if($pid == -2){
         $selectdb = mysqli_select_db($connection, config::database);
         $query = "SELECT * FROM `apiCorpList`";
 		$result = mysqli_query($connection, $query);
-		while($array = mysqli_fetch_assoc($result)) $userList[] = $array;
+		while($array = mysqli_fetch_assoc($result)) {
+			if(($array[accessMask] & 131072) > 0) $userList[] = $array;
+		}
         mysqli_close($connection);
 
         $users_count = count($userList);
