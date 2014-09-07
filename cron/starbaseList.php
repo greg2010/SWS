@@ -41,7 +41,7 @@ for($t=0; $t<$thread_count; $t++){
 		for($i=$users_first; $i<$users_last; $i++){
 			$smt = round(microtime(1)*1000);
 			$starbase = new starbases($userList[$i][keyID], $userList[$i][vCode]);
-			$drake = $starbase->updateStarbaseList()
+			$drake = $starbase->updateStarbaseList();
 			if($drake != NULL){
 				$log->merge($drake, $userList[$i][keyID]);
 				$log->put("key", "id: " . $userList[$i][keyID] . ")", $userList[$i][keyID]);
