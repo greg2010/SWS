@@ -99,14 +99,13 @@ class db {
      */
     
     public function hasRows($result) {
-        try {
-            if(mysqli_num_rows($result)>0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (Exception $e) {
-            return $e;
+        if (gettype($result)<> "object") {
+            throw new Exception("hasRows: Wrong input type. Object expected, " . gettype($result) . " given.");
+        }
+        if(mysqli_num_rows($result)>0) {
+            return true;
+        } else {
+            return false;
         }
     }
     
@@ -117,11 +116,10 @@ class db {
      */
     
     public function countRows($result) {
-        try {
-            return mysqli_num_rows($result);
-        } catch (Exception $e) {
-            return $e;
-        }            
+        if (gettype($result)<> "object") {
+            throw new Exception("countRows: Wrong input type. Object expected, " . gettype($result) . " given.");
+        }
+        return mysqli_num_rows($result);         
     }
     
     /**
@@ -131,11 +129,10 @@ class db {
      */
     
     public function affectedRows($result) {
-        try {
-            return mysqli_affected_rows($result);
-        } catch (Exception $e) {
-            return $e;
-        }            
+        if (gettype($result)<> "object" OR $result <> TRUE) {
+            throw new Exception("affectedRows: Wrong input type. Object or boolean true expected, " . var_dump($result) . " given.");
+        }
+        return mysqli_affected_rows($result);       
     }
     
     /**
@@ -145,20 +142,19 @@ class db {
      */
     
     public function fetchAssoc($result) {
-        try {
-            $assoc = array();
-            $numRows =$this->countRows($result);
-            if ($numRows === 1) {
-                $assoc = mysqli_fetch_assoc($result);
-            } else {
-                while ($array = mysqli_fetch_assoc($result)) {
-                    $assoc[] = $array;
-                }
-            }
-            return $assoc;
-        } catch (Exception $e) {
-            return $e;
+        if (gettype($result)<> "object") {
+            throw new Exception("fetchAssoc: Wrong input type. Object expected, " . gettype($result) . " given.");
         }
+        $assoc = array();
+        $numRows =$this->countRows($result);
+        if ($numRows === 1) {
+            $assoc = mysqli_fetch_assoc($result);
+        } else {
+            while ($array = mysqli_fetch_assoc($result)) {
+                $assoc[] = $array;
+            }
+        }
+        return $assoc;
     }
     
     /**
@@ -168,15 +164,14 @@ class db {
      */
     
     public function fetchArray($result) {
-        try {
-            $arrays = array();
-            while ($array = mysqli_fetch_array($result)) {
-                $arrays[] = $array;
-            }
-            return $arrays;
-        } catch (Exception $e) {
-            return $e;
+        if (gettype($result)<> "object") {
+            throw new Exception("fetchArray: Wrong input type. Object expected, " . gettype($result) . " given.");
         }
+        $arrays = array();
+        while ($array = mysqli_fetch_array($result)) {
+            $arrays[] = $array;
+        }
+        return $arrays;
     }
 
     /**
@@ -186,20 +181,19 @@ class db {
      */
     
     public function fetchRow($result) {
-        try {
-            $rows = array();
-            $numRows =$this->countRows($result);
-            if ($numRows === 1) {
-                $rows = mysqli_fetch_row($result);
-            }  else {
-                while ($array = mysqli_fetch_row($result)) {
-                    $rows[] = $array;
-                }
-            }
-            return $rows;
-        } catch (Exception $e) {
-            return $e;
+        if (gettype($result)<> "object") {
+            throw new Exception("fetchRow: Wrong input type. Object expected, " . gettype($result) . " given.");
         }
+        $rows = array();
+        $numRows =$this->countRows($result);
+        if ($numRows === 1) {
+            $rows = mysqli_fetch_row($result);
+        }  else {
+            while ($array = mysqli_fetch_row($result)) {
+                $rows[] = $array;
+            }
+        }
+        return $rows;
     }
     
     /**
@@ -210,15 +204,17 @@ class db {
      */
     
     public function getMysqlResult($result, $i = NULL) {
-        try {
-            $row = $this->fetchRow($result);
-            if ($i) {
-                return $row[$i];
-            } else {
-                return $row[0];
-            }
-        } catch (Exception $e) {
-            return $e;
+        if (gettype($result)<> "object") {
+            throw new Exception("getMysqlResult: Wrong input type. Object expected, " . gettype($result) . " given.");
+        }
+        $row = $this->fetchRow($result);
+        if (count($row) > 1) {
+            throw new Exception("getMysqlResult: Wrong input type. Expected 1 row, got " . count($row) . " row(s).");
+        }
+        if ($i) {
+            return $row[$i];
+        } else {
+            return $row[0];
         }
     }
     
@@ -237,14 +233,10 @@ class db {
      */
     
     public function pingServer() {
-        try {
-            if(!mysqli_ping($this->connection)) {
-                return false;
-            } else {
-                return true;
-            }
-        } catch (Exception $e) {
-            return $e;
+        if(!mysqli_ping($this->connection)) {
+            return false;
+        } else {
+            return true;
         }
     }
     
@@ -256,14 +248,10 @@ class db {
     
     public function toArray($result) {
         $results = array();
-        try {
-            while(($row = $result->fetch_assoc()) != false) {
-                $results[] = $row;
-            }
-            return $results;
-        } catch (Exception $e) {
-            return $e;
+        while(($row = $result->fetch_assoc()) != false) {
+            $results[] = $row;
         }
+        return $results;
     }
     
     private function predefinedMySQLLogin($login, $passwordHash) {
