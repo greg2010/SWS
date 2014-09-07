@@ -46,14 +46,10 @@ class db {
      */
     
     public function openConnection() {
-        try {
-            $this->connection = mysqli_connect($this->config[hostname], $this->config[username], $this->config[password]);
-            $this->selectdb = mysqli_select_db($this->connection, $this->config[database]);
-            if (mysqli_connect_error()) {
-                throw new mysqli_sql_exception(mysqli_connect_error(), mysqli_connect_errno());
-            }
-        } catch(mysqli_sql_exception $e) {
-            return $e->getMessage();
+        $this->connection = mysqli_connect($this->config[hostname], $this->config[username], $this->config[password]);
+        $this->selectdb = mysqli_select_db($this->connection, $this->config[database]);
+        if (mysqli_connect_error()) {
+            throw new Exception(mysqli_connect_error(), mysqli_connect_errno());
         }
     }
 
@@ -77,32 +73,22 @@ class db {
      */
     
     public function query($query) {
-        try {
-            if(empty($this->connection)) {
-                $this->openConnection();
-                if (mysqli_connect_error()) {
-                    $error = "ERROR:" . mysqli_connect_error() . " Error number:" . mysqli_connect_errno();
-                    return $error;
-                }
-                $this->lastQuery = mysqli_query($this->connection, $query);
-                if (mysqli_error($this->connection)) {
-                    $error = "ERROR:" . mysqli_error($this->connection) . " Error number:" . mysqli_errno($this->connection);
-                    return $error;
-                } else {
-                    return $this->lastQuery;
-                }
-                $this->closeConnection();
+        if(empty($this->connection)) {
+            $this->openConnection();
+            $this->lastQuery = mysqli_query($this->connection, $query);
+            if (mysqli_error($this->connection)) {
+                throw new Exception(mysqli_error($this->connection), mysqli_errno($this->connection));
             } else {
-                $this->lastQuery = mysqli_query($this->connection, $query);
-                if (mysqli_error($this->connection)) {
-                    $error = "ERROR:" . mysqli_error($this->connection) . " Error number:" . mysqli_errno($this->connection);
-                    return $error;                    
-                } else {
-                    return $this->lastQuery;
-                }
+                return $this->lastQuery;
             }
-        } catch (Exception $e) {
-            return $e;
+            $this->closeConnection();
+        } else {
+            $this->lastQuery = mysqli_query($this->connection, $query);
+            if (mysqli_error($this->connection)) {
+                throw new Exception(mysqli_error($this->connection), mysqli_errno($this->connection));
+            } else {
+                return $this->lastQuery;
+            }
         }
     }
     
