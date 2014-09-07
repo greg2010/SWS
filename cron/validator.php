@@ -33,9 +33,9 @@ if($pid == -2){
         $corp_count = count($apiCorpList);
         $corp_in_thread = round($corp_count / $thread_count);
 
-		$tolog = "select " . $users_count . " users and " . $corp_count . " corps, run " . $thread_count . " threads " . ($users_in_thread + $corp_in_thread) . " api keys each";
+		$tolog = "ok " . $users_count . " users and " . $corp_count . " corps run " . $thread_count . " threads " . ($users_in_thread + $corp_in_thread) . " api keys each";
 	} catch (Exception $ex){
-    	$tolog = "select fail: " . $ex->getMessage();
+    	$tolog = "err " . $ex->getMessage();
 	}
 }
 
@@ -44,7 +44,7 @@ for($t=0; $t<$thread_count; $t++){
 	if(!$pid){
 		$smta = round(microtime(1));
 		$log = new logging();
-		$log->put("keys", $tolog);
+		$log->put("select keys", $tolog);
 
 		$users_first = $t*$users_in_thread;
 		$users_last = ($t==($thread_count-1)) ? ($users_count) : (($t+1)*$users_in_thread);
@@ -54,7 +54,7 @@ for($t=0; $t<$thread_count; $t++){
 			$drake = $user->verifyApiInfo();
 			if($drake != NULL){
 				$log->merge($drake, $userList[$i][id]);
-				$log->put("user", $userList[$i][login] . " (id: " . $userList[$i][id] . ")", $userList[$i][id]);
+				$log->put("name", $userList[$i][login], $userList[$i][id]);
 				$emt = round(microtime(1)*1000) - $smt;
 				$log->put("spent", $emt . " microseconds", $userList[$i][id]);
 			}
@@ -68,7 +68,7 @@ for($t=0; $t<$thread_count; $t++){
 			$drake = $corp->verifyCorpApiInfo($apiCorpList[$i]);
 			if($drake != NULL){
 				$log->merge($drake, $apiCorpList[$i][keyID]);
-				$log->put("corp", $apiCorpList[$i][corporationName] . " (id: " . $apiCorpList[$i][corporationID] . ")", $apiCorpList[$i][keyID]);
+				$log->put("name", $apiCorpList[$i][corporationName], $apiCorpList[$i][keyID]);
 				$emt = round(microtime(1)*1000) - $smt;
 				$log->put("spent", $emt . " microseconds", $apiCorpList[$i][keyID]);
 			}

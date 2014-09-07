@@ -18,17 +18,20 @@ if($pid == -2){
         mysqli_close($connection);
 
         $users_count = count($userList);
-        if($users_count > $max_users){
+        if($users_count > $users_max){
         	$thread_count = ($users_count < $users_max) ? 1 : round($users_count / $users_max);
         	if($thread_count > $thread_max){
         		$thread_count = $thread_max;
         		$users_in_thread = round($users_count / $thread_count);
         	} else $users_in_thread = $users_max;
-        } else $thread_count = 1;
+        } else{
+        	$thread_count = 1;
+        	$users_in_thread = $users_count;
+        }
 
-		$tolog = "select " . $users_count . " API keys, run " . $thread_count . " threads " . $users_in_thread . " keys each";
+		$tolog = "ok " . $users_count . " API keys run " . $thread_count . " threads " . $users_in_thread . " keys each";
 	} catch (Exception $ex){
-    	$tolog = "select fail: " . $ex->getMessage();
+    	$tolog = "err " . $ex->getMessage();
 	}
 }
 
@@ -37,16 +40,16 @@ for($t=0; $t<$thread_count; $t++){
 	if(!$pid){
 		$smta = round(microtime(1));
 		$log = new logging();
-		$log->put("keys", $tolog);
+		$log->put("select keys", $tolog);
 		$users_first = $t*$users_in_thread;
 		$users_last = ($t==($thread_count-1)) ? ($users_count) : (($t+1)*$users_in_thread);
 		for($i=$users_first; $i<$users_last; $i++){
 			$smt = round(microtime(1)*1000);
-			$starbase = new starbases($userList[$i][keyID], $userList[$i][vCode]);
+			$starbase = new starbases($userList[$i]);
 			$drake = $starbase->updateStarbaseDetail();
 			if($drake != NULL){
 				$log->merge($drake, $userList[$i][keyID]);
-				$log->put("key", "id: " . $userList[$i][keyID], $userList[$i][keyID]);
+				$log->put("name", $userList[$i][corporationName], $userList[$i][keyID]);
 				$emt = round(microtime(1)*1000) - $smt;
 				$log->put("spent", $emt . " microseconds", $userList[$i][keyID]);
 			}
