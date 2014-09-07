@@ -40,11 +40,14 @@ for($t=0; $t<$thread_count; $t++){
 		$users_last = ($t==($thread_count-1)) ? ($users_count) : (($t+1)*$users_in_thread);
 		for($i=$users_first; $i<$users_last; $i++){
 			$smt = round(microtime(1)*1000);
-			$log->put("key", "id: " . $userList[$i][keyID] . ")", $userList[$i][keyID]);
 			$starbase = new starbases($userList[$i][keyID], $userList[$i][vCode]);
-			$log->merge($starbase->updateStarbaseList(), $userList[$i][keyID]);
-			$emt = round(microtime(1)*1000) - $smt;
-			$log->put("spent", $emt . " microseconds", $userList[$i][keyID]);
+			$drake = $starbase->updateStarbaseList()
+			if($drake != NULL){
+				$log->merge($drake, $userList[$i][keyID]);
+				$log->put("key", "id: " . $userList[$i][keyID] . ")", $userList[$i][keyID]);
+				$emt = round(microtime(1)*1000) - $smt;
+				$log->put("spent", $emt . " microseconds", $userList[$i][keyID]);
+			}
 		}
 		$emta = round(microtime(1)) - $smta;
 		$log->put("total spent", $emta . " seconds");

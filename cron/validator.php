@@ -50,22 +50,28 @@ for($t=0; $t<$thread_count; $t++){
 		$users_last = ($t==($thread_count-1)) ? ($users_count) : (($t+1)*$users_in_thread);
 		for($i=$users_first; $i<$users_last; $i++){
 			$smt = round(microtime(1)*1000);
-			$log->put("user", $userList[$i][login] . " (id: " . $userList[$i][id] . ")", $userList[$i][id]);
 			$user = new validation($userList[$i][id], $userList[$i][accessMask]);
-			$log->merge($user->verifyApiInfo(), $userList[$i][id]);
-			$emt = round(microtime(1)*1000) - $smt;
-			$log->put("spent", $emt . " microseconds", $userList[$i][id]);
+			$drake = $user->verifyApiInfo();
+			if($drake != NULL){
+				$log->merge($drake, $userList[$i][id]);
+				$log->put("user", $userList[$i][login] . " (id: " . $userList[$i][id] . ")", $userList[$i][id]);
+				$emt = round(microtime(1)*1000) - $smt;
+				$log->put("spent", $emt . " microseconds", $userList[$i][id]);
+			}
 		}
 
 		$corp_first = $t*$corp_in_thread;
 		$corp_last = ($t==($thread_count-1)) ? ($corp_count) : (($t+1)*$corp_in_thread);
 		for($i=$corp_first; $i<$corp_last; $i++){
 			$smt = round(microtime(1)*1000);
-			$log->put("corp", $apiCorpList[$i][corporationName] . " (id: " . $apiCorpList[$i][corporationID] . ")", $apiCorpList[$i][keyID]);
 			$corp = new validation();
-			$log->merge($corp->verifyCorpApiInfo($apiCorpList[$i]), $apiCorpList[$i][keyID]);
-			$emt = round(microtime(1)*1000) - $smt;
-			$log->put("spent", $emt . " microseconds", $apiCorpList[$i][keyID]);
+			$drake = $corp->verifyCorpApiInfo($apiCorpList[$i]);
+			if($drake != NULL){
+				$log->merge($drake, $apiCorpList[$i][keyID]);
+				$log->put("corp", $apiCorpList[$i][corporationName] . " (id: " . $apiCorpList[$i][corporationID] . ")", $apiCorpList[$i][keyID]);
+				$emt = round(microtime(1)*1000) - $smt;
+				$log->put("spent", $emt . " microseconds", $apiCorpList[$i][keyID]);
+			}
 		}
 
 		$emta = round(microtime(1)) - $smta;
