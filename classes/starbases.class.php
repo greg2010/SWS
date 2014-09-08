@@ -7,7 +7,7 @@ class starbases {
     protected $keyInfo = array();
     private $log;
     private $db;
-    private $poslist;
+    private $poslist = array();
 
 	public function __construct($keyInfo = array()){
         $this->db = db::getInstance();
@@ -20,7 +20,7 @@ class starbases {
         try{
             $response = $pheal->StarbaseList();
             foreach($response->starbases as $row){
-                if($this->checkStarbaseNotChanged($row)){
+                if($this->checkStarbaseNotChanged($row) == false){
                     $this->poslist[] = array(
                         'posID' => $row[itemID],
                         'typeID' => $row[typeID],
@@ -42,19 +42,15 @@ class starbases {
         try {
             $query = "SELECT `posID` FROM `posList` WHERE `corporationID` = '{$this->keyInfo[corporationID]}'";
             $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result);
-            while($dbposlist = $this->db->fetchRow($result)){
+            $dbposarr = $this->db->fetchRow($result);
+            foreach ($dbposarr as $dbposlist) {
                 for($j=0; $j<count($this->poslist); $j++){
                     if($this->poslist[$j][posID] == $dbposlist[0]) break;
                     if($j == (count($this->poslist)-1)){
-                        $query = "DELETE FROM `posList` WHERE `posID`='{$dbposlist[0]}' AND `corporationID` = '{$this->keyInfo[corporationID]}'";
+                        $query = "DELETE FROM `posList` WHERE `posID`='{$dbposlist[0]}'";
                         $res2 = $this->db->query($query);
-                        if(gettype($res2) == "string"){
-                            $this->log->put("checkStarbaseAlive " . $dbposlist[0], "err " . $res2);
-                        } else{
-                            throw new Exception("id: " . $dbposlist[0] . " " . $res2);
-                            $this->log->put("checkStarbaseAlive " . $dbposlist[0], "ok delete");
-                        } 
+                        var_dump($dbposlist[0]);
+                        $this->log->put("checkStarbaseAlive " . $dbposlist[0], "ok delete");
                     }
                 }
             }
@@ -65,22 +61,21 @@ class starbases {
 
     private function checkStarbaseNotChanged($pos = array()){
         try {
-            $query = "SELECT `locationID`, `moonID`, `state`, `stateTimestamp` FROM `posList` WHERE `posID`='{$pos[itemID]}' AND `corporationID` = '{$this->keyInfo[corporationID]}'";
+            $query = "SELECT `locationID`, `moonID`, `state`, `stateTimestamp` FROM `posList` WHERE `posID`='{$pos[itemID]}'";
             $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result);
             $dbpos = $this->db->fetchRow($result);
-            return ($pos[locationID] == $dbpos[locationID] && $pos[moonID] == $dbpos[moonID] && $pos[state] == $dbpos[state] && $pos[stateTimestamp] == $dbpos[stateTimestamp]) ? false : true;
+            //if($pos[locationID] != $dbpos[0] || $pos[moonID] != $dbpos[1] || $pos[state] != $dbpos[2] || $pos[stateTimestamp] != $dbpos[3]) var_dump($dbpos);
+            return ($pos[locationID] == $dbpos[0] && $pos[moonID] == $dbpos[1] && $pos[state] == $dbpos[2] && $pos[stateTimestamp] == $dbpos[3]) ? true : false;
         } catch (Exception $ex) {
             $this->log->put("checkStarbaseNotChanged " . $pos[itemID], "err " . $ex->getMessage());
-            return true;
+            return false;
         }
     }
 
     private function getMoonName($id){
         try {
             $query = "SELECT `itemName` FROM `mapDenormalize` WHERE `itemID`='$id' LIMIT 1";
-            $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result); 
+            $result = $this->db->query($query); 
             $row = $this->db->fetchAssoc($result);
             return $row[itemName];
         } catch (Exception $ex) {
@@ -92,7 +87,6 @@ class starbases {
         try {
             $query = "SELECT `typeName` FROM `invTypes` WHERE `typeID`='$id' LIMIT 1";
             $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result);
             $row = $this->db->fetchAssoc($result);
             return $row[typeName];
         } catch (Exception $ex) {
@@ -101,28 +95,26 @@ class starbases {
     }
 
     public function updateStarbaseList(){
-        if($this->getStarbaseList()){
-            $this->checkStarbaseAlive();
-            foreach($pos as $this->poslist){
+        $notempty = $this->getStarbaseList();
+        $this->checkStarbaseAlive();
+        if($notempty){
+            foreach($this->poslist as $pos){
                 try {
                     $query = "SELECT `posID` FROM `posList` WHERE `posID`='{$pos[posID]}' LIMIT 1";
                     $result = $this->db->query($query);
-                    if(gettype($result) == "string") throw new Exception($result);
                     $moonName = $this->getMoonName($pos[moonID]);
                     $typeName = $this->getTypeName($pos[typeID]);
-                    if($this->db->hasRows){
+                    if($this->db->hasRows($result)){
                         $query = "UPDATE `posList` SET  `locationID` = '{$pos[locationID]}', `moonID` = '{$pos[moonID]}', `state` = '{$pos[state]}', `stateTimestamp` = '{$pos[stateTimestamp]}',
                          `moonName` = '$moonName', `typeName` = '$typeName', `corporationID` = '{$this->keyInfo[corporationID]}', `corporationName`= '{$this->keyInfo[corporationName]}',
                          `allianceID` = '{$this->keyInfo[allianceID]}', `allianceName`= '{$this->keyInfo[allianceName]}' WHERE `posID`='{$pos[posID]}'";
                         $result = $this->db->query($query);
-                        if(gettype($result) == "string") throw new Exception($result);
                         $this->log->put("updateStarbaseList " . $pos[posID], "ok update");
                     } else{
                         $query = "INSERT INTO `posList` SET `posID`= '{$pos[posID]}', `typeID` = '{$pos[typeID]}', `locationID` = '{$pos[locationID]}', `moonID` = '{$pos[moonID]}', `state` = '{$pos[state]}',
                          `stateTimestamp` = '{$pos[stateTimestamp]}', `moonName` = '$moonName', `typeName` = '$typeName', `corporationID` = '{$this->keyInfo[corporationID]}',
                          `corporationName`= '{$this->keyInfo[corporationName]}',`allianceID` = '{$this->keyInfo[allianceID]}', `allianceName`= '{$this->keyInfo[allianceName]}'";
                         $result = $this->db->query($query);
-                        if(gettype($result) == "string") throw new Exception($result);
                         $this->log->put("updateStarbaseList " . $pos[posID], "ok insert");
                     } 
                 } catch (Exception $ex) {

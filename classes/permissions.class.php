@@ -27,7 +27,7 @@ class permissions {
             }
             return true;
         } catch (Exception $ex) {
-            $this->log->put("construct", "err: " . $ex->getMessage());
+            $this->log->put("construct", "err " . $ex->getMessage());
             return false;
         }
     }
@@ -36,7 +36,6 @@ class permissions {
         try {
             $query = "SELECT * FROM `bitMap`";
             $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result);
             $bitMapRaw = $this->db->fetchArray($result);
             $bitNames = array();
             foreach ($bitMapRaw as $rows) {
@@ -45,7 +44,7 @@ class permissions {
             $this->bitMap = $bitNames;
             return true;
         } catch (Exception $ex) {
-            $this->log->put("getBitMapFromDb", "err: " . $ex->getMessage());
+            $this->log->put("getBitMapFromDb", "err " . $ex->getMessage());
             return false;
         }
     }
@@ -54,13 +53,12 @@ class permissions {
         try {
             $query = "SELECT `accessMask` FROM `users` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result);
             $this->userMask = $this->db->getMysqlResult($result);
             //$this->userMask = 15731715; //Temp full mask for debug
             $this->maskLength = floor(log($this->userMask)/log(2)) + 1;
             return true;
         } catch (Exception $ex) {
-            $this->log->put("getUserMask", "err: " . $ex->getMessage());
+            $this->log->put("getUserMask", "err " . $ex->getMessage());
             return false;
         }
     }
@@ -79,7 +77,7 @@ class permissions {
             }
             return true;
         } catch (Exception $ex) {
-            $this->log->put("getUserPermissions", "err: " . $ex->getMessage());
+            $this->log->put("getUserPermissions", "err " . $ex->getMessage());
             return false;
         }
     }
@@ -97,7 +95,7 @@ class permissions {
             }
             return $rightsRequested;
         } catch (Exception $ex) {
-            $this->log->put("getPermissionsInRange", "err: " . $ex->getMessage());
+            $this->log->put("getPermissionsInRange", "err " . $ex->getMessage());
         }
     }
     
@@ -105,10 +103,9 @@ class permissions {
         try {
             $query = "UPDATE `users` SET `accessMask` = '$this->userMask' WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result);
             return true;
         } catch (Exception $ex) {
-            $this->log->put("updateUserMask", "err: " . $ex->getMessage());
+            $this->log->put("updateUserMask", "err " . $ex->getMessage());
             return false;
         }
     }
@@ -126,7 +123,7 @@ class permissions {
                 return False;
             }
         } catch (Exception $ex) {
-            $this->log->put("hasPermission", "err: " . $ex->getMessage());
+            $this->log->put("hasPermission", "err " . $ex->getMessage());
         }
     }
     
@@ -188,7 +185,7 @@ class permissions {
             $this->getUserPermissions();
             return true;
         } catch (Exception $ex) {
-            $this->log->put("setPermissions", "err: " . $ex->getMessage());
+            $this->log->put("setPermissions", "err " . $ex->getMessage());
             return false;
         }
     }
@@ -212,7 +209,7 @@ class permissions {
             $this->getUserPermissions();
             return true;
         } catch (Exception $ex) {
-            $this->log->put("unsetPermissions", "err: " . $ex->getMessage());
+            $this->log->put("unsetPermissions", "err " . $ex->getMessage());
             return false;
         }
     }

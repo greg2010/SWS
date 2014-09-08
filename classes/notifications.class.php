@@ -59,7 +59,7 @@ class notifications {
             }
             return true;
         } catch (\Pheal\Exceptions\PhealException $e){
-            $this->log->put("getNotificationsXML", "err: " . $e->getMessage());
+            $this->log->put("getNotificationsXML", "err " . $e->getMessage());
             return false;
         }
     }
@@ -68,10 +68,9 @@ class notifications {
         try {
             $query = "SELECT `notificationID` FROM `notifications` WHERE `notificationID` = '$notificationID' LIMIT 1";
             $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result);
             return ($this->db->hasRows($result)) ? true : false;
         } catch (Exception $ex) {
-            $this->log->put("rptCheck", "err: " . $ex->getMessage());
+            $this->log->put("rptCheck", "err " . $ex->getMessage());
             return false;
         }
     }
@@ -91,7 +90,7 @@ class notifications {
                 }
             }
         } catch (\Pheal\Exceptions\PhealException $e){
-            $this->log->put("getNotificationTextsXML, id: " . $notificationID, "err: " . $e->getMessage());
+            $this->log->put("getNotificationTextsXML " . $notificationID, "err " . $e->getMessage());
         }
     }
 
@@ -102,10 +101,9 @@ class notifications {
                 $query = "INSERT INTO `notifications` SET `notificationID` = '{$n['notificationID']}', `typeID` = '{$n['typeID']}', `senderID` = '{$n['senderID']}', `senderName` = '{$n['senderName']}',
                  `sentDate` = '{$n['sentDate']}', `NotificationText` = '$notixtxttosql', `corporationID` = '$this->corporationID', `allianceID` = '$this->allianceID'";
                 $result = $this->db->query($query);
-                if(gettype($result) == "string") throw new Exception($result);
             }
         } catch (Exception $ex) {
-            $this->log->put("insertToDB", "err: " . $ex->getMessage());
+            $this->log->put("insertToDB", "err " . $ex->getMessage());
         }
     } 
 
