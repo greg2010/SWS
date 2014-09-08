@@ -58,7 +58,7 @@ class validation implements Ivalidation {
             $this->log->merge($this->apiUserManagement->log->get(true), "APIUserManagement");
         }
         $cMask = $this->userManagement->getAllowedListMask();
-        if($this->userManagement->log->get() != NULL) $this->log->merge($this->userManagement->log->get(true), "userManagement");
+        $this->log->merge($this->userManagement->log->get(true), "userManagement");
         if($this->comparePilotInfo()){
         	if($cMask != $this->accessMask){
         		try {
