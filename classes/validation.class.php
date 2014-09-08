@@ -53,7 +53,10 @@ class validation implements Ivalidation {
     }
 
     public function verifyApiInfo(){
-        if($this->apiUserManagement->log->get() != NULL) $this->log->merge($this->apiUserManagement->log->get(true), "APIUserManagement");
+        if($this->apiUserManagement->log->get() != NULL){
+            $this->apiUserManagement->log->rm("getApiPilotInfo_code");
+            $this->log->merge($this->apiUserManagement->log->get(true), "APIUserManagement");
+        }
         $cMask = $this->userManagement->getAllowedListMask();
         if($this->userManagement->log->get() != NULL) $this->log->merge($this->userManagement->log->get(true), "userManagement");
         if($this->comparePilotInfo()){
@@ -88,7 +91,10 @@ class validation implements Ivalidation {
 
     public function verifyCorpApiInfo($dbCorp = array()){
         $apiCorp = $this->apiUserManagement->getCorpInfo($dbCorp[keyID], $dbCorp[vCode]);
-        if($this->apiUserManagement->log->get() != NULL) $this->log->merge($this->apiUserManagement->log->get(true), "APIUserManagement");
+        if($this->apiUserManagement->log->get() != NULL){
+            $this->apiUserManagement->log->rm("getApiPilotInfo_code");
+            $this->log->merge($this->apiUserManagement->log->get(true), "APIUserManagement");
+        }
         if($dbCorp[accessMask] != $apiCorp[accessMask] || $dbCorp[corporationID] != $apiCorp[corporationID] || $dbCorp[allianceID] != $apiCorp[allianceID]){
             try {
                 $query = "UPDATE `apiCorpList` SET `accessMask` = '{$apiCorp[accessMask]}', `corporationID` = '{$apiCorp[corporationID]}', `corporationName` = '{$apiCorp[corporationName]}', `allianceID` = '{$apiCorp[allianceID]}',

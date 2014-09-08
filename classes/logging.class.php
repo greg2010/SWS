@@ -27,6 +27,10 @@ class logging {
     	return $lg;
     }
 
+    public function rm($key=NULL){
+        if isset($key) unset($this->log[$key]); else unset($this->log);
+    }
+
     public function record($table){
     	try{
     		$db = db::getInstance();
