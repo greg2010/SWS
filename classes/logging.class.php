@@ -28,7 +28,7 @@ class logging {
     }
 
     public function rm($key=NULL){
-        if isset($key) unset($this->log[$key]); else unset($this->log);
+        if (isset($key)) unset($this->log[$key]); else unset($this->log);
     }
 
     public function record($table){
