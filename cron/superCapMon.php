@@ -56,7 +56,7 @@ for($t=0; $t<$thread_count; $t++){
 		}
 		$emta = round(microtime(1)) - $smta;
 		$log->put("total spent", $emta . " seconds");
-		$log->record("log.starbaseList");
+		$log->record("log.superCapMon");
 		posix_kill(posix_getpid(), SIGTERM);
 	}
 }

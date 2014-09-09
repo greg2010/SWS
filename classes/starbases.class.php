@@ -75,7 +75,7 @@ class starbases {
                         if($this->poslist[$j][posID] == $posID) break;
                         if($j == (count($this->poslist)-1)){
                             $query = "DELETE FROM `posList` WHERE `posID`='$posID'";
-                            $res2 = $this->db->query($query);
+                            $result = $this->db->query($query);
                             $this->log->put("checkStarbaseAlive " . $posID, "ok delete");
                         }
                     }
@@ -131,7 +131,7 @@ class starbases {
                         $moonName = $this->getMoonName($pos[moonID]);
                         $typeName = $this->getTypeName($pos[typeID]);
                         if($this->db->hasRows($result)){
-                            $query = "UPDATE `posList` SET  `locationID` = '{$pos[locationID]}', `moonID` = '{$pos[moonID]}',
+                            $query = "UPDATE `posList` SET `locationID` = '{$pos[locationID]}', `moonID` = '{$pos[moonID]}',
                              `moonName` = '$moonName', `typeName` = '$typeName', `corporationID` = '{$this->keyInfo[corporationID]}', `corporationName`= '{$this->keyInfo[corporationName]}',
                              `allianceID` = '{$this->keyInfo[allianceID]}', `allianceName`= '{$this->keyInfo[allianceName]}' WHERE `posID`='{$pos[posID]}'";
                             $result = $this->db->query($query);
