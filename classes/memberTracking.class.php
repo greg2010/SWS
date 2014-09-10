@@ -95,10 +95,10 @@ class memberTracking {
 
     private function getRegion($locationID){
         try {
-            $query = "SELECT `regionID` FROM `mapDenormalize` WHERE `solarSystemID` = '$locationID'";
+            $query = "SELECT `regionID` FROM `mapDenormalize` WHERE `solarSystemID` = '$locationID' LIMIT 1";
             $result = $this->db->query($query);
             $regionID = $this->db->getMysqlResult($result, 0);
-            $query = "SELECT `itemName` FROM `invNames` WHERE `itemID` = '$regionID'";
+            $query = "SELECT `itemName` FROM `invNames` WHERE `itemID` = '$regionID' LIMIT 1";
             $result = $this->db->query($query);
             return $this->db->getMysqlResult($result, 0);
         } catch (Exception $ex) {
@@ -108,7 +108,7 @@ class memberTracking {
 
     private function getSS($locationID){
         try {
-            $query = "SELECT `security` FROM `mapSolarSystems` WHERE `solarSystemID` = '$locationID'";
+            $query = "SELECT `security` FROM `mapSolarSystems` WHERE `solarSystemID` = '$locationID' LIMIT 1";
             $result = $this->db->query($query);
             return ($this->db->getMysqlResult($result, 0) < 0) ? 0.0 : round($this->db->getMysqlResult($result, 0), 1);
         } catch (Exception $ex) {
