@@ -28,7 +28,7 @@ class snotif {
             $response = $pheal->CharacterName(array("IDs" => $this->txtarr[aggressorID]));
             $this->txtarr[aggressorName] = $response->characters[0]->name;
         } catch (\Pheal\Exceptions\PhealException $e){
-            $this->log->put("aggressor", "err: " . $e->getMessage());
+            $this->log->put("aggressor", "err " . $e->getMessage());
         }
     }
 
@@ -39,7 +39,7 @@ class snotif {
             $this->txtarr[corpName] = $response->corporationName;
             $this->txtarr[corpTicker] = $response->ticker;
         } catch (\Pheal\Exceptions\PhealException $e){
-             $this->log->put("CorpID", "err: " . $e->getMessage());
+             $this->log->put("CorpID", "err " . $e->getMessage());
         }
         if($this->OwnerCorporationID != NULL){
             try{
@@ -47,7 +47,7 @@ class snotif {
                 $this->txtarr[OwnerCorpName] = $response->corporationName;
                 $this->txtarr[OwnerCorpTicker] = $response->ticker;
             } catch (\Pheal\Exceptions\PhealException $e){
-                $this->log->put("CorpID_owner", "err: " . $e->getMessage());
+                $this->log->put("CorpID_owner", "err " . $e->getMessage());
             }
         }
     }
@@ -67,7 +67,7 @@ class snotif {
                 }
             }
         } catch (\Pheal\Exceptions\PhealException $e){
-            $this->log->put("AllianceID", "err: " . $e->getMessage());
+            $this->log->put("AllianceID", "err " . $e->getMessage());
         }
     }
 
@@ -75,10 +75,9 @@ class snotif {
         try {
             $query = "SELECT `typeName` FROM  `invTypes` WHERE `typeID`='$this->txtarr[typeID]' LIMIT 1";
             $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result);
             $this->txtarr[typeName] = $this->db->getMysqlResult($result);
         } catch (Exception $ex) {
-            $this->log->put("typeID", "err: " . $ex->getMessage());
+            $this->log->put("typeID", "err " . $ex->getMessage());
         }
     }
 
@@ -87,10 +86,9 @@ class snotif {
             try {
                 $query = "SELECT `typeName` FROM  `invTypes` WHERE `typeID`='{$this->txtarr[wants][$i][typeID]}' LIMIT 1";
                 $result = $this->db->query($query);
-                if(gettype($result) == "string") throw new Exception($result);
                 $this->txtarr[wants][$i][typeName] = $this->db->getMysqlResult($result);
             } catch (Exception $ex) {
-                $this->log->put("wants " . $i, "err: " . $ex->getMessage());
+                $this->log->put("wants " . $i, "err " . $ex->getMessage());
             }
         }
     }
@@ -99,10 +97,9 @@ class snotif {
         try {
             $query = "SELECT `itemName` FROM  `mapDenormalize` WHERE `itemID`='$this->txtarr[moonID]' LIMIT 1";
             $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result);
             $this->txtarr[moonName] = $this->db->getMysqlResult($result);
         } catch (Exception $ex) {
-            $this->log->put("moonID", "err: " . $ex->getMessage());
+            $this->log->put("moonID", "err " . $ex->getMessage());
         }
     }
 
@@ -110,10 +107,9 @@ class snotif {
         try {
             $query = "SELECT `solarSystemName` FROM  `mapSolarSystems` WHERE `solarSystemID`='$this->txtarr[solarSystemID]' LIMIT 1";
             $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result);
             $this->txtarr[solarSystemName] = $this->db->getMysqlResult($result);
         } catch (Exception $ex) {
-            $this->log->put("solarSystemID", "err: " . $ex->getMessage());
+            $this->log->put("solarSystemID", "err " . $ex->getMessage());
         }
     }
 
@@ -121,10 +117,9 @@ class snotif {
         try {
             $query = "SELECT `itemName` FROM  `mapDenormalize` WHERE `itemID`='$this->txtarr[planetID]' LIMIT 1";
             $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result);
             $this->txtarr[planetName] = $this->db->getMysqlResult($result);
         } catch (Exception $ex) {
-            $this->log->put("planetID", "err: " . $ex->getMessage());
+            $this->log->put("planetID", "err " . $ex->getMessage());
         }
     }
     

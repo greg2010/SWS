@@ -208,9 +208,12 @@ class db {
             throw new Exception("getMysqlResult: Wrong input type. Object expected, " . gettype($result) . " given.");
         }
         $row = $this->fetchRow($result);
-        if (count($row) > 1) {
-            throw new Exception("getMysqlResult: Wrong input type. Expected 1 row, got " . count($row) . " row(s).");
+        foreach ($row as $value) {
+            if(gettype($value) == "array") throw new Exception("getMysqlResult: Wrong input type. Array deeper than expected.");
         }
+        /*if (count($row) > 1) {
+            throw new Exception("getMysqlResult: Wrong input type. Expected 1 row, got " . count($row) . " row(s).");
+        }*/
         if ($i) {
             return $row[$i];
         } else {
