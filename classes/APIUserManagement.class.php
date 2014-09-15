@@ -69,11 +69,14 @@ class APIUserManagement implements IAPIUserManagement {
                 if(!$isChar) throw new \Pheal\Exceptions\PhealException("Not found the right character", -30);
             }
         } catch (\Pheal\Exceptions\PhealException $e){
-            $this->log->put("getApiPilotInfo", "err: " . $e->getMessage());
-            $c = (isset($keyID) && isset($vCode)) ? 0 : $e->getCode();
-            if($c == 105 || $c == 106 || $c == 108 || $c == 112 || $c == 201 || $c == 202 || $c == 203 || $c == 204 || $c == 205 || $c == 210
-             || $c == 211 || $c == 212 || $c == 221 || $c == 222 || $c == 223 || $c == 516 || $c == 522 || $c == -10 || $c == -20 || $c == -30){
-                $this->permissions->unsetPermissions(array('webReg_Valid', 'TS_Valid', 'XMPP_Valid'));
+            $this->log->put("getApiPilotInfo", "err " . $e->getMessage());
+            $c = $e->getCode();
+            $this->log->put("getApiPilotInfo_code", $c);
+            if(isset($keyID) && isset($vCode)){
+                if($c == 105 || $c == 106 || $c == 108 || $c == 112 || $c == 201 || $c == 202 || $c == 203 || $c == 204 || $c == 205 || $c == 210
+                 || $c == 211 || $c == 212 || $c == 221 || $c == 222 || $c == 223 || $c == 516 || $c == 522 || $c == -10 || $c == -20 || $c == -30){
+                    $this->permissions->unsetPermissions(array('webReg_Valid', 'TS_Valid', 'XMPP_Valid'));
+                }
             }
         }
         if($this->permissions->log->get() != NULL) $this->log->merge($this->permissions->log->get(true), "permissions");
