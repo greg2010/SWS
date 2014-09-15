@@ -7,15 +7,6 @@
  */
 class userSession {
     
-    private static $_instance = null;
-    
-    static public function getInstance() {
-        if(is_null(self::$_instance)) {
-            self::$_instance = new self();
-        }
-        return self::$_instance;
-    }
-    
     private $sessionID;
     private $cookiesArray;
     private $id;
@@ -27,13 +18,28 @@ class userSession {
     private $pagePermissions;
     private $hasAccessToCurrentPage;
     
-    private function __construct() {
+    public $test;
+    
+    public function __construct() {
         $this->sessionStart();
         $this->db = db::getInstance();
         $this->logUserByCookie();
     }
     
-    private function sessionStart() {
+    public function __sleep() {
+         unset($this->db);
+         unset($this->permissions);
+         return array('sessionID', 'id', 'isLoggedIn', 'test');
+     }
+     
+     public function __wakeup() {
+         $this->db = db::getInstance();
+         if ($this->id) {
+            $this->permissions = new permissions($this->id);
+         }
+     }
+
+          private function sessionStart() {
         $sessionStarted = session_start();
         if ($sessionStarted === False) {
             die("Session hasn't started. Aborting...");
@@ -168,7 +174,6 @@ class userSession {
             } else {
                 $this->isLoggedIn = TRUE;
                 $this->initialize();
-                $this->setCookie();
             }
             return TRUE;
         } catch (Exception $ex) {
@@ -187,7 +192,6 @@ class userSession {
             } else {
                 $this->isLoggedIn = TRUE;
                 $this->initialize();
-                $this->setCookie();
             }
         } catch (Exception $ex) {
             unset($this->id);
@@ -196,6 +200,16 @@ class userSession {
         }
     }
     
+    public function setCookieForUser() {
+        if ($this->isLoggedIn) {
+            $this->setCookie();
+            return TRUE;
+        } else {
+            $this->removeCookie();
+            return FALSE;
+        }
+    }
+
     public function preparePage($permissions = array()) {
         $this->setPagePermissions($permissions);
         $this->hasAccess();

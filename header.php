@@ -1,7 +1,6 @@
 <?php
-$toTemplate = array();
 $active = " class=active";
-if ($_SESSION[user]->isLoggedIn() === FALSE) {
+if ($_SESSION[userObject]->isLoggedIn() === FALSE) {
     if ($thisPage === 'login') {
         $toTemplate['isLogin'] = $active;
     } else {
@@ -18,7 +17,7 @@ if ($_SESSION[user]->isLoggedIn() === FALSE) {
         $toTemplate['isAbout'] = '';
     }
 } else {
-    $permissions = $_SESSION[user]->permissions->getWebPermissions();
+    $permissions = $_SESSION[userObject]->permissions->getWebPermissions();
     if ($thisPage === 'index') {
         $toTemplate['isIndex'] = $active;
     } else {
