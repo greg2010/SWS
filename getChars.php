@@ -39,8 +39,8 @@ if (!$chars) {
         }
         $sendArray[] = array(
             "characterName" => $char[characterName],
-            "corporationName" => $char[corporationName],
-            "allianceName" => $char[allianceName],
+//            "corporationName" => $char[corporationName],
+//            "allianceName" => $char[allianceName],
             "valid" => $canRegister
         );
     }
