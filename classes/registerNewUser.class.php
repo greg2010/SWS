@@ -24,20 +24,12 @@ class registerNewUser {
     }
     
     private function getInfoFromKey() {
-            $this->apiPilotInfo = $this->APIUserManagement->getCharsInfo();
-            if ($this->apiPilotInfo === NULL) {
-                $errorArray = $this->APIUserManagement->log->get();
-                $this->error = $errorArray[getApiPilotInfo];
-            }
-            
-//            $c = $e->getCode();
-//            $this->error = $e->getMessage();
-//            if($c == 105 || $c == 106 || $c == 108 || $c == 112 || $c == 201 || $c == 202 || $c == 203 || $c == 204 || $c == 205 || $c == 210
-//             || $c == 211 || $c == 212 || $c == 221 || $c == 222 || $c == 223 || $c == 516 || $c == 522){
-//                $this->errorType = "user";
-//            } else {
-//                $this->errorType = "CCP";
-//            }
+        $this->apiPilotInfo = $this->APIUserManagement->getCharsInfo();
+        if ($this->apiPilotInfo === NULL) {
+            $errorArray = $this->APIUserManagement->log->get();
+            $this->error = $errorArray[getApiPilotInfo];
+            throw new Exception($this->error);
+        }
     }
     
     private function makeRegisterArray() {

@@ -1,11 +1,9 @@
 <?php
-require_once 'init.php';
+require_once 'auth.php';
+include 'header.php';
 
 $toTemplate = array();
-
-$loader = new Twig_Loader_Filesystem(dirname(__FILE__) . '/templates');
-$twig = new Twig_Environment($loader, array(
-    'cache' => False
-));
-$template = $twig->loadTemplate( 'index.twig');
-echo $template->render($toTemplate);
+$thisPage = "index";
+$templateName = $thisPage;
+var_dump($_SESSION[userObject]);
+require 'twigRender.php';

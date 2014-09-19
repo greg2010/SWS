@@ -7,15 +7,6 @@
  */
 class userSession {
     
-    private static $_instance = null;
-    
-    static public function getInstance() {
-        if(is_null(self::$_instance)) {
-            self::$_instance = new self();
-        }
-        return self::$_instance;
-    }
-    
     private $sessionID;
     private $cookiesArray;
     private $id;
@@ -27,13 +18,28 @@ class userSession {
     private $pagePermissions;
     private $hasAccessToCurrentPage;
     
-    private function __construct() {
+    public $test;
+    
+    public function __construct() {
         $this->sessionStart();
         $this->db = db::getInstance();
         $this->logUserByCookie();
     }
     
-    private function sessionStart() {
+    public function __sleep() {
+         unset($this->db);
+         unset($this->permissions);
+         return array('sessionID', 'id', 'isLoggedIn', 'test');
+     }
+     
+     public function __wakeup() {
+         $this->db = db::getInstance();
+         if ($this->id) {
+            $this->permissions = new permissions($this->id);
+         }
+     }
+
+          private function sessionStart() {
         $sessionStarted = session_start();
         if ($sessionStarted === False) {
             die("Session hasn't started. Aborting...");
@@ -96,14 +102,11 @@ class userSession {
             }
             $query = "SELECT $fields FROM `userCookies` WHERE `id` = $this->id";
             $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result);
             if ($this->db->hasRows($result) === FALSE) {
                 $query = "INSERT INTO `userCookies` SET `id` = $this->id";
                 $result = $this->db->query($query);
-                if(gettype($result) == "string") throw new Exception($result);
                 $query = "SELECT $fields FROM `userCookies` WHERE `id` = $this->id";
                 $result = $this->db->query($query);
-                if(gettype($result) == "string") throw new Exception($result);
             }
             $this->cookiesArray = $this->db->fetchAssoc($result);
         } catch (Exception $ex) {
@@ -129,7 +132,6 @@ class userSession {
             if (!$cookiePush) {
                 $query = "SELECT `pointer` FROM `userCookies` WHERE `id` = '$this->id'";
                 $result = $this->db->query($query);
-                if(gettype($result) == "string") throw new Exception($result, 1);
                 $pointer = $this->db->getMysqlResult($result);
                 if ($pointer === NULL) {
                     $pointer = 0;
@@ -144,7 +146,6 @@ class userSession {
             }
             $query = "UPDATE `userCookies` SET `$cookiePush` = '$newCookieValue', `pointer` = '$pointer'";
             $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result, 1);
             $this->getCookies();
         } catch (Exception $ex) {
             //handle mysql errors
@@ -158,7 +159,6 @@ class userSession {
         try {
             $query = "SELECT `salt` FROM `users` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
-            if(gettype($result) == "string") throw new Exception($result);
             $this->userSalt = $this->db->getMysqlResult($result);
         } catch (Exception $ex) {
             //handle mysql errors
@@ -167,28 +167,49 @@ class userSession {
     
     public function logUserByLoginPass($login, $password) {
         $passwordHash = hash(config::password_hash_type, $password);
-        $this->id = $this->db->getUserByLogin($login, $passwordHash);
-        if ($this->id === FALSE) {
-            $this->isLoggedIn = FALSE;
-        } else {
-            $this->isLoggedIn = TRUE;
-            $this->initialize();
-            $this->setCookie();
+        try {
+            $this->id = $this->db->getUserByLogin($login, $passwordHash);
+            if ($this->id === FALSE) {
+                $this->isLoggedIn = FALSE;
+            } else {
+                $this->isLoggedIn = TRUE;
+                $this->initialize();
+            }
+            return TRUE;
+        } catch (Exception $ex) {
+            unset($this->id);
+            unset($this->isLoggedIn);
+            return FALSE;
         }
     }
     
     public function logUserByCookie() {
         $cookie = $_COOKIE[SSID];
-        $this->id = $this->db->getUserByCookie($cookie);
-        if ($this->id === FALSE) {
-            $this->isLoggedIn = FALSE;
-        } else {
-            $this->isLoggedIn = TRUE;
-            $this->initialize();
-            $this->setCookie();
+        try {
+            $this->id = $this->db->getUserByCookie($cookie);
+            if ($this->id === FALSE) {
+                $this->isLoggedIn = FALSE;
+            } else {
+                $this->isLoggedIn = TRUE;
+                $this->initialize();
+            }
+        } catch (Exception $ex) {
+            unset($this->id);
+            unset($this->isLoggedIn);
+            return FALSE;
         }
     }
     
+    public function setCookieForUser() {
+        if ($this->isLoggedIn) {
+            $this->setCookie();
+            return TRUE;
+        } else {
+            $this->removeCookie();
+            return FALSE;
+        }
+    }
+
     public function preparePage($permissions = array()) {
         $this->setPagePermissions($permissions);
         $this->hasAccess();
