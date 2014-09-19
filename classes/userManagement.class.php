@@ -16,7 +16,7 @@ class userManagement implements IuserManagement {
     protected $pilotInfo;
     public $log;
 
-    public function __construct($id) {
+    public function __construct($id = NULL) {
         $this->db = db::getInstance();
         $this->log = new logging();
         $this->permissions = new permissions($id);
