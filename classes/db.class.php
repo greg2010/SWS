@@ -261,6 +261,9 @@ class db {
         $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `users` WHERE `login`=? AND `passwordHash`=?");
         mysqli_stmt_bind_param($stmt, "ss", $login, $passwordHash);
         mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception(mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
         mysqli_stmt_bind_result($stmt, $id);
         $success = mysqli_stmt_fetch($stmt);
         mysqli_stmt_close($stmt);
@@ -269,6 +272,23 @@ class db {
         } else {
             $id = False;
             return $id;
+        }
+    }
+    
+    private function predefinedMySQLCheckIfUserRegistered($login) {
+        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `users` WHERE `login`=?");
+        mysqli_stmt_bind_param($stmt, "s", $login);
+        mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception(mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+        mysqli_stmt_bind_result($stmt, $id);
+        $success = mysqli_stmt_fetch($stmt);
+        mysqli_stmt_close($stmt);
+        if ($success === True) {
+            return $id;
+        } else {
+            return False;
         }
     }
     
@@ -287,6 +307,9 @@ class db {
         $stmt = mysqli_prepare($this->connection, $query);
         mysqli_stmt_bind_param($stmt, "sssss", $cookie, $cookie, $cookie, $cookie, $cookie); //Repeat $cookie as many times as there cookies fields
         mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception(mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
         mysqli_stmt_bind_result($stmt, $id);
         $success = mysqli_stmt_fetch($stmt);
         mysqli_stmt_close($stmt);
@@ -298,6 +321,45 @@ class db {
         }
     }
     
+    private function predefinedPopulateUsers($login, $passwordHash, $accessMask, $salt, $email = NULL) {
+        $this->openConnection();
+        $stmt = mysqli_prepare($this->connection, "INSERT INTO `users` SET `login`=?, `passwordHash`=?, `accessMask`=?, `email`=?, `salt`=?");
+        mysqli_stmt_bind_param($stmt, "sssss", $login, $passwordHash, $accessMask, $email, $salt);
+        $success = mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception("predefinedPopulateUsers: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+        mysqli_stmt_close($stmt);
+        $this->closeConnection();
+        return $success;
+    }
+    
+    private function predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $keyStatus) {
+        $this->openConnection();
+        $stmt = mysqli_prepare($this->connection, "INSERT INTO `apiList` SET `id`=?, `keyID`=?, `vCode`=?, `characterID`=?, `keyStatus`=?");
+        mysqli_stmt_bind_param($stmt, "sssss", $id, $keyID, $vCode, $characterID, $keyStatus);
+        $success = mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception("predefinedPopulateApiList: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+        mysqli_stmt_close($stmt);
+        $this->closeConnection();
+        return $success;
+    }
+    
+    private function predefinedPopulatePilotInfo($id, $characterID, $characterName, $corporationID, $corporationName, $allianceID, $allianceName) {
+        $this->openConnection();
+        $stmt = mysqli_prepare($this->connection, "INSERT INTO `pilotInfo` SET `id`=?, `characterID`=?, `characterName`=?, `corporationID`=?, `corporationName`=?, `allianceID`=?, `allianceName`=?");
+        mysqli_stmt_bind_param($stmt, "sssssss", $id, $characterID, $characterName, $corporationID, $corporationName, $allianceID, $allianceName);
+        $success = mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception("predefinedPopulatePilotInfo: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+        mysqli_stmt_close($stmt);
+        $this->closeConnection();
+        return $success;
+    }
+
     public function getUserByLogin($login, $passwordHash) {
         $this->openConnection();
         $id = $this->predefinedMySQLLogin($login, $passwordHash);
@@ -308,5 +370,33 @@ class db {
         $this->openConnection();
         $id = $this->predefinedMySQLCookie($cookie);
         return $id;
+    }
+    
+    public function checkUserRegistered($login) {
+        $this->openConnection();
+        return $this->predefinedMySQLCheckIfUserRegistered($login);
+    }
+    
+    public function registerNewUser($keyID, $vCode, $characterID, $keyStatus, $characterName, $corporationID, $corporationName, $allianceID, $allianceName, $passwordHash, $permissions, $email = NULL, $salt) {
+        try {
+            $this->predefinedPopulateUsers($characterName, $passwordHash, $permissions, $salt, $email);
+            $id = $this->checkUserRegistered($characterName);
+            $this->predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $keyStatus);
+            $this->predefinedPopulatePilotInfo($id, $characterID, $characterName, $corporationID, $corporationName, $allianceID, $allianceName);
+        } catch (Exception $ex) {
+            $firstException = $ex->getMessage();
+            //Rolling Back...
+            try {
+                $query = "DELETE FROM `pilotInfo` WHERE `characterID` = '$characterID'";
+                $thirdRes = strval($this->query($query));
+                $query = "DELETE FROM `apiList` WHERE `vCode` = '$vCode'";
+                $secondRes = strval($this->query($query));
+                $query = "DELETE FROM `users` WHERE `login` = '$characterName'";
+                $firstRes = strval($this->query($query));
+            } catch (Exception $ex) {
+                $secondException = $ex->getMessage();
+            }
+            throw new Exception("Something went terribly wrong. Message: " . $firstException . "\nRolling back... users: " . $firstRes . "\napiList: " . $secondRes . "\npilotInfo: " . $thirdRes . "\nErrors during rolling back: " . $secondException);
+        }
     }
 }

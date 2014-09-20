@@ -9,6 +9,10 @@ class registerNewUser {
     private $apiKey;
     private $error;
     
+    private $login;
+    private $email;
+    private $passwordHash;
+    
     private $guiArray = array();
     private $registerArray = array();
     
@@ -76,12 +80,22 @@ class registerNewUser {
                 "corporationName" => $char[corporationName],
                 "allianceID" => $char[allianceID],
                 "allianceName" => $char[allianceName],
-                "permissions" => $keyPermissions
+                "permissions" => $keyPermissions,
+                "valid" => $canRegister
             );
         }
         return TRUE;
     }
 
+    private function generateSalt() {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $randstring = '';
+        for ($i = 0; $i < 4; $i++) {
+        $randomString .= $characters[rand(0, strlen($characters) - 1)];
+    }
+    return $randomString;
+    }
+    
     public function AjaxAnswer() {
         $returnArray = array_merge($this->guiArray, $this->error);
         return json_encode($returnArray);
@@ -94,17 +108,61 @@ class registerNewUser {
         $this->makeRegisterArray();
     }
     
-    public function setUserData($login, $password) {
+    public function setUserData($login, $password, $email = NULL) {
         try {
             $this->login = $login;
-            $this->passwordHash = hash(sha512, $password);
-            
+            $this->passwordHash = hash(config::password_hash_type, $password);
+            if ($email) {
+                $this->email = $email;
+            }
         } catch (Exception $ex) {
             return $ex->getMessage();
         }
     }
     
-    public function registerNewUser () {
-        $regCheck = $this->makeRegisterArray();
-    }
+    public function register() {
+        $keyStatus = 1; //Valid key status
+        //check if everything ok
+        try {
+            if (!$this->apiKey[0] || !$this->apiKey[1]) {
+                throw new Exception("There is something wrong with api. Values: " . $this->apiKey[0] . " ; " . $this->apiKey[1]);
+            }
+            if (!$this->registerArray[$this->login][characterID]) {
+                throw new Exception("There is something wrong with characterID. Value: " . $this->registerArray[$this->login][characterID]);
+            }
+            if (!$this->login) {
+                throw new Exception("There is something wrong with login. Value: " . $this->login);
+            }
+            
+            if (!$this->registerArray[$this->login][corporationID]) {
+                throw new Exception("There is something wrong with CorporationID. Value: " . $this->registerArray[$this->login][corporationID]);
+            }
+            
+            if (!$this->registerArray[$this->login][corporationName]) {
+                throw new Exception("There is something wrong with CorporationName. Value: " . $this->registerArray[$this->login][corporationName]);
+            }
+            
+            if (!$this->registerArray[$this->login][allianceID]) {
+                throw new Exception("There is something wrong with AllianceID. Value: " . $this->registerArray[$this->login][allianceID]);
+            }
+            
+            if (!$this->registerArray[$this->login][allianceName]) {
+                throw new Exception("There is something wrong with AllianceName. Value: " . $this->registerArray[$this->login][allianceName]);
+            }
+            
+            if (!$this->passwordHash) {
+                throw new Exception("There is something wrong with passwordHash. Value: " . $this->passwordHash);
+            }
+            
+            if (!$this->registerArray[$this->login][permissions]) {
+                throw new Exception("There is something wrong with permissions. Value: " . $this->registerArray[$this->login][permissions]);
+            }
+            $salt = $this->generateSalt();
+            $this->db->registerNewUser($this->apiKey[0], $this->apiKey[1], $this->registerArray[$this->login][characterID], $keyStatus, $this->login, $this->registerArray[$this->login][corporationID], $this->registerArray[$this->login][corporationName], $this->registerArray[$this->login][allianceID], $this->registerArray[$this->login][allianceName], $this->passwordHash, $this->registerArray[$this->login][permissions], $this->email, $salt);
+            return TRUE;
+        } catch (Exception $ex) {
+            echo $ex->getMessage();
+            return FALSE;
+        }
+        }
 }
