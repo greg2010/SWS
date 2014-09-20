@@ -1,11 +1,11 @@
 <?php
 
 require_once 'init.php';
-//$keyID = $_POST[keyID];
-//$vCode = $_POST[vCode];
+$keyID = $_POST[keyID];
+$vCode = $_POST[vCode];
 
-$keyID = "3361996";
-$vCode = "njIL4YIM0iwyl8QHWy9rf027vBxL3xZyAZ4Jl7CKLJJhPCorh981QC6mRgOy6wfA";
+//$keyID = "3361996";
+//$vCode = "njIL4YIM0iwyl8QHWy9rf027vBxL3xZyAZ4Jl7CKLJJhPCorh981QC6mRgOy6wfA";
 
 $_SESSION["regObject"] = new registerNewUser();
 
