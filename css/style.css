@@ -30,6 +30,22 @@ img {
         height: auto;
 }
 
+.r_button {
+        display: none;
+}
+
+.r_button + label {
+        background: url("../images/radio.png") no-repeat scroll 0 0;
+        cursor: pointer;
+        padding-left: 30px;
+        vertical-align: middle;
+}
+
+.r_button:checked + label {
+        background: url("../images/radio_active.png") no-repeat scroll 0 0;
+        vertical-align: middle;
+}
+
 .page {
         min-height: 100%; 
         height: auto !important;
