@@ -46,6 +46,24 @@ img {
         vertical-align: middle;
 }
 
+.glyphicon-ok {
+        color: #458B00;
+        margin-left: 25px;
+}
+
+.glyphicon-remove {
+        color: #FF4500;
+        margin-left: 25px;
+}
+
+label[for=r_1] {
+        color: #458B00;
+}
+
+label[for=r_2] {
+        color: #FF4500;
+}
+
 .page {
         min-height: 100%; 
         height: auto !important;
