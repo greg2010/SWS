@@ -94,17 +94,11 @@ class registerNewUser {
         $this->makeRegisterArray();
     }
     
-    public function setUserData($login, $password, $apiKey, $vCode) {
+    public function setUserData($login, $password) {
         try {
             $this->login = $login;
             $this->passwordHash = hash(sha512, $password);
-            $this->apiKey = $apiKey;
-            $this->vCode = $vCode;
-            $this->getInfoFromKey();
-            $apiError = $this->error;
-            if ($apiError) {
-                throw new Exception('Here is problem with your api: ' . $apiError);
-            }
+            
         } catch (Exception $ex) {
             return $ex->getMessage();
         }
