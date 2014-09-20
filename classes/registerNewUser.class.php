@@ -1,8 +1,5 @@
 <?php
 
-
-use Pheal\Pheal;
-
 class registerNewUser {
     
     private $apiPilotInfo = array();
@@ -70,8 +67,6 @@ class registerNewUser {
             }
             $this->guiArray[] = array(
                 "characterName" => $char[characterName],
-    //          "corporationName" => $char[corporationName],
-    //          "allianceName" => $char[allianceName],
                 "valid" => $canRegister
             );
             $this->registerArray[$char[characterName]] = array (
@@ -109,14 +104,10 @@ class registerNewUser {
     }
     
     public function setUserData($login, $password, $email = NULL) {
-        try {
-            $this->login = $login;
-            $this->passwordHash = hash(config::password_hash_type, $password);
-            if ($email) {
-                $this->email = $email;
-            }
-        } catch (Exception $ex) {
-            return $ex->getMessage();
+        $this->login = $login;
+        $this->passwordHash = hash(config::password_hash_type, $password);
+        if ($email) {
+            $this->email = $email;
         }
     }
     
@@ -161,8 +152,8 @@ class registerNewUser {
             $this->db->registerNewUser($this->apiKey[0], $this->apiKey[1], $this->registerArray[$this->login][characterID], $keyStatus, $this->login, $this->registerArray[$this->login][corporationID], $this->registerArray[$this->login][corporationName], $this->registerArray[$this->login][allianceID], $this->registerArray[$this->login][allianceName], $this->passwordHash, $this->registerArray[$this->login][permissions], $this->email, $salt);
             return TRUE;
         } catch (Exception $ex) {
-            echo $ex->getMessage();
+            //add logs for $ex->getMessage();
             return FALSE;
         }
-        }
+    }
 }
