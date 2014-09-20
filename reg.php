@@ -15,7 +15,6 @@ if ($_POST[form] == 'sent') {
         $email = $_POST[email];
     }
     $_SESSION[regObject]->setUserData($login, $password, $email);
-    
     $success = $_SESSION[regObject]->register();
     if ($success) {
         unset($_SESSION[regObject]);
