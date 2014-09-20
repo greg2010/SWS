@@ -26,14 +26,24 @@
           <p class="p-container">
             <a href="https://support.eveonline.com/api/key/createpredefined/8">Get Key ID & vCode</a>                         
             <input type="button" name="go" id="go" onclick="SendRequest()" value="Get Characters" />
+=======
+            <a href="https://support.eveonline.com/api/key/createpredefined/8">Get Key ID & vCode</a>
+            <input name="go" id="getChars" onclick="SendRequest()" value="Get Characters" />
+>>>>>>> df2d0f69eee7ef861be8f4cdea50db78e80e7995
           </p>
     <hr />    
         {# Нижеследующее предупреждение будет выскакивать, если кей и код оказались некорректными #}
+<<<<<<< HEAD
         <div class="alert alert-danger" role="alert">Sorry, but key ID or vCode incorrect!</div>
         <p>
+=======
+        <div class="alert alert-danger" role="alert" hidden></div>
+    <hr id="chars" hidden />
+        <p id="chars" hidden>
+>>>>>>> df2d0f69eee7ef861be8f4cdea50db78e80e7995
             <label for="SelectChar" style="color: #ccc;">SELECT CHARACTER</label><br>
-            <input class="r_button" type="radio" name="name" id="r_1"><label for="r_1">First nickname<span class="glyphicon glyphicon-ok""></span></label>
-            <input class="r_button" type="radio" name="name" id="r_2"><label for="r_2">Second nickname<span class="glyphicon glyphicon-remove"></span></label>
+            <div id="charList">
+            </div>
         </p>  
     <hr />
           <p>
