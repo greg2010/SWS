@@ -1,11 +1,19 @@
 <?php
-require_once 'init.php';
+$thisPage = "login";
+require_once 'auth.php';
+include 'header.php';
 
-$toTemplate = array();
+$templateName = $thisPage;
 
-$loader = new Twig_Loader_Filesystem(dirname(__FILE__) . '/templates');
-$twig = new Twig_Environment($loader, array(
-    'cache' => False
-));
-$template = $twig->loadTemplate( 'reg.twig');
-echo $template->render($toTemplate);
+if ($_POST[form] == 'sent') {
+    $key = $_POST[key];
+    $vCode = $_POST[vCode];
+    $login = $_POST[characterName];
+    $password = $_POST[password];
+    if ($_POST[email]) {
+        $email = $_POST[email];
+    }
+    
+}
+
+require 'twigRender.php';

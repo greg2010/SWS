@@ -6,9 +6,11 @@ use Pheal\Pheal;
 class registerNewUser {
     
     private $apiPilotInfo = array();
-    
+    private $apiKey;
     private $error;
-    private $errorType;
+    
+    private $guiArray = array();
+    private $registerArray = array();
     
     protected $id;
     protected $db;
@@ -20,27 +22,76 @@ class registerNewUser {
         $this->db = db::getInstance();
         $this->permissions = new permissions();
         $this->APIUserManagement = new APIUserManagement();
-        $this->userManagement = new userManagement;
+        $this->userManagement = new userManagement();
     }
     
     private function getInfoFromKey() {
-        $this->apiPilotInfo = $this->APIUserManagement->getCharsInfo();
-        if ($this->apiPilotInfo === NULL) {
-            $errorArray = $this->APIUserManagement->log->get();
-            $this->error = $errorArray[getApiPilotInfo];
-            throw new Exception($this->error);
+        $this->apiPilotInfo = $this->APIUserManagement->getCharsInfo($this->apiKey[0], $this->apiKey[1]);
+        if (!$this->apiPilotInfo) {
+            $error = $this->APIUserManagement->log->get();
+            $this->error = array (
+                "status" => $error[getApiPilotInfo_code],
+                "message" => ltrim($error[getApiPilotInfo], "err ")
+            );
+            return FALSE;
+        } else {
+            $this->error = array (
+                "status" => 0,
+                "message" => ""
+                );
+            return TRUE;
         }
     }
     
     private function makeRegisterArray() {
-        $i = 0;
-        for ($i = 0; $i < count($this->apiPilotInfo); $i++) {
-            $mask = $this->userManagement->getAllowedListMask($this->apiPilotInfo[$i]);
-            $this->permissions->setCustomMask($mask);
-            $this->apiPilotInfo[$i]['canRegister'] = $this->permissions->hasPermission('webReg_Valid');
-            $this->apiPilotInfo[$i]['permissions'] = $this->permissions->getAllPermissions();
+        if ($this->error[status] <> 0) {
+            return FALSE;
         }
-        print_r($this->apiPilotInfo);
+        foreach ($this->apiPilotInfo as $char) {
+            $requestArray = array (
+                "characterID" => $char[characterID],
+                "corporationID" => $char[corporationID],
+                "allianceID" => $char[allianceID]
+            );
+
+            $keyPermissions = $this->userManagement->getAllowedListMask($requestArray);
+            if (!$keyPermissions) {
+                $keyPermissions = 0;
+            }
+            $this->permissions->setUserMask($keyPermissions);
+            if ($this->permissions->hasPermission("webReg_Valid") == FALSE) {
+                $canRegister = 0;
+            } else {
+                $canRegister = 1;
+            }
+            $this->guiArray[] = array(
+                "characterName" => $char[characterName],
+    //          "corporationName" => $char[corporationName],
+    //          "allianceName" => $char[allianceName],
+                "valid" => $canRegister
+            );
+            $this->registerArray[$char[characterName]] = array (
+                "characterID" => $char[characterID],
+                "corporationID" => $char[corporationID],
+                "corporationName" => $char[corporationName],
+                "allianceID" => $char[allianceID],
+                "allianceName" => $char[allianceName],
+                "permissions" => $keyPermissions
+            );
+        }
+        return TRUE;
+    }
+
+    public function AjaxAnswer() {
+        $returnArray = array_merge($this->guiArray, $this->error);
+        return json_encode($returnArray);
+    }
+    
+    public function setUserApi($keyID, $vCode) {
+        $this->apiKey[0] = $keyID;
+        $this->apiKey[1] = $vCode;
+        $this->getInfoFromKey();
+        $this->makeRegisterArray();
     }
     
     public function setUserData($login, $password, $apiKey, $vCode) {
@@ -61,13 +112,5 @@ class registerNewUser {
     
     public function registerNewUser () {
         $regCheck = $this->makeRegisterArray();
-    }
-    
-    public function getError() {
-        return $this->error;
-    }
-    
-    public function getErrorType() {
-        return $this->errorType;
     }
 }

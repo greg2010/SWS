@@ -4,7 +4,7 @@ require_once 'auth.php';
 include 'header.php';
 
 $templateName = $thisPage;
-$pagePermissions = array();
+//$pagePermissions = array();
 
 $loginFormSent = $_POST[form];
 $method = $_SERVER[REQUEST_METHOD];
@@ -25,9 +25,9 @@ if ($loginFormSent == 'sent') {
         $_SESSION[userObject]->setCookieForUser();
     }
 }
-$_SESSION[userObject]->preparePage($pagePermissions);
+//$_SESSION[userObject]->preparePage($pagePermissions);
 
-$toTemplate['hasAccess'] = $_SESSION[userObject]->hasPermission();
-$_SESSION[userObject]->test = 0;
-var_dump($_SESSION[userObject]);
+//$toTemplate['hasAccess'] = $_SESSION[userObject]->hasPermission();
+//$_SESSION[userObject]->test = 0;
+//var_dump($_SESSION[userObject]);
 require 'twigRender.php';
