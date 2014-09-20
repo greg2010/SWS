@@ -1,16 +1,52 @@
+var click = 0;
+
 function SendRequest(){
-    $.ajax({
-        type: "POST",
-        url: "getChars.php",
-        data: "sid=<?=session_id()?>&keyID="+$('#keyID').val()+"&vCode="+$('#vCode').val(),
-        datatype: 'json',
-        success: function( json ) {
-            $.each(json, function(i, value) {
-                $('#myselect').append($('<option>').text(value).attr('value', value));
-            });
-        }
-    });
+    if (click === 0) {
+        $.ajax({
+            type: "POST",
+            url: "getChars.php",
+            data: "sid=<?=session_id()?>&keyID="+$('#keyID').val()+"&vCode="+$('#vCode').val(),
+            datatype: 'json',
+            success: function(json){
+                if (json.status !== 0) {
+                    $('div[role="alert"').removeAttr('hidden').text("API server has responed with an error: "+json.message)
+                } else {
+                    $('#chars').removeAttr('hidden');
+                    $.each(json, function(i, chars) {
+                        if (typeof(chars) === "object") {
+                            $('#charList').append($('<input>').attr('type', 'radio').attr('value', chars.characterName).attr('class', 'r_button').attr('name', 'login'));
+                            if (chars.valid === 1) {
+                                var id = "r_1";
+                                var className = "glyphicon glyphicon-ok";
+                            } else {
+                                var id = "r_2";
+                                var className = "glyphicon glyphicon-remove";
+                            }
+                            $(':radio[value='+chars.characterName+']').attr('id', id).after(function() {
+                                var label = $("<label>");
+                                $(label).attr('for', id).text(chars.characterName).append(function() {
+                                    var span = $("<span>");
+                                    $(span).attr('class', className);
+                                    return $(span);
+                                });
+                                return $(label)
+                            });
+                        }
+                    });
+                }
+                click++;
+            }
+        });
     }
+}
+//    $(document).ready(function() {
+//        for(i=0; i<20; i++)
+//        {
+//            $('#target').append($('<input type="radio">').text(i).attr('value', i));
+////            var radioBtn = $("<input type='radio' name='rbtnCount' id='myradio"+i+"' />");
+////            radioBtn.appendTo('#target');
+////        }
+//    })
 //    document.getElementById("submit").disabled = false;
 //    };
 //$(document).ready(function() {
