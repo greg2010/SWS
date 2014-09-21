@@ -330,4 +330,43 @@ input[type=button]:hover {
         inset 0 -10px 10px rgba(255,255,255,0.1);
 }
 
+#online {
+        color: #458B00;
+}
+
+#offline {
+        color: #FF4500;
+}
+
+#column-1 {
+        width: 33%; 
+        min-height: 130px;
+        float: left;
+        border: 1px solid;
+        border-color: #000;
+        color: #ccc;
+        background: linear-gradient(#222, #2D2D2D) repeat scroll 0% 0% transparent;
+        padding: 5px;
+}
+
+#column-2 {
+        width: 34%;
+        min-height: 130px;
+        float: left;
+        border: 1px solid;
+        border-color: #000;
+        color: #ccc;
+        background: linear-gradient(#222, #2D2D2D) repeat scroll 0% 0% transparent;
+        padding: 5px;
+}
+#column-3 {
+        width: 33%;
+        min-height: 130px;
+        float: left;
+        border: 1px solid;
+        border-color: #000;   
+        color: #ccc;
+        background: linear-gradient(#222, #2D2D2D) repeat scroll 0% 0% transparent;
+        padding: 5px;
+}
 
