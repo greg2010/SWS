@@ -383,3 +383,11 @@ input[type=button]:hover {
         padding: 5px;
 }
 
+#reqs {
+        font-size: 13px;
+        color: #ccc;
+}
+
+#passmust {
+        color: #ccc;
+}
