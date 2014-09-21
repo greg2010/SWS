@@ -36,11 +36,11 @@ function SendRequest(){
                         });
                     }
                 });
+                $('#go').removeAttr('disabled')
             }
         }
     });
 }
-document.getElementById("submit").disabled = false;
 $(document).ready(function() {
     $('#email').blur(function() {
         if($(this).val() !== '') {

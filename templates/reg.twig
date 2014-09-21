@@ -19,11 +19,11 @@
           <div class="alert alert-danger" role="alert-api" hidden></div>
           <p>
             <label for="keyID">KEY ID</label>
-            <input type="text" name="keyID" id="keyID">
+            <input type="text" name="keyID" value="{{saveForm.keyID}}" id="keyID">
           </p>
           <p>
             <label for="vCode">VERIFICATION CODE</label>
-            <input type="text" name="vCode" id="vCode">
+            <input type="text" name="vCode" value="{{saveForm.vCode}}" id="vCode">
           </p>
           <p class="p-container">
             <a href="https://support.eveonline.com/api/key/createpredefined/8">Get Key ID & vCode</a>
@@ -38,7 +38,7 @@
     <hr />
           <p>
             <label for="email">E-MAIL (OPTIONAL)</label>
-            <input type="text" name="email" id="email">
+            <input type="text" name="email" value="{{saveForm.email}}" id="email">
           </p>
     <hr />
           <p>
@@ -52,7 +52,7 @@
     <hr />
            <p class="p-container">
                <input type="hidden" name="form" value="sent">
-               <input type="submit" name="go" id="go" value="SUBMIT">
+               <input type="submit" name="go" id="go" value="SUBMIT" disabled>
            </p>
        </div>
 </form>
