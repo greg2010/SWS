@@ -285,7 +285,7 @@ class db {
         mysqli_stmt_bind_result($stmt, $id);
         $success = mysqli_stmt_fetch($stmt);
         mysqli_stmt_close($stmt);
-        if ($success === True) {
+        if ($id) {
             return $id;
         } else {
             return False;

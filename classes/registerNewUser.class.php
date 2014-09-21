@@ -105,8 +105,12 @@ class registerNewUser {
     
     public function setUserData($login, $password, $email = NULL) {
         $this->login = $login;
-        if ($this->registerArray[$login][valid] <> 1) {
+        if ($this->registerArray[$this->login][valid] <> 1) {
             throw new Exception("Not valid character!", 20);
+        }
+        $alreadyRegistered = $this->db->getIDByName($this->login);
+        if ($alreadyRegistered <> FALSE) {
+            throw new Exception("Already registered!", 21);
         }
         $this->salt = $this->generateSalt();
         $passwordWithSalt = $password . $this->salt;

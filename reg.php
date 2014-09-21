@@ -16,21 +16,20 @@ if ($_POST[form] == 'sent') {
         $email = $_POST[email];
     }
     try {
-        
-    $_SESSION[regObject]->setUserData($login, $password, $email);
-    $success = $_SESSION[regObject]->register();
-    
-    if ($success) {
-        unset($_SESSION[regObject]);
-        $_SESSION[userObject]->logUserByLoginPass($login, $password);
-        $toTemplate['loggedIn'] = $_SESSION[userObject]->isLoggedIn();
-        if (!$toTemplate['loggedIn']) {
-            //Something went wrong...
-        } else {
-            $_SESSION[userObject]->setCookieForUser();
-            header("Location: /index.php");
+        $_SESSION[regObject]->setUserData($login, $password, $email);
+        $success = $_SESSION[regObject]->register();
+
+        if ($success) {
+            unset($_SESSION[regObject]);
+            $_SESSION[userObject]->logUserByLoginPass($login, $password);
+            $toTemplate['loggedIn'] = $_SESSION[userObject]->isLoggedIn();
+            if (!$toTemplate['loggedIn']) {
+                //Something went wrong...
+            } else {
+                $_SESSION[userObject]->setCookieForUser();
+                header("Location: /index.php");
+            }
         }
-    }
     } catch (Exception $ex) {
         switch ($ex->getCode()) {
             case 10:
@@ -42,8 +41,11 @@ if ($_POST[form] == 'sent') {
             case 20:
                 $toTemplate["errorMsg"] = "Please choose eligible charater.";
                 break;
+            case 21:
+                $toTemplate["errorMsg"] = "This character is already registered!";
+                break;
             case 30:
-                $toTemplate["errorMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue!<br> Please convey this information to server administator:" . $ex->getMessage();
+                $toTemplate["errorMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
                 break;
         }
     }
