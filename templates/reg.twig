@@ -49,15 +49,18 @@
             <label for="email">E-MAIL (OPTIONAL)</label>
             <input type="text" name="email" value="{{saveForm.email}}" id="email">
           </p>
+          <div class="alert alert-danger" role="alert">Sorry, but this e-mail isn't suitable!</div>
     <hr />
           <p>
             <label for="password">PASSWORD</label>
             <input type="password" name="password" id="password">
           </p>
+          <div class="alert alert-danger" role="alert">Sorry, but password is very simple!</div>
           <p>
             <label for="password">REPEAT PASSWORD</label>
             <input type="password" id="password">
           </p>
+          <div class="alert alert-danger" role="alert">Sorry, but the password doesn't match!</div>
     <hr />
            <p class="p-container">
                <input type="hidden" name="form" value="sent">
