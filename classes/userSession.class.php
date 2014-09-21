@@ -215,7 +215,7 @@ class userSession {
     }
     
     public function isLoggedIn() {
-        return $this->isLoggedIn;
+        return strval($this->isLoggedIn);
     }
     
     public function hasPermission() {
