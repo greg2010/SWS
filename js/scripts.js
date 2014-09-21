@@ -65,69 +65,49 @@ $(document).ready(function() {
     var invalidBorder = "1px solid #ff0000";
         $('#password').on("input", (function() {
         if($(this).val() !== '') {
+            
             var pwd = $(this).val();
             var count = pwd.length;
+            var countValid;
             var numberValid;
             var lowerValid;
             var upperValid;
+            
             if(count > 7){
                 $('#length').css({'color' : validColor});
-                if(!/\d/.test(pwd)){
-                    $('#numbers').css({'color' : invalidColor});
-                     //$('div[role="alert-password"]').removeAttr('hidden').text('Your password has to contain at least 1 digit!');
-                    passValid = 0;
-                    numberValid = 0;
-                    console.log("numbers", numberValid);
-                } else {
-                    $('#numbers').css({'color' : validColor});
-                    //$('div[role="alert-password"]').val().replace('Your password has to contain at least 1 digit!','');
-                    passValid = 0;
-                    numberValid = 1;
-                    console.log("numbers", numberValid);
-                }
-                if(!/[a-z]/.test(pwd)){
-                    $('#lowerCase').css({'color' : invalidColor});
-                    // $('div[role="alert-password"]').removeAttr('hidden').text('Your password has to contain at least 1 lower-case!');
-                    passValid = 0;
-                    lowerValid = 0;
-                    console.log("lower", lowerValid);
-                } else {
-                    $('#lowerCase').css({'color' : validColor});
-                    //$('div[role="alert-password"]').val().replace('Your password has to contain at least 1 lower-case!','');
-                    passValid = 0;
-                    lowerValid = 1;
-                    console.log("lower", lowerValid);
-                }
-                if(!/[A-Z]/.test(pwd)){
-                    $('#upperCase').css({'color' : invalidColor});
-                     //$('div[role="alert-password"]').removeAttr('hidden').text('Your password has to contain at least 1 upper-case!');
-                    passValid = 0;
-                     upperValid = 0;
-                     console.log("upper", upperValid);
-                } else {
-                    $('#upperCase').css({'color' : validColor});
-                    //$('div[role="alert-password"]').val().replace('Your password has to contain at least 1 upper-case!','');
-                    passValid = 0;
-                    upperValid = 1;
-                    console.log("upper", upperValid);
-                }
-                if (numberValid === 1 && lowerValid === 1 && upperValid === 1) {
-                    passValid = 1;
-                    $(this).css({'border' : validBorder});
-                    $('div[role="alert-password"]').attr('hidden', 1);
-                }
+                countValid = 1;
+            } else {
+                $('#length').css({'color' : invalidColor});
+                countValid = 0;
+            }
+            if(!/\d/.test(pwd)){
+                $('#numbers').css({'color' : invalidColor});
+                numberValid = 0;
+            } else {
+                $('#numbers').css({'color' : validColor});
+                numberValid = 1;
+            }
+            if(!/[a-z]/.test(pwd)){
+                $('#lowerCase').css({'color' : invalidColor});
+                lowerValid = 0;
+            } else {
+                $('#lowerCase').css({'color' : validColor});
+                lowerValid = 1;
+            }
+            if(!/[A-Z]/.test(pwd)){
+                $('#upperCase').css({'color' : invalidColor});
+                upperValid = 0;
+            } else {
+                $('#upperCase').css({'color' : validColor});
+                upperValid = 1;
+            }
+            if (numberValid === 1 && lowerValid === 1 && upperValid === 1 && countValid === 1) {
+                passValid = 1;
+                $(this).css({'border' : validBorder});
             } else {
                 passValid = 0;
                 $(this).css({'border' : invalidBorder});
-                $('#length').css({'color' : invalidColor});
-                //$('div[role="alert-password"]').removeAttr('hidden').text('Your password must consist minimum of 8 symbols!');
             }
-        } else {
-            $('#reqs').css({'color' : invalidColor});
-            passValid = 0;
-            // Поле pwd пустое, выводим предупреждающее сообщение
-            $(this).css({'border' : invalidBorder});
-            $('div[role="alert-password"]').attr('hidden', 1);
         }
     }));
     $('#password-repeat').blur(function() {
