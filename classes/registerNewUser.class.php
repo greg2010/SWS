@@ -113,6 +113,16 @@ class registerNewUser {
         }
     }
     
+    private function testEmail($email) {
+        $pattern = "/^([a-z0-9_\.-])+@[a-z0-9-]+\.([a-z]{2,4}\.)?[a-z]{2,4}$/i";
+        if (preg_match($pattern, $email)) {
+            if (preg_match($upper, $password)) {
+            throw new Exception("Your e-mail is invalid!", 11);
+        }
+        }
+    }
+
+
     public function AjaxAnswer() {
         $returnArray = array_merge($this->guiArray, $this->error);
         return json_encode($returnArray);
@@ -128,6 +138,9 @@ class registerNewUser {
     public function setUserData($login, $password, $email = NULL) {
         $this->login = $login;
         $this->testPassword($password);
+        if ($email) {
+            $this->testEmail($email);
+        }
         if ($this->registerArray[$this->login][valid] <> 1) {
             throw new Exception("Not valid character!", 20);
         }
