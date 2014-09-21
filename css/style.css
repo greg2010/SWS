@@ -30,6 +30,19 @@ img {
         height: auto;
 }
 
+.amPmCheckbox input[type="checkbox"] {
+        display: none;
+}
+.amPmCheckbox input[type="checkbox"]+label {    
+        background: url("../images/checkbox.png") no-repeat;
+        height:18px;
+        padding-left: 30px;
+}
+.amPmCheckbox input[type="checkbox"]:checked + label {
+        background: url("../images/checkbox_active.png")  no-repeat;
+        height:18px;
+}
+
 .r_button {
         display: none;
 }
