@@ -49,18 +49,24 @@
             <label for="email">E-MAIL (OPTIONAL)</label>
             <input type="text" name="email" value="{{saveForm.email}}" id="email">
           </p>
-          <div class="alert alert-danger" role="alert">Sorry, but this e-mail isn't suitable!</div>
+          <div class="alert alert-danger" role="alert-email" hidden></div>
     <hr />
           <p>
             <label for="password">PASSWORD</label>
             <input type="password" name="password" id="password">
+          Your password must:
+          <ul id="reqs">
+              <li id="length">Have more than 8 symbols</li>
+              <li id="numbers">Have at least 1 number</li>
+              <li id="lowerCase">Have at least 1 upper-case letter</li>
+              <li id="upperCase">Have at least 1 lower-case letter</li>
+          </ul>
           </p>
-          <div class="alert alert-danger" role="alert">Sorry, but password is very simple!</div>
           <p>
             <label for="password">REPEAT PASSWORD</label>
-            <input type="password" id="password">
+            <input type="password" id="password-repeat">
           </p>
-          <div class="alert alert-danger" role="alert">Sorry, but the password doesn't match!</div>
+          <div class="alert alert-danger" role="alert-password-repeat" hidden>Sorry, but the password doesn't match!</div>
     <hr />
            <p class="p-container">
                <input type="hidden" name="form" value="sent">

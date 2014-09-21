@@ -8,11 +8,11 @@ function SendRequest(){
             if (json.status !== 0) {
                 $('#chars').empty();
                 $('#chars').attr('hidden', 1);
-                $('div[role="alert-api"').empty();
+                $('div[role="alert-api"]').empty();
                 $('div[role="alert-api"]').removeAttr('hidden').text("API server has responed with an error: "+json.message);
             } else {
-                $('div[role="alert-api"').empty();
-                $('div[role="alert-api"').attr('hidden', 1);
+                $('div[role="alert-api"]').empty();
+                $('div[role="alert-api"]').attr('hidden', 1);
                 $('#charList').empty();
                 $('#chars').removeAttr('hidden');
                 $.each(json, function(i, chars) {
@@ -47,31 +47,98 @@ $(document).ready(function() {
             var pattern = /^([a-z0-9_\.-])+@[a-z0-9-]+\.([a-z]{2,4}\.)?[a-z]{2,4}$/i;
             if(pattern.test($(this).val())){
                 $(this).css({'border' : '1px solid #569b44'});
-                $('#email-valid').text('');
+                $('div[role="alert-email"]').attr('hidden', 1);
             } else {
                 $(this).css({'border' : '1px solid #ff0000'});
-                $('#email-valid').text('Your e-mail is not valid!').css({'color' : '#ff0000'});
+                $('div[role="alert-email"]').removeAttr('hidden').text('Your e-mail is not valid!');
             }
         } else {
             // Поле email пустое, выводим предупреждающее сообщение
-            $(this).css({'border' : '1px solid #ff0000'});
-            $('#email-valid').text('Please type your e-mail!').css({'color' : '#ff0000'});
+            $(this).css({'border' : ''});
+            $('div[role="alert-email"]').attr('hidden', 1);
         }
     });
-        $('#password').blur(function() {
+    var passValid;
+    var validColor = "#569b44";
+    var validBorder = "1px solid #569b44";
+    var invalidColor = "#ff0000";
+    var invalidBorder = "1px solid #ff0000";
+        $('#password').on("input", (function() {
         if($(this).val() !== '') {
-            var count = $(this).val().length;
-            if(count > 6){
-                $(this).css({'border' : '1px solid #569b44'});
-                $('#password-valid').text('');
+            var pwd = $(this).val();
+            var count = pwd.length;
+            var numberValid;
+            var lowerValid;
+            var upperValid;
+            if(count > 7){
+                $('#length').css({'color' : validColor});
+                if(!/\d/.test(pwd)){
+                    $('#numbers').css({'color' : invalidColor});
+                     //$('div[role="alert-password"]').removeAttr('hidden').text('Your password has to contain at least 1 digit!');
+                    passValid = 0;
+                    numberValid = 0;
+                    console.log("numbers", numberValid);
+                } else {
+                    $('#numbers').css({'color' : validColor});
+                    //$('div[role="alert-password"]').val().replace('Your password has to contain at least 1 digit!','');
+                    passValid = 0;
+                    numberValid = 1;
+                    console.log("numbers", numberValid);
+                }
+                if(!/[a-z]/.test(pwd)){
+                    $('#lowerCase').css({'color' : invalidColor});
+                    // $('div[role="alert-password"]').removeAttr('hidden').text('Your password has to contain at least 1 lower-case!');
+                    passValid = 0;
+                    lowerValid = 0;
+                    console.log("lower", lowerValid);
+                } else {
+                    $('#lowerCase').css({'color' : validColor});
+                    //$('div[role="alert-password"]').val().replace('Your password has to contain at least 1 lower-case!','');
+                    passValid = 0;
+                    lowerValid = 1;
+                    console.log("lower", lowerValid);
+                }
+                if(!/[A-Z]/.test(pwd)){
+                    $('#upperCase').css({'color' : invalidColor});
+                     //$('div[role="alert-password"]').removeAttr('hidden').text('Your password has to contain at least 1 upper-case!');
+                    passValid = 0;
+                     upperValid = 0;
+                     console.log("upper", upperValid);
+                } else {
+                    $('#upperCase').css({'color' : validColor});
+                    //$('div[role="alert-password"]').val().replace('Your password has to contain at least 1 upper-case!','');
+                    passValid = 0;
+                    upperValid = 1;
+                    console.log("upper", upperValid);
+                }
+                if (numberValid === 1 && lowerValid === 1 && upperValid === 1) {
+                    passValid = 1;
+                    $(this).css({'border' : validBorder});
+                    $('div[role="alert-password"]').attr('hidden', 1);
+                }
             } else {
-                $(this).css({'border' : '1px solid #ff0000'});
-                $('#password-valid').text('Your password must consist minimum of 6 symbols!').css({'color' : '#ff0000'});
+                passValid = 0;
+                $(this).css({'border' : invalidBorder});
+                $('#length').css({'color' : invalidColor});
+                //$('div[role="alert-password"]').removeAttr('hidden').text('Your password must consist minimum of 8 symbols!');
             }
         } else {
-            // Поле email пустое, выводим предупреждающее сообщение
-            $(this).css({'border' : '1px solid #ff0000'});
-            $('#password-valid').text('Password field is empty!').css({'color' : '#ff0000'});
+            $('#reqs').css({'color' : invalidColor});
+            passValid = 0;
+            // Поле pwd пустое, выводим предупреждающее сообщение
+            $(this).css({'border' : invalidBorder});
+            $('div[role="alert-password"]').attr('hidden', 1);
+        }
+    }));
+    $('#password-repeat').blur(function() {
+        if (passValid === 1) {
+            if($(this).val() !== $('#password').val()) {
+                $(this).css({'border' : invalidBorder});  
+                $('div[role="alert-password-repeat"]').removeAttr('hidden').text('Passwords don\'t match!');
+            } else {
+                $(this).css({'border' : validBorder});
+                $('div[role="alert-password-repeat"]').attr('hidden', 1).replace('Passwords don\'t match!\n', '');
+            }
         }
     });
 });
