@@ -4,7 +4,9 @@ require_once 'auth.php';
 include 'header.php';
 
 $templateName = $thisPage;
-
+$toTemplate['saveForm']['keyID'] = $_POST[keyID];
+$toTemplate['saveForm']['vCode'] = $_POST[vCode];
+$toTemplate['saveForm']['email'] = $_POST[email];
 if ($_POST[form] == 'sent') {
     if (!($_SESSION[regObject] instanceof registerNewUser)) {
         throw new Exception("Getting api info step was skipped. Aborting...");
@@ -31,7 +33,20 @@ if ($_POST[form] == 'sent') {
         }
     }
     } catch (Exception $ex) {
-         echo $ex->getMessage();
+        switch ($ex->getCode()) {
+            case 10:
+                $toTemplate["errorMsg"] = "Please fill in all fields!";
+                break;
+            case 15:
+                $toTemplate["errorMsg"] = "There is a problem with CCP servers. Please try again later.";
+                break;
+            case 20:
+                $toTemplate["errorMsg"] = "Please choose eligible charater.";
+                break;
+            case 30:
+                $toTemplate["errorMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue!<br> Please convey this information to server administator:" . $ex->getMessage();
+                break;
         }
     }
+}
 require 'twigRender.php';

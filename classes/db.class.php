@@ -396,7 +396,7 @@ class db {
             } catch (Exception $ex) {
                 $secondException = $ex->getMessage();
             }
-            throw new Exception("Something went terribly wrong. Message: " . $firstException . "\nRolling back... users: " . $firstRes . "\napiList: " . $secondRes . "\npilotInfo: " . $thirdRes . "\nErrors during rolling back: " . $secondException);
+            throw new Exception("Something went terribly wrong. Message: " . $firstException . "\nRolling back... users: " . $firstRes . "\napiList: " . $secondRes . "\npilotInfo: " . $thirdRes . "\nErrors during rolling back: " . $secondException, 30);
         }
     }
 }

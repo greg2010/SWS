@@ -120,37 +120,37 @@ class registerNewUser {
         $keyStatus = 1; //Valid key status
         //check if everything ok
         if (!$this->apiKey[0] || !$this->apiKey[1]) {
-            throw new Exception("There is something wrong with api. Values: " . $this->apiKey[0] . " ; " . $this->apiKey[1]);
+            throw new Exception("There is something wrong with api. Values: " . $this->apiKey[0] . " ; " . $this->apiKey[1], 10);
         }
         if (!$this->registerArray[$this->login][characterID]) {
-            throw new Exception("There is something wrong with characterID. Value: " . $this->registerArray[$this->login][characterID]);
+            throw new Exception("There is something wrong with characterID. Value: " . $this->registerArray[$this->login][characterID], 15);
         }
         if (!$this->login) {
-            throw new Exception("There is something wrong with login. Value: " . $this->login);
+            throw new Exception("There is something wrong with login. Value: " . $this->login, 10);
         }
 
         if (!$this->registerArray[$this->login][corporationID]) {
-            throw new Exception("There is something wrong with CorporationID. Value: " . $this->registerArray[$this->login][corporationID]);
+            throw new Exception("There is something wrong with CorporationID. Value: " . $this->registerArray[$this->login][corporationID], 15);
         }
 
         if (!$this->registerArray[$this->login][corporationName]) {
-            throw new Exception("There is something wrong with CorporationName. Value: " . $this->registerArray[$this->login][corporationName]);
+            throw new Exception("There is something wrong with CorporationName. Value: " . $this->registerArray[$this->login][corporationName], 15);
         }
 
         if (!$this->registerArray[$this->login][allianceID]) {
-            throw new Exception("There is something wrong with AllianceID. Value: " . $this->registerArray[$this->login][allianceID]);
+            throw new Exception("There is something wrong with AllianceID. Value: " . $this->registerArray[$this->login][allianceID], 15);
         }
 
         if (!$this->registerArray[$this->login][allianceName]) {
-            throw new Exception("There is something wrong with AllianceName. Value: " . $this->registerArray[$this->login][allianceName]);
+            throw new Exception("There is something wrong with AllianceName. Value: " . $this->registerArray[$this->login][allianceName], 15);
         }
 
         if (!$this->passwordHash) {
-            throw new Exception("There is something wrong with passwordHash. Value: " . $this->passwordHash);
+            throw new Exception("There is something wrong with passwordHash. Value: " . $this->passwordHash, 10);
         }
 
         if (!$this->registerArray[$this->login][permissions]) {
-            throw new Exception("There is something wrong with permissions. Value: " . $this->registerArray[$this->login][permissions]);
+            throw new Exception("There is something wrong with permissions. Value: " . $this->registerArray[$this->login][permissions], 30);
         }
         $this->db->registerNewUser($this->apiKey[0], $this->apiKey[1], $this->registerArray[$this->login][characterID], $keyStatus, $this->login, $this->registerArray[$this->login][corporationID], $this->registerArray[$this->login][corporationName], $this->registerArray[$this->login][allianceID], $this->registerArray[$this->login][allianceName], $this->passwordHash, $this->registerArray[$this->login][permissions], $this->email, $this->salt);
         return TRUE;
