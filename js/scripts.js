@@ -45,7 +45,9 @@ function SendRequest(){
         }
     });
 }
+
 $(document).ready(function() {
+
     $('#email').blur(function() {
         if($(this).val() !== '') {
             var pattern = /^([a-z0-9_\.-])+@[a-z0-9-]+\.([a-z]{2,4}\.)?[a-z]{2,4}$/i;
@@ -132,6 +134,7 @@ $(document).ready(function() {
         }
     });
     if (charReady === 1 && passReady === 1 && repPassReady === 1) {
-        $('#go').removeAttr('disabled')
+        console.log('success');
+        $('#go').removeAttr('disabled');
     }
 });

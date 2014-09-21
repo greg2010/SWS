@@ -135,9 +135,15 @@ class registerNewUser {
         $this->makeRegisterArray();
     }
     
-    public function setUserData($login, $password, $email = NULL) {
+    public function setUserData($login, $password, $passwordRepeat, $email = NULL) {
         $this->login = $login;
         $this->testPassword($password);
+        if (!$passwordRepeat) {
+            throw new Exception("Password repeat", 10);
+        }
+        if ($passwordRepeat <> $password) {
+            throw new Exception("Passwords don't match!", 12);
+        }
         if ($email) {
             $this->testEmail($email);
         }
