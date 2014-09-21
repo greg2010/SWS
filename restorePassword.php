@@ -1,7 +1,17 @@
 <?php
 
 require_once 'auth.php';
+if ($_POST[form] == 'sent') {
+    $login = $_POST[login];
+    $email = $_POST[email];
+    $restorePassword = new restorePassword();
+    try {
+        $restorePassword->setUserData($login, $email);
+        $restorePassword->mail();
+    } catch (Exception $ex) {
 
+    }
+}
 //человек жмет кнопку восстановить пароль
 //в бд генерируется случайный хеш кода
 //юзеру ставится спец кука с кодом->на почту приходит ссылка с гет запросом к спец скрипту
