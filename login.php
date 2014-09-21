@@ -16,14 +16,14 @@ if ($loginFormSent == 'sent') {
     $password = $_POST[password];
     $_SESSION[userObject]->logUserByLoginPass($login, $password);
     $toTemplate['loggedIn'] = $_SESSION[userObject]->isLoggedIn();
+     if ($_POST[remember] == 1 && $toTemplate[loggedIn] == TRUE) {
+        $_SESSION[userObject]->setCookieForUser();
+    }
     if ($toTemplate[loggedIn] == TRUE) {
         $toTemplate['success'] = 1;
         header("Location: /index.php");
     } else {
         $toTemplate['success'] = 0;
-    }
-    if ($_POST[remember] == 1 && $toTemplate[loggedIn] == TRUE) {
-        $_SESSION[userObject]->setCookieForUser();
     }
 }
 //$_SESSION[userObject]->preparePage($pagePermissions);

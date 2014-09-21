@@ -14,8 +14,11 @@ if ($_POST[form] == 'sent') {
     if ($_POST[email]) {
         $email = $_POST[email];
     }
+    try {
+        
     $_SESSION[regObject]->setUserData($login, $password, $email);
     $success = $_SESSION[regObject]->register();
+    
     if ($success) {
         unset($_SESSION[regObject]);
         $_SESSION[userObject]->logUserByLoginPass($login, $password);
@@ -24,7 +27,11 @@ if ($_POST[form] == 'sent') {
             //Something went wrong...
         } else {
             $_SESSION[userObject]->setCookieForUser();
+            header("Location: /index.php");
         }
     }
-}
+    } catch (Exception $ex) {
+         echo $ex->getMessage();
+        }
+    }
 require 'twigRender.php';

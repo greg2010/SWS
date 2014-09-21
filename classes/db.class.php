@@ -372,7 +372,7 @@ class db {
         return $id;
     }
     
-    public function checkUserRegistered($login) {
+    public function getIDByName($login) {
         $this->openConnection();
         return $this->predefinedMySQLCheckIfUserRegistered($login);
     }
@@ -380,7 +380,7 @@ class db {
     public function registerNewUser($keyID, $vCode, $characterID, $keyStatus, $characterName, $corporationID, $corporationName, $allianceID, $allianceName, $passwordHash, $permissions, $email = NULL, $salt) {
         try {
             $this->predefinedPopulateUsers($characterName, $passwordHash, $permissions, $salt, $email);
-            $id = $this->checkUserRegistered($characterName);
+            $id = $this->getIDByName($characterName);
             $this->predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $keyStatus);
             $this->predefinedPopulatePilotInfo($id, $characterID, $characterName, $corporationID, $corporationName, $allianceID, $allianceName);
         } catch (Exception $ex) {
