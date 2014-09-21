@@ -11,14 +11,13 @@ class userSession {
     private $cookiesArray;
     private $id;
     private $userSalt;
-    private $permissions;
     private $db;
     
     private $isLoggedIn;
     private $pagePermissions;
     private $hasAccessToCurrentPage;
     
-    public $test;
+    public $permissions;
     
     public function __construct() {
         $this->sessionStart();
@@ -29,7 +28,7 @@ class userSession {
     public function __sleep() {
          unset($this->db);
          unset($this->permissions);
-         return array('sessionID', 'id', 'isLoggedIn', 'test');
+         return array('sessionID', 'id', 'isLoggedIn');
      }
      
      public function __wakeup() {

@@ -25,7 +25,7 @@ function SendRequest(){
                             var id = "r_2";
                             var className = "glyphicon glyphicon-remove";
                         }
-                        $(':radio[value='+chars.characterName+']').attr('id', id).after(function() {
+                        $(':radio[value="'+chars.characterName+'"]').attr('id', id).after(function() {
                             var label = $("<label>");
                             $(label).attr('for', id).text(chars.characterName).append(function() {
                                 var span = $("<span>");

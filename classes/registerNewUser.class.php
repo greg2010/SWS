@@ -152,7 +152,7 @@ class registerNewUser {
             $this->db->registerNewUser($this->apiKey[0], $this->apiKey[1], $this->registerArray[$this->login][characterID], $keyStatus, $this->login, $this->registerArray[$this->login][corporationID], $this->registerArray[$this->login][corporationName], $this->registerArray[$this->login][allianceID], $this->registerArray[$this->login][allianceName], $this->passwordHash, $this->registerArray[$this->login][permissions], $this->email, $salt);
             return TRUE;
         } catch (Exception $ex) {
-            //add logs for $ex->getMessage();
+            echo $ex->getMessage();
             return FALSE;
         }
     }
