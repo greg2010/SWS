@@ -91,6 +91,28 @@ class registerNewUser {
     return $randomString;
     }
     
+    private function testPassword($password) {
+        $numbers = '/\d/';
+        $lower = '/[a-z]/';
+        $upper = '/[A-Z]/';
+        
+        if (strlen($password) < 8) {
+            throw new Exception("Your password have to have at least 8 characters in it!", 11);
+        }
+        
+        if (preg_match($numbers, $password)) {
+            throw new Exception("You have to have at least 1 number in your password!", 11);
+        }
+        
+        if (preg_match($lower, $password)) {
+            throw new Exception("You have to have at least 1 lower-case in your password!", 11);
+        }
+        
+        if (preg_match($upper, $password)) {
+            throw new Exception("You have to have at least 1 upper-case in your password!", 11);
+        }
+    }
+    
     public function AjaxAnswer() {
         $returnArray = array_merge($this->guiArray, $this->error);
         return json_encode($returnArray);
@@ -105,6 +127,7 @@ class registerNewUser {
     
     public function setUserData($login, $password, $email = NULL) {
         $this->login = $login;
+        $this->testPassword($password);
         if ($this->registerArray[$this->login][valid] <> 1) {
             throw new Exception("Not valid character!", 20);
         }
