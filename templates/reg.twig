@@ -3,6 +3,12 @@
 {% block title %}Registration{% endblock %}
 
 {% block content %}
+    {% if errorMsg is defined %}
+        {% set isErrorHidden = "" %}
+    {% else %}
+        {% set isErrorHidden = "hidden" %}
+    {% endif %}
+    
 <script type="text/javascript" src="js/scripts.js"></script>
   {#{% if fromPost == '1' %} {# Проверка что юзер действительно пришел из формы. #}
     {#{% if success == '1' %} {# Проверка на успешность логина #}
@@ -15,7 +21,7 @@
  <form method="post">
     <h1 style="color: #f6c000; font-size: 20px;">REGISTRATION</h1>
       <div class="inset">
-          <div class="alert alert-danger" role="alert">
+          <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
               {{errorMsg}}
           </div>
           {# Нижеследующее предупреждение будет выскакивать, если кей и код оказались некорректными #}

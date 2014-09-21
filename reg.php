@@ -2,7 +2,6 @@
 $thisPage = "reg";
 require_once 'auth.php';
 include 'header.php';
-
 $templateName = $thisPage;
 $toTemplate['saveForm']['keyID'] = $_POST[keyID];
 $toTemplate['saveForm']['vCode'] = $_POST[vCode];
