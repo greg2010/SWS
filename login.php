@@ -18,6 +18,7 @@ if ($loginFormSent == 'sent') {
     $toTemplate['loggedIn'] = $_SESSION[userObject]->isLoggedIn();
     if ($toTemplate[loggedIn] == TRUE) {
         $toTemplate['success'] = 1;
+        header("Location: /index.php");
     } else {
         $toTemplate['success'] = 0;
     }
