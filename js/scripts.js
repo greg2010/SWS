@@ -59,10 +59,10 @@ $(document).ready(function() {
         }
     });
     var passValid;
-    var validColor = "#569b44";
-    var validBorder = "1px solid #569b44";
-    var invalidColor = "#ff0000";
-    var invalidBorder = "1px solid #ff0000";
+    var validColor = "#458B00";
+    var validBorder = "1px solid #458B00";
+    var invalidColor = "#FF4500";
+    var invalidBorder = "1px solid #FF4500";
         $('#password').on("input", (function() {
         if($(this).val() !== '') {
             
