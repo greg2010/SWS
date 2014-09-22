@@ -217,7 +217,6 @@ form:before {
 }
 
 form h1 {
-        font-size:18px;
         text-shadow:0 1px 0 black;
         text-align:center;
         padding:15px 0;
@@ -448,4 +447,19 @@ input[type=button]:hover {
 #danger {
         border-color: #FF4500;
         color: #FF4500;
+}
+
+#getAPI {
+            margin-left: 400px;
+}
+
+#success {
+            border-color: #458B00;
+            color: #458B00;
+}
+
+#SetIns {
+            margin-left: 80px;
+            margin-right: 80px;
+            margin-bottom: 80px;
 }

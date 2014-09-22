@@ -18,9 +18,10 @@
         <li><a href="#">EVE API</a></li>
         <li><a href="#">TeamSpeak</a></li>
     </ul>
-    <form id="formSettings">            
+    <form id="formSettings">  
+ <!--Форма смены почты и пароля-->
         <h1>PROFILE SETTINGS</h1>
-    <div class="inset" style="margin-left: 60px;">
+    <div class="inset" id="SetIns">
         <h2>ADD / CHANGE E-MAIL</h2>
             <p>
                 <label for="email">E-MAIL</label>
@@ -54,6 +55,52 @@
             <p class="p-container">
                 <input type="submit" name="go" id="go" value="SUBMIT">
             </p>
+<!--Конец формы смены почты и пароля-->           
+<!--Форма смены API-->
+
+        <h2>CURRENT API</h2>
+        <br>
+            <p>
+                <label for="username">KEY ID</label>
+                <input type="text" name="usermane" id="keyID2">
+            </p>
+            <p>
+                <label for="vCode">VERIFICATION CODE</label>
+                <input type="text" name="vCode" id="vCode2">
+            </p>
+            <br>
+                <span>If you want to change api, you must delete the current api first</span>
+            <br>
+            <hr id="danger"/>
+                <span id="danger">If you're sure you want to delete the current api, click on this button! If you're not sure, don't touch the button!</span>
+            <br>
+            <br>
+            <p class="p-container">
+                <input type="button" name="delete" id="danger" value="DELETE">
+            </p>
+
+        <h2>NEW API</h2>
+            <br>
+                <a href="https://support.eveonline.com/api/key/createpredefined/8" id="getAPI">Get Key ID & vCode here</a>
+            <br>
+            <p>
+                <label for="username">KEY ID</label>
+                <input type="text" name="usermane" id="keyID2">
+            </p>
+            <p>
+                <label for="vCode">VERIFICATION CODE</label>
+                <input type="text" name="vCode" id="vCode2">
+            </p>
+            <br>
+            <!--<div class="alert alert-danger" role="alert">Sorry, but key ID or vCode incorrect!</div>-->
+            <hr />
+
+            <p class="p-container">
+                <input type="submit" name="go" id="go" value="SUBMIT">
+            </p>
+            <!--<div class="alert alert-danger" role="alert" id="success">Your api successfully changed!</div>-->    
+<!--Конец смены API-->
+
     </div>
     </form>
 </div>
