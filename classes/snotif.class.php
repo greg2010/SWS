@@ -1,7 +1,7 @@
 <?php
 
 use Pheal\Pheal;
-use Pheal\Core\Config;
+use Pheal\Core\Config as PhealConfig;
 
 class snotif {
 
@@ -17,8 +17,8 @@ class snotif {
         $this->txtarr = yaml_parse($text);
         $this->db = db::getInstance();
         $this->log = new logging();
-        Config::getInstance()->cache = new \Pheal\Cache\FileStorage(dirname(__FILE__) . '/../phealcache/');
-        Config::getInstance()->access = new \Pheal\Access\StaticCheck();
+        //PhealConfig::getInstance()->cache = new \Pheal\Cache\PdoStorage("mysql:host=" . config::hostname . ";dbname=" . config::database, config::username, config::password, "phealng-cache");
+        PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage(dirname(__FILE__) . '/../phealcache/');
         $this->supplementedNotifText();
     }
 

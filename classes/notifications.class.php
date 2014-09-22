@@ -1,6 +1,7 @@
 <?php
 
 use Pheal\Pheal;
+use Pheal\Core\Config as PhealConfig;
 
 class notifications {
 
@@ -21,6 +22,8 @@ class notifications {
         $this->allianceID = $allianceID;
         $this->db = db::getInstance();
         $this->log = new logging();
+        //PhealConfig::getInstance()->cache = new \Pheal\Cache\PdoStorage("mysql:host=" . config::hostname . ";dbname=" . config::database, config::username, config::password, "phealng-cache");
+        PhealConfig::getInstance()->cache = new \Pheal\Cache\HashedNameFileStorage(dirname(__FILE__) . '/../phealcache/');
     }
 
     private function getNotificationsXML(){       
@@ -84,7 +87,7 @@ class notifications {
                     if($key['notificationID'] == $row->notificationID){
                         $arrpos = array_search($key, $this->notif);
                         $notiftext = ($this->notif[$arrpos]['typeID']==76) ? (new snotif((string)$row)) : (new snotif((string)$row, $this->corporationID, $this->allianceID));
-                        $this->log->merge($notiftext->log->get(true), "getNotificationTextsXML, id: " . $row->notificationID);
+                        $this->log->merge($notiftext->log->get(true), "getNotificationTextsXML" . $row->notificationID);
                         $this->notif[$arrpos]['NotificationText'] = $notiftext->getText();
                     }
                 }
