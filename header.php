@@ -1,6 +1,11 @@
 <?php
 $active = " class=active";
-if ($_SESSION[userObject]->isLoggedIn() === FALSE) {
+if ($_SESSION[userObject]->isLoggedIn() == 0) {
+    if ($thisPage === 'index') {
+        $toTemplate['isIndex'] = $active;
+    } else {
+        $toTemplate['isIndex'] = '';
+    }
     if ($thisPage === 'login') {
         $toTemplate['isLogin'] = $active;
     } else {

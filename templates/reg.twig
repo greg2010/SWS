@@ -3,6 +3,12 @@
 {% block title %}Registration{% endblock %}
 
 {% block content %}
+    {% if errorMsg is defined %}
+        {% set isErrorHidden = "" %}
+    {% else %}
+        {% set isErrorHidden = "hidden" %}
+    {% endif %}
+    
 <script type="text/javascript" src="js/scripts.js"></script>
   {#{% if fromPost == '1' %} {# Проверка что юзер действительно пришел из формы. #}
     {#{% if success == '1' %} {# Проверка на успешность логина #}
@@ -12,47 +18,59 @@
     {#{% endif %}
 {#{% elseif %} #}
     
- <form>
+ <form method="post">
     <h1 style="color: #f6c000; font-size: 20px;">REGISTRATION</h1>
       <div class="inset">
+          <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
+              {{errorMsg}}
+          </div>
+          {# Нижеследующее предупреждение будет выскакивать, если кей и код оказались некорректными #}
+          <div class="alert alert-danger" role="alert-api" hidden></div>
           <p>
             <label for="keyID">KEY ID</label>
-            <input type="text" name="keyID" id="keyID">
+            <input type="text" name="keyID" value="{{saveForm.keyID}}" id="keyID">
           </p>
           <p>
             <label for="vCode">VERIFICATION CODE</label>
-            <input type="text" name="vCode" id="vCode">
+            <input type="text" name="vCode" value="{{saveForm.vCode}}" id="vCode">
           </p>
           <p class="p-container">
-            <a href="https://support.eveonline.com/api/key/createpredefined/8">Get Key ID & vCode</a>                         
-            <input type="button" name="go" id="go" onclick="SendRequest()" value="Get Characters" />
-          </p>
-        {# Нижеследующее предупреждение будет выскакивать, если кей и код оказались некорректными #}
-        <div class="alert alert-danger" role="alert">Sorry, but key ID or vCode incorrect!</div>
-    <hr />
-            <label for="select">SELECT CHARACTER</label>
-        <div class="new-select-style-wpandyou">
-           <select class="myselect">
-                 
-            </select>
-        </div>
+            <a href="https://support.eveonline.com/api/key/createpredefined/8">Get Key ID & vCode</a>
+            <input type="button" name="go" id="getChars" onclick="SendRequest()" value="Get Characters" />
+          </p>     
+    <hr id="chars" hidden />
+        <p id="chars" hidden>
+            <label for="SelectChar" style="color: #ccc;">SELECT CHARACTER</label><br>
+            <div id="charList">
+            </div>
+        </p>  
     <hr />
           <p>
             <label for="email">E-MAIL (OPTIONAL)</label>
-            <input type="text" name="email" id="email">
+            <input type="text" name="email" value="{{saveForm.email}}" id="email">
           </p>
+          <div class="alert alert-danger" role="alert-email" hidden></div>
     <hr />
           <p>
             <label for="password">PASSWORD</label>
             <input type="password" name="password" id="password">
+          <span id="passmust">Your password must:</span>
+          <ul id="reqs">
+              <li id="length">Have more than 8 symbols</li>
+              <li id="numbers">Have at least 1 number</li>
+              <li id="upperCase">Have at least 1 upper-case letter</li>
+              <li id="lowerCase">Have at least 1 lower-case letter</li>
+          </ul>
           </p>
           <p>
             <label for="password">REPEAT PASSWORD</label>
-            <input type="password" name="password" id="password">
+            <input type="password" id="password-repeat" name="passwordRepeat">
           </p>
+          <div class="alert alert-danger" role="alert-password-repeat" hidden></div>
     <hr />
            <p class="p-container">
-               <input type="submit" name="go" id="go" value="SUBMIT">
+               <input type="hidden" name="form" value="sent">
+               <input type="submit" name="go" id="go" value="SUBMIT" disabled>
            </p>
        </div>
 </form>

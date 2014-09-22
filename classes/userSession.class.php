@@ -10,15 +10,16 @@ class userSession {
     private $sessionID;
     private $cookiesArray;
     private $id;
-    private $userSalt;
-    private $permissions;
+    private $salt;
     private $db;
     
     private $isLoggedIn;
     private $pagePermissions;
     private $hasAccessToCurrentPage;
     
-    public $test;
+    public $userInfo;
+    
+    public $permissions;
     
     public function __construct() {
         $this->sessionStart();
@@ -29,7 +30,7 @@ class userSession {
     public function __sleep() {
          unset($this->db);
          unset($this->permissions);
-         return array('sessionID', 'id', 'isLoggedIn', 'test');
+         return array('sessionID', 'id', 'isLoggedIn', 'userInfo');
      }
      
      public function __wakeup() {
@@ -157,17 +158,23 @@ class userSession {
     private function initialize() {
         $this->permissions = new permissions($this->id);
         try {
-            $query = "SELECT `salt` FROM `users` WHERE `id` = '$this->id'";
+            $query = "SELECT * FROM `pilotInfo` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
-            $this->userSalt = $this->db->getMysqlResult($result);
+            $this->userInfo = $this->db->fetchAssoc($result);
         } catch (Exception $ex) {
-            //handle mysql errors
+            echo $ex->getMessage();
         }
     }
     
     public function logUserByLoginPass($login, $password) {
-        $passwordHash = hash(config::password_hash_type, $password);
         try {
+            $id = $this->db->getIDByName($login);
+            if ($id) {
+                $query = "SELECT `salt` FROM `users` WHERE `id` = $id";
+                $this->salt = $this->db->getMySQLResult($this->db->query($query));
+            }
+            $password = $password . $this->salt;
+            $passwordHash = hash(config::password_hash_type, $password);
             $this->id = $this->db->getUserByLogin($login, $passwordHash);
             if ($this->id === FALSE) {
                 $this->isLoggedIn = FALSE;
@@ -216,7 +223,7 @@ class userSession {
     }
     
     public function isLoggedIn() {
-        return $this->isLoggedIn;
+        return strval($this->isLoggedIn);
     }
     
     public function hasPermission() {
@@ -226,5 +233,8 @@ class userSession {
     public function removeCookie() {
         $cookieValue = $this->generateCookieForCurrentUser();
         setcookie('SSID', $cookieValue, time()-config::cookie_lifetime);
+    }
+    public function getPilotInfo() {
+        return $this->userInfo;
     }
 }

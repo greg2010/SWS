@@ -13,9 +13,10 @@
 {#{% elseif %} #}
     
  <form action="login.php" method="post">
+   <h1 style="color: #f6c000; font-size: 20px;">LOG IN</h1>
    <div class="inset">
       <p>
-        <label for="email">USERNAME</label>
+        <label for="email">INGAME NAME</label>
         <input type="text" name="login" id="email">
       </p>
       <p>
@@ -25,10 +26,11 @@
         {% if success == '0' %}
         <div class="alert alert-danger" role="alert">Sorry, but login or password incorrect!</div>
         {% endif %}
-      <p>
-        <input type="checkbox" name="remember" id="remember">
-        <label for="remember">Remember me</label>
-      </p>
+  <hr />
+    <div class="amPmCheckbox">
+        <input type="checkbox" name="rememberme" class="checkboxLabel main_street_input" id="ch1" value="1" />
+        <label for="ch1">Remember me</label>
+    </div>
   </div>
       <p class="p-container">
         <span><a href="#">Forgot password ?</a></span>
