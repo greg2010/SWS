@@ -1,0 +1,61 @@
+{% extends "baseNoAuth.twig" %}
+
+{% block title %}Profile Settings{% endblock %}
+
+{% block content %}
+
+  {#{% if fromPost == '1' %} {# Проверка что юзер действительно пришел из формы. #}
+    {#{% if success == '1' %} {# Проверка на успешность логина #}
+        {# Вывод сообщения об успешной регистрации и редиректим (куда?) #}
+    {#{% elseif %}
+        {# Вывод сообщения о неудачной попытке регистрации (на стороне сервера). #}
+    {#{% endif %}
+{#{% elseif %} #}
+    
+<div class="container">
+    <ul class="nav nav-tabs navbar-inverse" role="tablist">
+        <li class="active"><a href="#">PROFILE</a></li>
+        <li><a href="#">EVE API</a></li>
+        <li><a href="#">TeamSpeak</a></li>
+    </ul>
+    <form id="formSettings">            
+        <h1>PROFILE SETTINGS</h1>
+    <div class="inset" style="margin-left: 60px;">
+        <h2>ADD / CHANGE E-MAIL</h2>
+            <p>
+                <label for="email">E-MAIL</label>
+                <input type="text" name="email" id="email2">
+            </p>
+            <div class="amPmCheckbox">
+                <input type="checkbox" name="allow" class="checkboxLabel main_street_input" id="ch2" value="1" />
+                <label for="ch2">I allow users to send e-mail to me</label>
+            </div>
+            <br>
+        <!--<div class="alert alert-danger" role="alert" id="email2">Sorry, but this e-mail isn't suitable!</div>-->
+
+        <h2>CHANGE PASSWORD</h2>
+            <p>
+                <label for="password">NEW PASSWORD</label>
+                <input type="password" name="password" id="password2">
+            </p>
+        <!--<div class="alert alert-danger" role="alert" id="password2">Sorry, but password is very simple!</div>-->
+            <p>
+                <label for="password">REPEAT NEW PASSWORD</label>
+                <input type="password" name="password" id="password2">
+            </p>
+        <!--<div class="alert alert-danger" role="alert" id="password2">Sorry, but the password doesn't match!</div>-->
+            <p>
+            <hr />
+                <label for="password">CURRENT PASSWORD FOR SAVE CHANGES</label>
+                <input type="password" name="password" id="password2">
+            </p>
+        <!--<div class="alert alert-danger" role="alert" id="password2">Sorry, but login or password incorrect!</div>-->
+
+            <p class="p-container">
+                <input type="submit" name="go" id="go" value="SUBMIT">
+            </p>
+    </div>
+    </form>
+</div>
+     
+{% endblock %}

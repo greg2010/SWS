@@ -26,6 +26,10 @@ img {
         height:auto;
 }
 
+span {
+        color: #ccc;
+}
+
 #header {
         height: auto;
 }
@@ -142,10 +146,6 @@ button, input, select, optgroup, textarea {
         color: #f6c000;
 }
 
-hr {
-    color: #f6c000;
-}
-
 
 #logo {
         background:url(../images/Logo.png) no-repeat top left;
@@ -223,6 +223,8 @@ form h1 {
         padding:15px 0;
         border-bottom:1px solid rgba(0,0,0,1);
         position:relative;
+        color: #f6c000; 
+        font-size: 20px;
 }
 
 form h1:after {
@@ -390,4 +392,60 @@ input[type=button]:hover {
 
 #passmust {
         color: #ccc;
+}
+
+.nav > li > a:hover,
+.nav > li > a:focus {
+  background-color: #333;
+}
+
+.nav > li > a > img {
+  max-width: none;
+}
+
+.nav-tabs > li > a {
+  border: 1px solid transparent;
+}
+.nav-tabs > li > a:hover {
+  border-color: #f6c000;
+}
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+  color: #ccc;
+  background-color: #111111;
+  border: transparent;
+  border-bottom-color: transparent;
+}
+
+
+#formSettings {
+            width:auto;
+            height: auto;
+            margin-top: 0px;
+}
+
+#formSettings:before {
+           left:12%;
+}
+        
+#email2 {
+            width: 500px;
+}
+
+#password2 {
+            width: 500px;
+}
+
+#keyID2 {
+            width: 80px;
+}
+
+#vCode2 {
+            width: 570px;
+}
+
+#danger {
+        border-color: #FF4500;
+        color: #FF4500;
 }
