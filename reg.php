@@ -12,11 +12,12 @@ if ($_POST[form] == 'sent') {
     }
     $login = $_POST[login];
     $password = $_POST[password];
+    $passwordRepeat = $_POST[passwordRepeat];
     if ($_POST[email]) {
         $email = $_POST[email];
     }
     try {
-        $_SESSION[regObject]->setUserData($login, $password, $email);
+        $_SESSION[regObject]->setUserData($login, $password, $passwordRepeat, $email);
         $success = $_SESSION[regObject]->register();
 
         if ($success) {
@@ -34,6 +35,12 @@ if ($_POST[form] == 'sent') {
         switch ($ex->getCode()) {
             case 10:
                 $toTemplate["errorMsg"] = "Please fill in all fields!";
+                break;
+            case 11:
+                $toTemplate["errorMsg"] = "There is a problem with your password: " . $ex->getMessage();
+                break;
+            case 12:
+                $toTemplate["errorMsg"] = "Your passwords don't match!";
                 break;
             case 15:
                 $toTemplate["errorMsg"] = "There is a problem with CCP servers. Please try again later.";

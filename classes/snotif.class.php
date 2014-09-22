@@ -1,7 +1,7 @@
 <?php
 
 use Pheal\Pheal;
-use Pheal\Core\Config;
+use Pheal\Core\Config as PhealConfig;
 
 class snotif {
 
@@ -17,8 +17,8 @@ class snotif {
         $this->txtarr = yaml_parse($text);
         $this->db = db::getInstance();
         $this->log = new logging();
-        Config::getInstance()->cache = new \Pheal\Cache\FileStorage(dirname(__FILE__) . '/../phealcache/');
-        Config::getInstance()->access = new \Pheal\Access\StaticCheck();
+        //PhealConfig::getInstance()->cache = new \Pheal\Cache\PdoStorage("mysql:host=" . config::hostname . ";dbname=" . config::database, config::username, config::password, "phealng-cache");
+        PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage(dirname(__FILE__) . '/../phealcache/');
         $this->supplementedNotifText();
     }
 
@@ -73,7 +73,7 @@ class snotif {
 
     private function typeID(){
         try {
-            $query = "SELECT `typeName` FROM  `invTypes` WHERE `typeID`='$this->txtarr[typeID]' LIMIT 1";
+            $query = "SELECT `typeName` FROM `invTypes` WHERE `typeID`='{$this->txtarr[typeID]}' LIMIT 1";
             $result = $this->db->query($query);
             $this->txtarr[typeName] = $this->db->getMysqlResult($result);
         } catch (Exception $ex) {
@@ -84,7 +84,7 @@ class snotif {
     private function wants(){
         for($i=0; $i < count($this->txtarr[wants]); $i++){
             try {
-                $query = "SELECT `typeName` FROM  `invTypes` WHERE `typeID`='{$this->txtarr[wants][$i][typeID]}' LIMIT 1";
+                $query = "SELECT `typeName` FROM `invTypes` WHERE `typeID`='{$this->txtarr[wants][$i][typeID]}' LIMIT 1";
                 $result = $this->db->query($query);
                 $this->txtarr[wants][$i][typeName] = $this->db->getMysqlResult($result);
             } catch (Exception $ex) {
@@ -95,7 +95,7 @@ class snotif {
 
     private function moonID(){
         try {
-            $query = "SELECT `itemName` FROM  `mapDenormalize` WHERE `itemID`='$this->txtarr[moonID]' LIMIT 1";
+            $query = "SELECT `itemName` FROM `mapDenormalize` WHERE `itemID`='{$this->txtarr[moonID]}' LIMIT 1";
             $result = $this->db->query($query);
             $this->txtarr[moonName] = $this->db->getMysqlResult($result);
         } catch (Exception $ex) {
@@ -105,7 +105,7 @@ class snotif {
 
     private function solarSystemID(){
         try {
-            $query = "SELECT `solarSystemName` FROM  `mapSolarSystems` WHERE `solarSystemID`='$this->txtarr[solarSystemID]' LIMIT 1";
+            $query = "SELECT `solarSystemName` FROM `mapSolarSystems` WHERE `solarSystemID`='{$this->txtarr[solarSystemID]}' LIMIT 1";
             $result = $this->db->query($query);
             $this->txtarr[solarSystemName] = $this->db->getMysqlResult($result);
         } catch (Exception $ex) {
@@ -115,7 +115,7 @@ class snotif {
 
     private function planetID(){
         try {
-            $query = "SELECT `itemName` FROM  `mapDenormalize` WHERE `itemID`='$this->txtarr[planetID]' LIMIT 1";
+            $query = "SELECT `itemName` FROM `mapDenormalize` WHERE `itemID`='{$this->txtarr[planetID]}' LIMIT 1";
             $result = $this->db->query($query);
             $this->txtarr[planetName] = $this->db->getMysqlResult($result);
         } catch (Exception $ex) {

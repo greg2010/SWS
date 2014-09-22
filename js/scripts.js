@@ -1,3 +1,6 @@
+var charReady;
+var passReady;
+var repPassReady;
 function SendRequest(){
     $.ajax({
         type: "POST",
@@ -36,12 +39,15 @@ function SendRequest(){
                         });
                     }
                 });
-                $('#go').removeAttr('disabled')
             }
+            charReady = 1;
+            console.log("charReady: ", charReady);
         }
     });
 }
+
 $(document).ready(function() {
+
     $('#email').blur(function() {
         if($(this).val() !== '') {
             var pattern = /^([a-z0-9_\.-])+@[a-z0-9-]+\.([a-z]{2,4}\.)?[a-z]{2,4}$/i;
@@ -103,9 +109,12 @@ $(document).ready(function() {
             }
             if (numberValid === 1 && lowerValid === 1 && upperValid === 1 && countValid === 1) {
                 passValid = 1;
+                passReady = 1;
+                console.log("passReady: ", passReady);
                 $(this).css({'border' : validBorder});
             } else {
                 passValid = 0;
+                passReady = 0;
                 $(this).css({'border' : invalidBorder});
             }
         }
@@ -115,10 +124,17 @@ $(document).ready(function() {
             if($(this).val() !== $('#password').val()) {
                 $(this).css({'border' : invalidBorder});  
                 $('div[role="alert-password-repeat"]').removeAttr('hidden').text('Passwords don\'t match!');
+                repPassReady = 0;
             } else {
                 $(this).css({'border' : validBorder});
-                $('div[role="alert-password-repeat"]').attr('hidden', 1).replace('Passwords don\'t match!\n', '');
+                repPassReady = 1;
+                console.log("repPassReady: ", repPassReady);
+                $('div[role="alert-password-repeat"]').attr('hidden', 1).text('');
             }
         }
     });
+    if (charReady === 1 && passReady === 1 && repPassReady === 1) {
+        console.log('success');
+        $('#go').removeAttr('disabled');
+    }
 });

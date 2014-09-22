@@ -1,6 +1,7 @@
 <?php
 
 use Pheal\Pheal;
+use Pheal\Core\Config as PhealConfig;
 
 interface IAPIUserManagement {
     function getPilotInfo();
@@ -26,6 +27,8 @@ class APIUserManagement implements IAPIUserManagement {
     public function __construct($id = NULL) {
         $this->db = db::getInstance();
         $this->log = new logging();
+        //PhealConfig::getInstance()->cache = new \Pheal\Cache\PdoStorage("mysql:host=" . config::hostname . ";dbname=" . config::database, config::username, config::password, "phealng-cache");
+        PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage(dirname(__FILE__) . '/../phealcache/');
         $this->permissions = new permissions($id);
         $this->userManagement = new userManagement($id);
         if(!isset($id)) {
