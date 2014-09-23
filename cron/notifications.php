@@ -13,7 +13,7 @@ if($pid == -2){
         $query = "SELECT `characterID`, `keyID`, `vCode` FROM `apiList` WHERE `keyStatus` > 0";
 		$result = mysqli_query($connection, $query);
 		while($array = mysqli_fetch_assoc($result)) $userList[] = $array;
-		$query = "SELECT `characterID`, `characterName`, `corporationID`, `allianceID` FROM `pilotInfo`";
+		$query = "SELECT * FROM `pilotInfo`";
 		$result = mysqli_query($connection, $query);
 		while($array = mysqli_fetch_assoc($result)) $tmpArr[] = $array;
         mysqli_close($connection);
@@ -24,6 +24,8 @@ if($pid == -2){
         			$userList[$i][characterName] = $row[characterName];
         			$userList[$i][corporationID] = $row[corporationID];
         			$userList[$i][allianceID] = $row[allianceID];
+        			$userList[$i][corporationName] = $row[corporationName];
+        			$userList[$i][allianceName] = $row[allianceName];
         			break;
         		}
         	}
@@ -56,7 +58,7 @@ for($t=0; $t<$thread_count; $t++){
 		$users_last = ($t==($thread_count-1)) ? ($users_count) : (($t+1)*$users_in_thread);
 		for($i=$users_first; $i<$users_last; $i++){
 			$smt = round(microtime(1)*1000);
-			$notification = new notifications($userList[$i][keyID], $userList[$i][vCode], $userList[$i][characterID], $userList[$i][corporationID], $userList[$i][allianceID]);
+			$notification = new notifications($userList[$i]);
 			$drake = $notification->processNotif();
 			if($drake != NULL){
 				$log->merge($drake, $userList[$i][keyID]);
