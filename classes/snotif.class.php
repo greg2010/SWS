@@ -7,23 +7,31 @@ class snotif {
 
     public $log;
     private $db;
-    protected $OwnerCorporationID;
-    protected $OwnerAllianceID;
     private $txtarr = array();
 
-	public function __construct($text, $oc = NULL, $oa = NULL){
-        $this->OwnerCorporationID = $oc;
-        $this->OwnerAllianceID = $oa;
+	public function __construct($text, $ocn, $oan, $isf){
         $this->txtarr = yaml_parse($text);
         $this->db = db::getInstance();
         $this->log = new logging();
         //PhealConfig::getInstance()->cache = new \Pheal\Cache\PdoStorage("mysql:host=" . config::hostname . ";dbname=" . config::database, config::username, config::password, "phealng-cache");
         PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage(dirname(__FILE__) . '/../phealcache/');
-        $this->supplementedNotifText();
+
+        $this->txtarr[OwnerCorpName] = $ocn;
+        $this->txtarr[OwnerAllyName] = $oan;
+        if($this->txtarr[aggressorID]) $this->aggressor();
+        if(!$isf){
+            if($this->txtarr[corpID] || $this->txtarr[aggressorCorpID]) $this->CorpID();
+            if($this->txtarr[allianceID] || $this->txtarr[aggressorAllianceID]) $this->AllianceID();
+        }
+        if($this->txtarr[typeID]) $this->typeID();
+        if($this->txtarr[wants]) $this->wants();
+        if($this->txtarr[moonID]) $this->moonID();
+        if($this->txtarr[solarSystemID]) $this->solarSystemID();
+        if($this->txtarr[planetID]) $this->planetID();
     }
 
     private function aggressor(){
-        $pheal = new Pheal($this->keyID, $this->vCode, "eve");
+        $pheal = new Pheal(NULL, NULL, "eve");
         try{
             $response = $pheal->CharacterName(array("IDs" => $this->txtarr[aggressorID]));
             $this->txtarr[aggressorName] = $response->characters[0]->name;
@@ -33,34 +41,21 @@ class snotif {
     }
 
     private function CorpID(){
-        $pheal = new Pheal($this->keyID, $this->vCode, "corp");
+        $pheal = new Pheal(NULL, NULL, "corp");
         try{
-            $response = $pheal->CorporationSheet(array("corporationID" => $this->txtarr[corpID]));
+            $response = ($this->txtarr[corpID]) ? ($pheal->CorporationSheet(array("corporationID" => $this->txtarr[corpID]))) : ($pheal->CorporationSheet(array("corporationID" => $this->txtarr[aggressorCorpID])));
             $this->txtarr[corpName] = $response->corporationName;
             $this->txtarr[corpTicker] = $response->ticker;
         } catch (\Pheal\Exceptions\PhealException $e){
              $this->log->put("CorpID", "err " . $e->getMessage());
         }
-        if($this->OwnerCorporationID != NULL){
-            try{
-                $response = $pheal->CorporationSheet(array("corporationID" => $this->OwnerCorporationID));
-                $this->txtarr[OwnerCorpName] = $response->corporationName;
-                $this->txtarr[OwnerCorpTicker] = $response->ticker;
-            } catch (\Pheal\Exceptions\PhealException $e){
-                $this->log->put("CorpID_owner", "err " . $e->getMessage());
-            }
-        }
     }
 
     private function AllianceID(){
-        $pheal = new Pheal($this->keyID, $this->vCode, "eve");
+        $pheal = new Pheal(NULL, NULL, "eve");
         try{
             $response = $pheal->AllianceList();
             foreach($response->alliances as $row){
-                if($this->OwnerAllianceID != NULL && $row->allianceID == $this->OwnerAllianceID){
-                    $this->txtarr[OwnerAllyName] = $row->name;
-                    $this->txtarr[OwnerAllyTicker] = $row->shortName;
-                }
                 if($row->allianceID == $this->txtarr[allianceID] || $row->allianceID == $this->txtarr[aggressorAllianceID]){
                     $this->txtarr[allyName] = $row->name;
                     $this->txtarr[allyTicker] = $row->shortName;
@@ -121,17 +116,6 @@ class snotif {
         } catch (Exception $ex) {
             $this->log->put("planetID", "err " . $ex->getMessage());
         }
-    }
-    
-    private function supplementedNotifText(){
-        if($this->txtarr[aggressorID]) $this->aggressor();
-        if($this->txtarr[corpID] || $this->txtarr[aggressorCorpID] || $this->OwnerCorporationID != NULL) $this->CorpID();
-        if($this->txtarr[allianceID] || $this->txtarr[aggressorAllianceID] || $this->OwnerAllianceID != NULL) $this->AllianceID();
-        if($this->txtarr[typeID]) $this->typeID();
-        if($this->txtarr[wants]) $this->wants();
-        if($this->txtarr[moonID]) $this->moonID();
-        if($this->txtarr[solarSystemID]) $this->solarSystemID();
-        if($this->txtarr[planetID]) $this->planetID();
     }
 
     public function getText(){

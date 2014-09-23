@@ -5,21 +5,13 @@ use Pheal\Core\Config as PhealConfig;
 
 class notifications {
 
-    protected $keyID;
-    protected $vCode;
-    protected $characterID;
-    protected $corporationID;
-    protected $allianceID;
+    protected $key = array();
     private $log;
     private $db;
     private $notif = array();
 
-	public function __construct($keyID, $vCode, $characterID, $corporationID, $allianceID){
-        $this->keyID = $keyID;
-        $this->vCode = $vCode;
-        $this->characterID = $characterID;
-        $this->corporationID = $corporationID;
-        $this->allianceID = $allianceID;
+	public function __construct($key = array()){
+        $this->key = $key;
         $this->db = db::getInstance();
         $this->log = new logging();
         //PhealConfig::getInstance()->cache = new \Pheal\Cache\PdoStorage("mysql:host=" . config::hostname . ";dbname=" . config::database, config::username, config::password, "phealng-cache");
@@ -28,9 +20,9 @@ class notifications {
     }
 
     private function getNotificationsXML(){       
-        $pheal = new Pheal($this->keyID, $this->vCode, "char");
+        $pheal = new Pheal($this->key[keyID], $this->key[vCode], "char");
         try{
-            $response = $pheal->Notifications(array("characterID" => $this->characterID));
+            $response = $pheal->Notifications(array("characterID" => $this->key[characterID]));
             foreach($response->notifications as $row){
                 $rpt = false;
                 $rtype = false;
@@ -80,14 +72,15 @@ class notifications {
     }
 
     private function getNotificationTextsXML($notificationIDs){         
-        $pheal = new Pheal($this->keyID, $this->vCode, "char");
+        $pheal = new Pheal($this->key[keyID], $this->key[vCode], "char");
         try{
-            $response = $pheal->NotificationTexts(array("characterID" => $this->characterID, "IDs" => $notificationIDs));
+            $response = $pheal->NotificationTexts(array("characterID" => $this->key[characterID], "IDs" => $notificationIDs));
             foreach($response->notifications as $row){
                 foreach($this->notif as $key){
                     if($key['notificationID'] == $row->notificationID){
                         $arrpos = array_search($key, $this->notif);
-                        $notiftext = ($this->notif[$arrpos]['typeID']==76) ? (new snotif((string)$row)) : (new snotif((string)$row, $this->corporationID, $this->allianceID));
+                        $notiftext = ($this->notif[$arrpos][typeID]==76) ? (new snotif((string)$row, $this->key[corporationName], $this->key[allianceName], true))
+                         : (new snotif((string)$row, $this->key[corporationName], $this->key[allianceName], false));
                         $this->log->merge($notiftext->log->get(true), "getNotificationTextsXML " . $row->notificationID);
                         $this->notif[$arrpos]['NotificationText'] = $notiftext->getText();
                     }
@@ -102,8 +95,8 @@ class notifications {
         try {
             foreach ($this->notif as $n){
                 $notixtxttosql = addslashes($n['NotificationText']);
-                $query = "INSERT INTO `notifications` SET `notificationID` = '{$n['notificationID']}', `typeID` = '{$n['typeID']}', `senderID` = '{$n['senderID']}', `senderName` = '{$n['senderName']}',
-                 `sentDate` = '{$n['sentDate']}', `NotificationText` = '$notixtxttosql', `corporationID` = '$this->corporationID', `allianceID` = '$this->allianceID'";
+                $query = "INSERT INTO `notifications` SET `notificationID` = '{$n[notificationID]}', `typeID` = '{$n[typeID]}', `senderID` = '{$n[senderID]}', `senderName` = '{$n[senderName]}',
+                 `sentDate` = '{$n[sentDate]}', `NotificationText` = '$notixtxttosql', `corporationID` = '{$this->key[corporationID]}', `allianceID` = '{$this->key[allianceID]}'";
                 $result = $this->db->query($query);
             }
         } catch (Exception $ex) {
