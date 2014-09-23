@@ -15,7 +15,7 @@ class logging {
 	}
 
     public function merge($arr, $sub=NULL){
-        if(isset($arr)){
+        if($arr != NULL){
     	   if(isset($sub)){
     	       if($this->log[$sub] == NULL) $this->log[$sub] = array();
     	       $this->log[$sub] = array_merge($arr, $this->log[$sub]);
