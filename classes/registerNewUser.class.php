@@ -31,7 +31,7 @@ class registerNewUser {
         if (!$this->apiPilotInfo) {
             $error = $this->APIUserManagement->log->get();
             $this->error = array (
-                "status" => $error[getApiPilotInfo_code],
+                "status" => -30000,
                 "message" => ltrim($error[getApiPilotInfo], "err ")
             );
             return FALSE;

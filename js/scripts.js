@@ -133,7 +133,7 @@ $(document).ready(function() {
             }
         }
     });
-    if (charReady === 1 && passReady === 1 && repPassReady === 1) {
+if (charReady === 1 && passReady === 1 && repPassReady === 1) {
         console.log('success');
         $('#go').removeAttr('disabled');
     }
