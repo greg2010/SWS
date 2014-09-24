@@ -191,6 +191,19 @@ return $tsAdmin;
     $perm=$s_gr_clid['data'];
     return $perm;
     }
+
+
+    public function getUid($nick){
+     $tsAdmin=$this->tsAdmin;
+    $info=$tsAdmin->clientDbFind("$nick");
+    $cl_id=$info['data'][0]['cldbid'];
+    $cDbInf_raw=$tsAdmin->clientDbInfo("$cl_id");
+    $Uid=$cDbInf_raw['data']['client_unique_identifier'];
+
+    return $Uid;
+    }
+
+
     
     private function setGrUser($sgid,$nick){
     $tsAdmin=$this->tsAdmin;
