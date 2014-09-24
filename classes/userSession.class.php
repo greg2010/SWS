@@ -163,6 +163,14 @@ class userSession {
             $query = "SELECT * FROM `pilotInfo` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
             $this->userInfo = $this->db->fetchAssoc($result);
+            
+            $query = "SELECT * FROM `corporationList` WHERE `id` = '{$this->userInfo[corporationID]}'";
+            $result = $this->db->query($query);
+            $this->corpInfo = $this->db->fetchAssoc($result);
+            
+            $query = "SELECT * FROM `allianceList` WHERE `id` = '{$this->userInfo[allianceID]}'";
+            $result = $this->db->query($query);
+            $this->allianceInfo = $this->db->fetchAssoc($result);
         } catch (Exception $ex) {
             echo $ex->getMessage();
         }

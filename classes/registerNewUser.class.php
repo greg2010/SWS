@@ -70,11 +70,10 @@ class registerNewUser {
                 "valid" => $canRegister
             );
             $this->registerArray[$char[characterName]] = array (
+                "accessMask" => $char[accessMask],
                 "characterID" => $char[characterID],
                 "corporationID" => $char[corporationID],
-                "corporationName" => $char[corporationName],
                 "allianceID" => $char[allianceID],
-                "allianceName" => $char[allianceName],
                 "permissions" => $keyPermissions,
                 "valid" => $canRegister
             );
@@ -100,25 +99,23 @@ class registerNewUser {
             throw new Exception("Your password have to have at least 8 characters in it!", 11);
         }
         
-        if (preg_match($numbers, $password)) {
+        if (!preg_match($numbers, $password)) {
             throw new Exception("You have to have at least 1 number in your password!", 11);
         }
         
-        if (preg_match($lower, $password)) {
+        if (!preg_match($lower, $password)) {
             throw new Exception("You have to have at least 1 lower-case in your password!", 11);
         }
         
-        if (preg_match($upper, $password)) {
+        if (!preg_match($upper, $password)) {
             throw new Exception("You have to have at least 1 upper-case in your password!", 11);
         }
     }
     
     private function testEmail($email) {
         $pattern = "/^([a-z0-9_\.-])+@[a-z0-9-]+\.([a-z]{2,4}\.)?[a-z]{2,4}$/i";
-        if (preg_match($pattern, $email)) {
-            if (preg_match($upper, $password)) {
+        if (!preg_match($pattern, $email)) {
             throw new Exception("Your e-mail is invalid!", 11);
-        }
         }
     }
 
@@ -147,9 +144,6 @@ class registerNewUser {
         if ($email) {
             $this->testEmail($email);
         }
-        if ($this->registerArray[$this->login][valid] <> 1) {
-            throw new Exception("Not valid character!", 20);
-        }
         $alreadyRegistered = $this->db->getIDByName($this->login);
         if ($alreadyRegistered <> FALSE) {
             throw new Exception("Already registered!", 21);
@@ -157,6 +151,9 @@ class registerNewUser {
         $hasApi = $this->db->checkIfApiExists($apiKey[0]);
         if ($alreadyRegistered <> FALSE) {
             throw new Exception("This api is already used here!", 22);
+        }
+        if ($this->registerArray[$this->login][valid] <> 1) {
+            throw new Exception("Not valid character!", 20);
         }
         $this->salt = $this->generateSalt();
         $passwordWithSalt = $password . $this->salt;
@@ -175,6 +172,11 @@ class registerNewUser {
         if (!$this->registerArray[$this->login][characterID]) {
             throw new Exception("There is something wrong with characterID. Value: " . $this->registerArray[$this->login][characterID], 15);
         }
+        
+        if (!$this->registerArray[$this->login][accessMask]) {
+            throw new Exception("There is something wrong with accessMask. Value: " . $this->registerArray[$this->login][accessMask], 15);
+        }
+        
         if (!$this->login) {
             throw new Exception("There is something wrong with login. Value: " . $this->login, 10);
         }
@@ -183,16 +185,8 @@ class registerNewUser {
             throw new Exception("There is something wrong with CorporationID. Value: " . $this->registerArray[$this->login][corporationID], 15);
         }
 
-        if (!$this->registerArray[$this->login][corporationName]) {
-            throw new Exception("There is something wrong with CorporationName. Value: " . $this->registerArray[$this->login][corporationName], 15);
-        }
-
         if (!$this->registerArray[$this->login][allianceID]) {
             throw new Exception("There is something wrong with AllianceID. Value: " . $this->registerArray[$this->login][allianceID], 15);
-        }
-
-        if (!$this->registerArray[$this->login][allianceName]) {
-            throw new Exception("There is something wrong with AllianceName. Value: " . $this->registerArray[$this->login][allianceName], 15);
         }
 
         if (!$this->passwordHash) {
@@ -202,7 +196,7 @@ class registerNewUser {
         if (!$this->registerArray[$this->login][permissions]) {
             throw new Exception("There is something wrong with permissions. Value: " . $this->registerArray[$this->login][permissions], 30);
         }
-        $this->db->registerNewUser($this->apiKey[0], $this->apiKey[1], $this->registerArray[$this->login][characterID], $keyStatus, $this->login, $this->registerArray[$this->login][corporationID], $this->registerArray[$this->login][corporationName], $this->registerArray[$this->login][allianceID], $this->registerArray[$this->login][allianceName], $this->passwordHash, $this->registerArray[$this->login][permissions], $this->email, $this->salt);
+        $this->db->registerNewUser($this->apiKey[0], $this->apiKey[1], $this->registerArray[$this->login][accessMask], $this->registerArray[$this->login][characterID], $keyStatus, $this->login, $this->registerArray[$this->login][corporationID], $this->registerArray[$this->login][allianceID], $this->passwordHash, $this->registerArray[$this->login][permissions], $this->email, $this->salt);
         return TRUE;
     }
 }

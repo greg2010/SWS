@@ -292,7 +292,7 @@ class db {
     }
     
     private function predefinedMySQLCheckIfApiIsInDB($keyID) {
-        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `apiList` WHERE `keyID`=? AND `keyStatus`='1'");
+        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `apiList` WHERE `keyID`=?");
         mysqli_stmt_bind_param($stmt, "s", $keyID);
         mysqli_stmt_execute($stmt);
         if (mysqli_error($this->connection)) {
@@ -349,17 +349,17 @@ class db {
         return $success;
     }
     
-    private function predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $keyStatus) {
+    private function predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $keyStatus, $accessMask) {
         $this->openConnection();
-        $stmt = mysqli_prepare($this->connection, "SELECT * FROM `apiList` WHERE `keyID`=? AND `keyStatus`='0'");
-        mysqli_stmt_bind_param($stmt, "sssss", $id, $keyID, $vCode, $characterID, $keyStatus);
+        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `apiList` WHERE `keyID`=? AND `keyStatus`='0'");
+        mysqli_stmt_bind_param($stmt, "s", $keyID);
         $success = mysqli_stmt_execute($stmt);
-        mysqli_stmt_bind_result($stmt, $id);
+        mysqli_stmt_bind_result($stmt, $idNew);
         $success = mysqli_stmt_fetch($stmt);
         mysqli_stmt_close($stmt);
-        if ($id == FALSE) {
-            $stmt = mysqli_prepare($this->connection, "INSERT INTO `apiList` SET `id`=?, `keyID`=?, `vCode`=?, `characterID`=?, `keyStatus`=?");
-            mysqli_stmt_bind_param($stmt, "sssss", $id, $keyID, $vCode, $characterID, $keyStatus);
+        if (!$idNew) {
+            $stmt = mysqli_prepare($this->connection, "INSERT INTO `apiList` SET `id`=?, `keyID`=?, `vCode`=?, `characterID`=?, `keyStatus`=?, `accessMask`=?");
+            mysqli_stmt_bind_param($stmt, "ssssss", $id, $keyID, $vCode, $characterID, $keyStatus, $accessMask);
             $success = mysqli_stmt_execute($stmt);
             if (mysqli_error($this->connection)) {
                 throw new Exception("predefinedPopulateApiList: " . mysqli_error($this->connection), mysqli_errno($this->connection));
@@ -367,8 +367,8 @@ class db {
             mysqli_stmt_close($stmt);
             $this->closeConnection();
         } else {
-            $stmt = mysqli_prepare($this->connection, "UPDATE `apiList` SET `id`=?, `vCode`=?, `characterID`=?, `keyStatus`=?");
-            mysqli_stmt_bind_param($stmt, "ssss", $id, $vCode, $characterID, $keyStatus);
+            $stmt = mysqli_prepare($this->connection, "UPDATE `apiList` SET `id`=?, `vCode`=?, `characterID`=?, `keyStatus`=?, `accessMask`=? WHERE `id`=?");
+            mysqli_stmt_bind_param($stmt, "ssssss", $id, $vCode, $characterID, $keyStatus, $accessMask, $idNew);
             $success = mysqli_stmt_execute($stmt);
             if (mysqli_error($this->connection)) {
                 throw new Exception("predefinedPopulateApiList: " . mysqli_error($this->connection), mysqli_errno($this->connection));
@@ -378,10 +378,10 @@ class db {
         return $success;
     }
     
-    private function predefinedPopulatePilotInfo($id, $characterID, $characterName, $corporationID, $corporationName, $allianceID, $allianceName) {
+    private function predefinedPopulatePilotInfo($id, $characterID, $characterName, $corporationID, $allianceID) {
         $this->openConnection();
-        $stmt = mysqli_prepare($this->connection, "INSERT INTO `pilotInfo` SET `id`=?, `characterID`=?, `characterName`=?, `corporationID`=?, `corporationName`=?, `allianceID`=?, `allianceName`=?");
-        mysqli_stmt_bind_param($stmt, "sssssss", $id, $characterID, $characterName, $corporationID, $corporationName, $allianceID, $allianceName);
+        $stmt = mysqli_prepare($this->connection, "INSERT INTO `pilotInfo` SET `id`=?, `characterID`=?, `characterName`=?, `corporationID`=?, `allianceID`=?");
+        mysqli_stmt_bind_param($stmt, "sssss", $id, $characterID, $characterName, $corporationID, $allianceID);
         $success = mysqli_stmt_execute($stmt);
         if (mysqli_error($this->connection)) {
             throw new Exception("predefinedPopulatePilotInfo: " . mysqli_error($this->connection), mysqli_errno($this->connection));
@@ -413,12 +413,12 @@ class db {
         return $this->predefinedMySQLCheckIfApiIsInDB($keyID);
     }
     
-    public function registerNewUser($keyID, $vCode, $characterID, $keyStatus, $characterName, $corporationID, $corporationName, $allianceID, $allianceName, $passwordHash, $permissions, $email = NULL, $salt) {
+    public function registerNewUser($keyID, $vCode, $accessMask, $characterID, $keyStatus, $characterName, $corporationID, $allianceID, $passwordHash, $permissions, $email = NULL, $salt) {
         try {
             $this->predefinedPopulateUsers($characterName, $passwordHash, $permissions, $salt, $email);
             $id = $this->getIDByName($characterName);
-            $this->predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $keyStatus);
-            $this->predefinedPopulatePilotInfo($id, $characterID, $characterName, $corporationID, $corporationName, $allianceID, $allianceName);
+            $this->predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $keyStatus, $accessMask);
+            $this->predefinedPopulatePilotInfo($id, $characterID, $characterName, $corporationID, $allianceID);
         } catch (Exception $ex) {
             $firstException = $ex->getMessage();
             //Rolling Back...
