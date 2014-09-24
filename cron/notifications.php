@@ -10,9 +10,11 @@ if($pid == -2){
 	try{
 		$connection = mysqli_connect(config::hostname, config::username, config::password);
         $selectdb = mysqli_select_db($connection, config::database);
-        $query = "SELECT `characterID`, `keyID`, `vCode` FROM `apiList` WHERE `keyStatus` > 0";
+        $query = "SELECT `characterID`, `keyID`, `vCode`, `accessMask` FROM `apiList` WHERE `keyStatus` > 0";
 		$result = mysqli_query($connection, $query);
-		while($array = mysqli_fetch_assoc($result)) $userList[] = $array;
+		while($array = mysqli_fetch_assoc($result)){
+			if(($array[accessMask] & 49152) > 0) $userList[] = $array;
+		}
 		$query = "SELECT * FROM `pilotInfo`";
 		$result = mysqli_query($connection, $query);
 		while($array = mysqli_fetch_assoc($result)) $tmpArr[] = $array;
@@ -24,8 +26,6 @@ if($pid == -2){
         			$userList[$i][characterName] = $row[characterName];
         			$userList[$i][corporationID] = $row[corporationID];
         			$userList[$i][allianceID] = $row[allianceID];
-        			$userList[$i][corporationName] = $row[corporationName];
-        			$userList[$i][allianceName] = $row[allianceName];
         			break;
         		}
         	}

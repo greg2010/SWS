@@ -131,15 +131,13 @@ class starbases {
                         $moonName = $this->getMoonName($pos[moonID]);
                         $typeName = $this->getTypeName($pos[typeID]);
                         if($this->db->hasRows($result)){
-                            $query = "UPDATE `posList` SET `locationID` = '{$pos[locationID]}', `moonID` = '{$pos[moonID]}',
-                             `moonName` = '$moonName', `typeName` = '$typeName', `corporationID` = '{$this->keyInfo[corporationID]}', `corporationName`= '{$this->keyInfo[corporationName]}',
-                             `allianceID` = '{$this->keyInfo[allianceID]}', `allianceName`= '{$this->keyInfo[allianceName]}' WHERE `posID`='{$pos[posID]}'";
+                            $query = "UPDATE `posList` SET `locationID` = '{$pos[locationID]}', `moonID` = '{$pos[moonID]}', `moonName` = '$moonName', `typeName` = '$typeName',
+                             `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}' WHERE `posID`='{$pos[posID]}'";
                             $result = $this->db->query($query);
                             $this->log->put("updateStarbaseList " . $pos[posID], "ok update");
                         } else{
                             $query = "INSERT INTO `posList` SET `posID`= '{$pos[posID]}', `typeID` = '{$pos[typeID]}', `locationID` = '{$pos[locationID]}', `moonID` = '{$pos[moonID]}', `state` = '{$pos[state]}',
-                             `stateTimestamp` = '{$pos[stateTimestamp]}', `moonName` = '$moonName', `typeName` = '$typeName', `corporationID` = '{$this->keyInfo[corporationID]}',
-                             `corporationName`= '{$this->keyInfo[corporationName]}',`allianceID` = '{$this->keyInfo[allianceID]}', `allianceName`= '{$this->keyInfo[allianceName]}'";
+                             `stateTimestamp` = '{$pos[stateTimestamp]}', `moonName` = '$moonName', `typeName` = '$typeName', `corporationID` = '{$this->keyInfo[corporationID]}',`allianceID` = '{$this->keyInfo[allianceID]}'";
                             $result = $this->db->query($query);
                             $this->log->put("updateStarbaseList " . $pos[posID], "ok insert");
                         } 

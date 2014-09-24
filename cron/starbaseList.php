@@ -49,7 +49,7 @@ for($t=0; $t<$thread_count; $t++){
 			$drake = $starbase->updateStarbaseList();
 			if($drake != NULL){
 				$log->merge($drake, $userList[$i][keyID]);
-				$log->put("name", $userList[$i][corporationName], $userList[$i][keyID]);
+				$log->put("id", $userList[$i][corporationID], $userList[$i][keyID]);
 				$emt = round(microtime(1)*1000) - $smt;
 				$log->put("spent", $emt . " microseconds", $userList[$i][keyID]);
 			}

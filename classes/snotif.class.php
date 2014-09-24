@@ -9,15 +9,14 @@ class snotif {
     private $db;
     private $txtarr = array();
 
-	public function __construct($text, $ocn, $oan, $isf){
+	public function __construct($text, $cid, $aid, $isf){
         $this->txtarr = yaml_parse($text);
         $this->db = db::getInstance();
         $this->log = new logging();
         //PhealConfig::getInstance()->cache = new \Pheal\Cache\PdoStorage("mysql:host=" . config::hostname . ";dbname=" . config::database, config::username, config::password, "phealng-cache");
         PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage(dirname(__FILE__) . '/../phealcache/');
 
-        $this->txtarr[OwnerCorpName] = $ocn;
-        $this->txtarr[OwnerAllyName] = $oan;
+        $this->Owner($cid, $aid);
         if($this->txtarr[aggressorID]) $this->aggressor();
         if(!$isf){
             if($this->txtarr[corpID] || $this->txtarr[aggressorCorpID]) $this->CorpID();
@@ -28,6 +27,27 @@ class snotif {
         if($this->txtarr[moonID]) $this->moonID();
         if($this->txtarr[solarSystemID]) $this->solarSystemID();
         if($this->txtarr[planetID]) $this->planetID();
+    }
+
+    private function Owner($cid, $aid){
+        try {
+            $query = "SELECT `name`, `ticker` FROM `corporationList` WHERE `id`='$cid'";
+            $result = $this->db->query($query);
+            $resarr = $this->db->fetchAssoc($result);
+            $this->txtarr[OwnerCorpName] = $resarr[name];
+            $this->txtarr[OwnerCorpTicker] = $resarr[ticker];
+        } catch (Exception $ex) {
+            $this->log->put("Owner Corp", "err " . $ex->getMessage());
+        }
+        try {
+            $query = "SELECT `name`, `ticker` FROM `allianceList` WHERE `id`='$aid'";
+            $result = $this->db->query($query);
+            $resarr = $this->db->fetchAssoc($result);
+            $this->txtarr[OwnerAllyName] = $resarr[name];
+            $this->txtarr[OwnerAllyTicker] = $resarr[ticker];
+        } catch (Exception $ex) {
+            $this->log->put("Owner Alli", "err " . $ex->getMessage());
+        }
     }
 
     private function aggressor(){

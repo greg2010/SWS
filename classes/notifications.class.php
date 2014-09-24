@@ -16,7 +16,6 @@ class notifications {
         $this->log = new logging();
         //PhealConfig::getInstance()->cache = new \Pheal\Cache\PdoStorage("mysql:host=" . config::hostname . ";dbname=" . config::database, config::username, config::password, "phealng-cache");
         PhealConfig::getInstance()->cache = new \Pheal\Cache\HashedNameFileStorage(dirname(__FILE__) . '/../phealcache/');
-        PhealConfig::getInstance()->access = new \Pheal\Access\StaticCheck();
     }
 
     private function getNotificationsXML(){       
@@ -79,8 +78,8 @@ class notifications {
                 foreach($this->notif as $key){
                     if($key['notificationID'] == $row->notificationID){
                         $arrpos = array_search($key, $this->notif);
-                        $notiftext = ($this->notif[$arrpos][typeID]==76) ? (new snotif((string)$row, $this->key[corporationName], $this->key[allianceName], true))
-                         : (new snotif((string)$row, $this->key[corporationName], $this->key[allianceName], false));
+                        $notiftext = ($this->notif[$arrpos][typeID]==76) ? (new snotif((string)$row, $this->key[corporationID], $this->key[allianceID], true))
+                         : (new snotif((string)$row, $this->key[corporationID], $this->key[allianceID], false));
                         $this->log->merge($notiftext->log->get(true), "getNotificationTextsXML " . $row->notificationID);
                         $this->notif[$arrpos]['NotificationText'] = $notiftext->getText();
                     }

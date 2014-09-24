@@ -122,24 +122,22 @@ class memberTracking {
         if($this->getSuperCapList()){
             foreach($this->superCapList as $superCap){
                 try {
-                    $shipType = $this->getShipClass($superCap[shipType]);
+                    $shipClass = $this->getShipClass($superCap[shipType]);
                     if($pilots != NULL && in_array($superCap[characterID], $pilots)){
                         if($this->checkSuperCapChanged($superCap)){
                             $SS = $this->getSS($superCap[locationID]);
                             $region = $this->getRegion($superCap[locationID]);
-                            $query = "UPDATE `superCapitalList` SET `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}', `corporationName` = '{$this->keyInfo[corporationName]}',
-                             `allianceName` = '{$this->keyInfo[allianceName]}', `logonDateTime` = '{$superCap[logonDateTime]}', `logoffDateTime` = '{$superCap[logoffDateTime]}', `locationID` = '{$superCap[locationID]}',
-                             `SS` = '$SS', `locationName` = '{$superCap[location]}', `regionName` = '$region', `shipTypeID` = '{$superCap[shipTypeID]}', `shipTypeName` = '{$superCap[shipType]}', `shipClass` = '$shipClass'
-                             WHERE `characterID`='{$superCap[characterID]}'";
+                            $query = "UPDATE `superCapitalList` SET `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}', `logonDateTime` = '{$superCap[logonDateTime]}',
+                             `logoffDateTime` = '{$superCap[logoffDateTime]}', `locationID` = '{$superCap[locationID]}', `SS` = '$SS', `locationName` = '{$superCap[location]}', `regionName` = '$region',
+                              `shipTypeID` = '{$superCap[shipTypeID]}', `shipTypeName` = '{$superCap[shipType]}', `shipClass` = '$shipClass' WHERE `characterID`='{$superCap[characterID]}'";
                             $result = $this->db->query($query);
                         }
                     } else{
                         $SS = $this->getSS($superCap[locationID]);
                         $region = $this->getRegion($superCap[locationID]);
                         $query = "INSERT INTO `superCapitalList` SET `characterName` = '{$superCap[name]}', `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}',
-                             `corporationName` = '{$this->keyInfo[corporationName]}', `allianceName` = '{$this->keyInfo[allianceName]}', `logonDateTime` = '{$superCap[logonDateTime]}', `logoffDateTime` = '{$superCap[logoffDateTime]}',
-                              `locationID` = '{$superCap[locationID]}', `SS` = '$SS', `locationName` = '{$superCap[location]}', `regionName` = '$region', `shipTypeID` = '{$superCap[shipTypeID]}', `shipTypeName` = '{$superCap[shipType]}',
-                               `shipClass` = '$shipClass', `characterID`='{$superCap[characterID]}'";
+                             `logonDateTime` = '{$superCap[logonDateTime]}', `logoffDateTime` = '{$superCap[logoffDateTime]}', `locationID` = '{$superCap[locationID]}', `SS` = '$SS', `locationName` = '{$superCap[location]}',
+                             `regionName` = '$region', `shipTypeID` = '{$superCap[shipTypeID]}', `shipTypeName` = '{$superCap[shipType]}', `shipClass` = '$shipClass', `characterID`='{$superCap[characterID]}'";
                         $result = $this->db->query($query);
                     }
 
