@@ -59,6 +59,7 @@ class snotif {
                 if($row->allianceID == $this->txtarr[allianceID] || $row->allianceID == $this->txtarr[aggressorAllianceID]){
                     $this->txtarr[allyName] = $row->name;
                     $this->txtarr[allyTicker] = $row->shortName;
+                    break;
                 }
             }
         } catch (\Pheal\Exceptions\PhealException $e){

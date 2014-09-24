@@ -53,26 +53,20 @@ class APIUserManagement implements IAPIUserManagement {
             }
             if(isset($keyID) && isset($vCode)){
                 if($corp){
-                    $this->apiCharsInfo = $response->key->characters[0];
-                    $this->apiCharsInfo[accessMask] = $response->key->accessMask;
+                    $this->apiCharsInfo = $this->makeCharArray($response->key->accessMask, $response->key->characters[0]);
                 } else{
                     foreach($response->key->characters as $char){
-                        $this->apiCharsInfo[] = $char;
+                        $this->apiCharsInfo[] = $this->makeCharArray($response->key->accessMask, $char);
                     }
                 }
                 return true;
             } else{
                 for($i=0; $i<sizeof($response->key->characters); $i++){
                     if($response->key->characters[$i]->characterID == $this->apiKey[2]){
-                        //$isChar = true;
-                        $this->apiPilotInfo = $response->key->characters[$i];
-                        $this->apiPilotInfo[accessMask] = $response->key->accessMask;
+                        $this->apiPilotInfo = $this->makeCharArray($response->key->accessMask, $response->key->characters[$i]);
                         return true;
-                    }/* else{
-                        $isChar = false;
-                    }*/
+                    }
                 }
-                //if(!$isChar) 
                 throw new \Pheal\Exceptions\PhealException("Not found the right character", -30);
             }
         } catch (\Pheal\Exceptions\PhealException $e){
@@ -89,13 +83,66 @@ class APIUserManagement implements IAPIUserManagement {
         if($this->permissions->log->get() != NULL) $this->log->merge($this->permissions->log->get(true), "permissions");
         return false;
     }
+
+    private function makeCharArray($mask, $char){
+        $charArray = array(
+            'accessMask' => $mask,
+            'characterID' => $char->characterID,
+            'characterName' => $char->characterName,
+            'corporationID' => $char->corporationID,
+            'corporationName' => $char->corporationName,
+            'corpTicker' => $this->getCorporationTicker($char->corporationID),
+            'allianceID' => $char->allianceID,
+            'allianceName' => $char->allianceName,
+            'alliTicker' => $this->getAllianceTicker($char->allianceID)
+        );
+        return $charArray;
+    }
     
     private function getCorporationTicker($id){
-        //
+        $Ticker = NULL;
+        try{
+            $Ticker = $this->userManagement->getCorporationTicker($id);
+        } catch(Exception $ex){
+            throw new \Pheal\Exceptions\PhealException("getCorporationTicker " . $ex->getMessage(), ($ex->getCode())*-1);
+        }
+        if($Ticker != NULL){
+            return $Ticker;
+        } else{
+            $pheal = new Pheal(NULL, NULL, "corp");
+            $response = $pheal->CorporationSheet(array("corporationID" => $id));
+            try{
+                $this->userManagement->recordCorporationInfo($id, $response->corporationName, $response->ticker);
+            } catch(Exception $ex){
+                throw new \Pheal\Exceptions\PhealException("recordCorporationInfo " . $ex->getMessage(), ($ex->getCode())*-1);
+            }
+            return $response->ticker;
+        }
     }
 
     private function getAllianceTicker($id){
-        //
+        $Ticker = NULL;
+        try{
+            $Ticker = $this->userManagement->getAllianceTicker($id);
+        } catch(Exception $ex){
+            throw new \Pheal\Exceptions\PhealException("getAllianceTicker " . $ex->getMessage(), ($ex->getCode())*-1);
+        }
+        if($Ticker != NULL){
+            return $Ticker;
+        } else{
+            $pheal = new Pheal(NULL, NULL, "eve");
+            $response = $pheal->AllianceList();
+            foreach($response->alliances as $row){
+                if($row->allianceID == $id){
+                    try{
+                        $this->userManagement->recordAllianceInfo($id, $row->name, $row->shortName);
+                    } catch(Exception $ex){
+                        throw new \Pheal\Exceptions\PhealException("recordAllianceInfo " . $ex->getMessage(), ($ex->getCode())*-1);
+                    }
+                    return $row->shortName;
+                }
+            }
+        }
     }
 
     public function getCorpInfo($keyID, $vCode) {

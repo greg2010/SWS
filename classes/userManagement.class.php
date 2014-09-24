@@ -5,6 +5,10 @@ interface IuserManagement {
     function getUserAllianceName();
     function setNewPassword($password);
     function setUserInfo();
+    function getCorporationTicker($id);
+    function getAllianceTicker($id);
+    function recordCorporationInfo($id, $name, $ticker);
+    function recordAllianceInfo($id, $name, $ticker);
 }
 
 class userManagement implements IuserManagement {
@@ -131,5 +135,27 @@ class userManagement implements IuserManagement {
     
     public function setUserInfo() {
         
+    }
+
+    public function getCorporationTicker($id){
+        $query = "SELECT `ticker` FROM `corporationList` WHERE `id` = '$id'";
+        $result = $this->db->query($query);
+        return $this->db->getMysqlResult($result);
+    }
+    
+    public function getAllianceTicker($id){
+        $query = "SELECT `ticker` FROM `allianceList` WHERE `id` = '$id'";
+        $result = $this->db->query($query);
+        return $this->db->getMysqlResult($result);
+    }
+
+    public function recordCorporationInfo($id, $name, $ticker){
+        $query = "INSERT INTO `corporationList` SET `id` = '$id', `name` = '$name', `ticker` = '$ticker'";
+        $result = $this->db->query($query);
+    }
+    
+    public function recordAllianceInfo($id, $name, $ticker){
+        $query = "INSERT INTO `allianceList` SET `id` = '$id', `name` = '$name', `ticker` = '$ticker'";
+        $result = $this->db->query($query);
     }
 }

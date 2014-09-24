@@ -35,14 +35,19 @@ class validation implements Ivalidation {
     private function comparePilotInfo(){
     	if($this->apiPilotInfo[characterID] == NULL){
             return false;
-        } elseif($this->apiPilotInfo[characterID] == $this->dbPilotInfo[characterID] && $this->apiPilotInfo[corporationID] == $this->dbPilotInfo[corporationID] && $this->apiPilotInfo[allianceID] == $this->dbPilotInfo[allianceID]){
+        } elseif($this->apiPilotInfo[characterID] == $this->dbPilotInfo[characterID] && $this->apiPilotInfo[corporationID] == $this->dbPilotInfo[corporationID]
+         && $this->apiPilotInfo[allianceID] == $this->dbPilotInfo[allianceID] && $this->apiPilotInfo[accessMask] == $this->dbPilotInfo[accessMask]){
             //$this->log->put("comparePilotInfo", "ok: IDs match (char: " . $this->apiPilotInfo[characterID] . ", corp: " . $this->apiPilotInfo[corporationID] . ", alli: " . $this->apiPilotInfo[allianceID] . ")");
     		return true;
     	} else{
     		try {
             	$query = "UPDATE `pilotInfo` SET `characterID` = '{$this->apiPilotInfo[characterID]}', `characterName` = '{$this->apiPilotInfo[characterName]}', `corporationID` = '{$this->apiPilotInfo[corporationID]}',
-            	 `corporationName` = '{$this->apiPilotInfo[corporationName]}', `allianceID` = '{$this->apiPilotInfo[allianceID]}', `allianceName` = '{$this->apiPilotInfo[allianceName]}' WHERE `id` = '$this->id'";
+            	 `allianceID` = '{$this->apiPilotInfo[allianceID]}' WHERE `id` = '$this->id'";
             	$result = $this->db->query($query);
+                if($this->apiPilotInfo[accessMask] != $this->dbPilotInfo[accessMask]){
+                    $query = "UPDATE `apiList` SET `accessMask` = '{$this->apiPilotInfo[accessMask]}' WHERE `id` = '$this->id'";
+                    $result = $this->db->query($query);
+                }
                 $this->log->put("comparePilotInfo", "ok update");
             	return true;
         	} catch (Exception $ex) {
@@ -97,8 +102,7 @@ class validation implements Ivalidation {
         }
         if($dbCorp[accessMask] != $apiCorp[accessMask] || $dbCorp[corporationID] != $apiCorp[corporationID] || $dbCorp[allianceID] != $apiCorp[allianceID]){
             try {
-                $query = "UPDATE `apiCorpList` SET `accessMask` = '{$apiCorp[accessMask]}', `corporationID` = '{$apiCorp[corporationID]}', `corporationName` = '{$apiCorp[corporationName]}', `allianceID` = '{$apiCorp[allianceID]}',
-                 `allianceName` = '{$apiCorp[allianceName]}' WHERE `keyID` = '{$dbCorp[keyID]}'";
+                $query = "UPDATE `apiCorpList` SET `accessMask` = '{$apiCorp[accessMask]}', `corporationID` = '{$apiCorp[corporationID]}', `allianceID` = '{$apiCorp[allianceID]}' WHERE `keyID` = '{$dbCorp[keyID]}'";
                 $result = $this->db->query($query);
                 $this->log->put("verifyCorpApiInfo", "ok update");
             } catch (Exception $ex) {
