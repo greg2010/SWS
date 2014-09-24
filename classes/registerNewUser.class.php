@@ -31,7 +31,7 @@ class registerNewUser {
         if (!$this->apiPilotInfo) {
             $error = $this->APIUserManagement->log->get();
             $this->error = array (
-                "status" => $error[getApiPilotInfo_code],
+                "status" => -30000,
                 "message" => ltrim($error[getApiPilotInfo], "err ")
             );
             return FALSE;
@@ -153,6 +153,10 @@ class registerNewUser {
         $alreadyRegistered = $this->db->getIDByName($this->login);
         if ($alreadyRegistered <> FALSE) {
             throw new Exception("Already registered!", 21);
+        }
+        $hasApi = $this->db->checkIfApiExists($apiKey[0]);
+        if ($alreadyRegistered <> FALSE) {
+            throw new Exception("This api is already used here!", 22);
         }
         $this->salt = $this->generateSalt();
         $passwordWithSalt = $password . $this->salt;

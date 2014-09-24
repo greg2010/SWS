@@ -40,8 +40,7 @@ function SendRequest(){
                     }
                 });
             }
-            charReady = 1;
-            console.log("charReady: ", charReady);
+            window.charReady = 1;
         }
     });
 }
@@ -71,14 +70,14 @@ $(document).ready(function() {
     var invalidBorder = "1px solid #FF4500";
         $('#password').on("input", (function() {
         if($(this).val() !== '') {
-            
+
             var pwd = $(this).val();
             var count = pwd.length;
             var countValid;
             var numberValid;
             var lowerValid;
             var upperValid;
-            
+
             if(count > 7){
                 $('#length').css({'color' : validColor});
                 countValid = 1;
@@ -109,12 +108,11 @@ $(document).ready(function() {
             }
             if (numberValid === 1 && lowerValid === 1 && upperValid === 1 && countValid === 1) {
                 passValid = 1;
-                passReady = 1;
-                console.log("passReady: ", passReady);
+                window.passReady = 1;
                 $(this).css({'border' : validBorder});
             } else {
                 passValid = 0;
-                passReady = 0;
+                window.passReady = 0;
                 $(this).css({'border' : invalidBorder});
             }
         }
@@ -124,17 +122,26 @@ $(document).ready(function() {
             if($(this).val() !== $('#password').val()) {
                 $(this).css({'border' : invalidBorder});  
                 $('div[role="alert-password-repeat"]').removeAttr('hidden').text('Passwords don\'t match!');
-                repPassReady = 0;
+                window.repPassReady = 0;
             } else {
                 $(this).css({'border' : validBorder});
-                repPassReady = 1;
-                console.log("repPassReady: ", repPassReady);
+                window.repPassReady = 1;
                 $('div[role="alert-password-repeat"]').attr('hidden', 1).text('');
             }
         }
     });
-    if (charReady === 1 && passReady === 1 && repPassReady === 1) {
-        console.log('success');
-        $('#go').removeAttr('disabled');
+    
+function formCheck() {
+    if(window.charReady === 1 && window.passReady === 1 && window.repPassReady === 1) {//we want it to match
+        setTimeout(formCheck, 50);
+        $('#submit').removeAttr('disabled');
+    } else {
+        setTimeout(formCheck, 50);//wait 50 millisecnds then recheck
+        $('#submit').removeAttr('disabled');
+        $('div[role="alert-password-repeat"]').attr('disabled', 1);
+        return;
     }
+}
+
+formCheck();
 });

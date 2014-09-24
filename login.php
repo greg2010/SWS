@@ -14,21 +14,26 @@ if ($method <> 'POST' AND $loginFromSent === 'sent') {
 if ($loginFormSent == 'sent') {
     $login = $_POST[login];
     $password = $_POST[password];
-    $_SESSION[userObject]->logUserByLoginPass($login, $password);
-    $toTemplate['loggedIn'] = $_SESSION[userObject]->isLoggedIn();
-     if ($_POST[remember] == 1 && $toTemplate[loggedIn] == TRUE) {
-        $_SESSION[userObject]->setCookieForUser();
-    }
-    if ($toTemplate[loggedIn] == TRUE) {
-        $toTemplate['success'] = 1;
+    try {
+        $_SESSION[userObject]->logUserByLoginPass($login, $password);
+        if ($_POST[remember] == 1) {
+            $_SESSION[userObject]->setCookieForUser();
+        }
         header("Location: /index.php");
-    } else {
-        $toTemplate['success'] = 0;
+    } catch (Exception $ex) {
+        $toTemplate['saveform']['login'] = $login;
+        switch ($ex->getCode()) {
+            case 11:
+                $toTemplate['errorMsg'] = "Login failed. Please check your login or password.";
+                break;
+            case 30:
+                $toTemplate["errorMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
+                break;
+        }
     }
+    $toTemplate['loggedIn'] = $_SESSION[userObject]->isLoggedIn();
 }
 //$_SESSION[userObject]->preparePage($pagePermissions);
 
 //$toTemplate['hasAccess'] = $_SESSION[userObject]->hasPermission();
-//$_SESSION[userObject]->test = 0;
-//var_dump($_SESSION[userObject]);
 require 'twigRender.php';
