@@ -3,6 +3,11 @@
 {% block title %}Registration{% endblock %}
 
 {% block content %}
+    {% if errorMsg is defined %}
+        {% set isErrorHidden = "" %}
+    {% else %}
+        {% set isErrorHidden = "hidden" %}
+    {% endif %}
 
   {#{% if fromPost == '1' %} {# Проверка что юзер действительно пришел из формы. #}
     {#{% if success == '1' %} {# Проверка на успешность логина #}
@@ -15,17 +20,17 @@
  <form action="login.php" method="post">
    <h1>LOG IN</h1>
    <div class="inset">
+          <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
+              {{errorMsg}}
+          </div>
       <p>
         <label for="email">INGAME NAME</label>
-        <input type="text" name="login" id="email">
+        <input type="text" name="login" value ="{{saveform.login}}" id="email">
       </p>
       <p>
         <label for="password">PASSWORD</label>
         <input type="password" name="password" id="password" style="color: #f6c000;">
       </p>
-        {% if success == '0' %}
-        <div class="alert alert-danger" role="alert">Sorry, but login or password incorrect!</div>
-        {% endif %}
   <hr />
     <div class="amPmCheckbox">
         <input type="checkbox" name="rememberme" class="checkboxLabel main_street_input" id="ch1" value="1" />

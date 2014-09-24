@@ -154,6 +154,10 @@ class registerNewUser {
         if ($alreadyRegistered <> FALSE) {
             throw new Exception("Already registered!", 21);
         }
+        $hasApi = $this->db->checkIfApiExists($apiKey[0]);
+        if ($alreadyRegistered <> FALSE) {
+            throw new Exception("This api is already used here!", 22);
+        }
         $this->salt = $this->generateSalt();
         $passwordWithSalt = $password . $this->salt;
         $this->passwordHash = hash(config::password_hash_type, $passwordWithSalt);

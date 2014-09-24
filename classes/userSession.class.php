@@ -20,6 +20,7 @@ class userSession {
     public $userInfo;
     
     public $permissions;
+    public $userManagement;
     
     public function __construct() {
         $this->sessionStart();
@@ -157,6 +158,7 @@ class userSession {
     
     private function initialize() {
         $this->permissions = new permissions($this->id);
+        $this->userManagement = new userManagement($this->id);
         try {
             $query = "SELECT * FROM `pilotInfo` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
@@ -178,15 +180,19 @@ class userSession {
             $this->id = $this->db->getUserByLogin($login, $passwordHash);
             if ($this->id === FALSE) {
                 $this->isLoggedIn = FALSE;
+                throw new Exception("Login Failed!", 11);
             } else {
                 $this->isLoggedIn = TRUE;
                 $this->initialize();
             }
             return TRUE;
         } catch (Exception $ex) {
+            if ($ex->getCode() == 11) {
+                throw new Exception($ex->getMessage(), $ex->getCode());
+            }
             unset($this->id);
             unset($this->isLoggedIn);
-            return FALSE;
+            throw new Exception("MySQL error! " . $ex->getMessage(), 30);
         }
     }
     

@@ -1,0 +1,102 @@
+{% extends "base.twig" %}
+
+{% block title %}Profile Settings{% endblock %}
+
+{% block content %}
+<div class="container">
+    <ul class="nav nav-tabs navbar-inverse" role="tablist">
+        <li {{active.profile}}><a href="settings.php">PROFILE</a></li>
+        <li {{active.api}}><a href="settings.php?a=api">EVE API</a></li>
+        <li {{active.teamspeak}}><a href="settings.php?a=teamspeak">TeamSpeak</a></li>
+    </ul>
+ {% if curForm == 'api' %}
+<!--Форма смены API-->
+    <form id="formSettings">  
+
+        <h2>CURRENT API</h2>
+        <br>
+            <p>
+                <label for="username">KEY ID</label>
+                <input type="text" name="usermane" id="keyID2">
+            </p>
+            <p>
+                <label for="vCode">VERIFICATION CODE</label>
+                <input type="text" name="vCode" id="vCode2">
+            </p>
+            <br>
+                <span>If you want to change api, you must delete the current api first</span>
+            <br>
+            <hr id="danger"/>
+                <span id="danger">If you're sure you want to delete the current api, click on this button! If you're not sure, don't touch the button!</span>
+            <br>
+            <br>
+            <p class="p-container">
+                <input type="button" name="delete" id="danger" value="DELETE">
+            </p>
+
+        <h2>NEW API</h2>
+            <br>
+                <a href="https://support.eveonline.com/api/key/createpredefined/8" id="getAPI">Get Key ID & vCode here</a>
+            <br>
+            <p>
+                <label for="username">KEY ID</label>
+                <input type="text" name="usermane" id="keyID2">
+            </p>
+            <p>
+                <label for="vCode">VERIFICATION CODE</label>
+                <input type="text" name="vCode" id="vCode2">
+            </p>
+            <br>
+            <!--<div class="alert alert-danger" role="alert">Sorry, but key ID or vCode incorrect!</div>-->
+            <hr />
+
+            <p class="p-container">
+                <input type="submit" name="go" id="go" value="SUBMIT">
+            </p>
+            <!--<div class="alert alert-danger" role="alert" id="success">Your api successfully changed!</div>-->    
+<!--Конец смены API-->
+{% else %}
+<!--Форма смены почты и пароля-->
+    <form id="formSettings">  
+        <h1>PROFILE SETTINGS</h1>
+    <div class="inset" id="SetIns">
+        <h2>ADD / CHANGE E-MAIL</h2>
+            <p>
+                <label for="email">E-MAIL</label>
+                <input type="text" name="email" id="email2">
+            </p>
+            <div class="amPmCheckbox">
+                <input type="checkbox" name="allow" class="checkboxLabel main_street_input" id="ch2" value="1" />
+                <!--<label for="ch2">I allow users to send e-mail to me</label>-->
+            </div>
+        <!--<div class="alert alert-danger" role="alert" id="email2">Sorry, but this e-mail isn't suitable!</div>-->
+
+        <h2>CHANGE PASSWORD</h2>
+            <p>
+                <label for="password">NEW PASSWORD</label>
+                <input type="password" name="password" id="password2">
+            </p>
+        <!--<div class="alert alert-danger" role="alert" id="password2">Sorry, but password is very simple!</div>-->
+            <p>
+                <label for="password">REPEAT NEW PASSWORD</label>
+                <input type="password" name="password" id="password2">
+            </p>
+        <!--<div class="alert alert-danger" role="alert" id="password2">Sorry, but the password doesn't match!</div>-->
+            <p>
+            <hr />
+                <label for="password">CURRENT PASSWORD FOR SAVE CHANGES</label>
+                <input type="password" name="password" id="password2">
+            </p>
+        <!--<div class="alert alert-danger" role="alert" id="password2">Sorry, but login or password incorrect!</div>-->
+
+            <p class="p-container">
+                <input type="submit" name="go" id="go" value="SUBMIT">
+            </p>
+    </div>
+    </form>
+<!--Конец формы смены почты и пароля-->
+
+    </form>
+</div>
+ {% endif %}    
+{% endblock %}

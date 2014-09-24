@@ -267,17 +267,33 @@ class db {
         mysqli_stmt_bind_result($stmt, $id);
         $success = mysqli_stmt_fetch($stmt);
         mysqli_stmt_close($stmt);
-        if ($success === True) {
+        if ($id) {
             return $id;
         } else {
-            $id = False;
-            return $id;
+            return False;
         }
     }
     
     private function predefinedMySQLCheckIfUserRegistered($login) {
         $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `users` WHERE `login`=?");
         mysqli_stmt_bind_param($stmt, "s", $login);
+        mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception(mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+        mysqli_stmt_bind_result($stmt, $id);
+        $success = mysqli_stmt_fetch($stmt);
+        mysqli_stmt_close($stmt);
+        if ($id) {
+            return $id;
+        } else {
+            return False;
+        }
+    }
+    
+    private function predefinedMySQLCheckIfApiIsInDB($keyID) {
+        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `apiList` WHERE `keyID`=? AND `keyStatus`='1'");
+        mysqli_stmt_bind_param($stmt, "s", $keyID);
         mysqli_stmt_execute($stmt);
         if (mysqli_error($this->connection)) {
             throw new Exception(mysqli_error($this->connection), mysqli_errno($this->connection));
@@ -313,11 +329,10 @@ class db {
         mysqli_stmt_bind_result($stmt, $id);
         $success = mysqli_stmt_fetch($stmt);
         mysqli_stmt_close($stmt);
-        if ($success === True) {
+        if ($id) {
             return $id;
         } else {
-            $id = False;
-            return $id;
+            return False;
         }
     }
     
@@ -336,14 +351,30 @@ class db {
     
     private function predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $keyStatus) {
         $this->openConnection();
-        $stmt = mysqli_prepare($this->connection, "INSERT INTO `apiList` SET `id`=?, `keyID`=?, `vCode`=?, `characterID`=?, `keyStatus`=?");
+        $stmt = mysqli_prepare($this->connection, "SELECT * FROM `apiList` WHERE `keyID`=? AND `keyStatus`='0'");
         mysqli_stmt_bind_param($stmt, "sssss", $id, $keyID, $vCode, $characterID, $keyStatus);
         $success = mysqli_stmt_execute($stmt);
-        if (mysqli_error($this->connection)) {
-            throw new Exception("predefinedPopulateApiList: " . mysqli_error($this->connection), mysqli_errno($this->connection));
-        }
+        mysqli_stmt_bind_result($stmt, $id);
+        $success = mysqli_stmt_fetch($stmt);
         mysqli_stmt_close($stmt);
-        $this->closeConnection();
+        if ($id == FALSE) {
+            $stmt = mysqli_prepare($this->connection, "INSERT INTO `apiList` SET `id`=?, `keyID`=?, `vCode`=?, `characterID`=?, `keyStatus`=?");
+            mysqli_stmt_bind_param($stmt, "sssss", $id, $keyID, $vCode, $characterID, $keyStatus);
+            $success = mysqli_stmt_execute($stmt);
+            if (mysqli_error($this->connection)) {
+                throw new Exception("predefinedPopulateApiList: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+            }
+            mysqli_stmt_close($stmt);
+            $this->closeConnection();
+        } else {
+            $stmt = mysqli_prepare($this->connection, "UPDATE `apiList` SET `id`=?, `vCode`=?, `characterID`=?, `keyStatus`=?");
+            mysqli_stmt_bind_param($stmt, "ssss", $id, $vCode, $characterID, $keyStatus);
+            $success = mysqli_stmt_execute($stmt);
+            if (mysqli_error($this->connection)) {
+                throw new Exception("predefinedPopulateApiList: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+            }
+            mysqli_stmt_close($stmt);
+        }
         return $success;
     }
     
@@ -375,6 +406,11 @@ class db {
     public function getIDByName($login) {
         $this->openConnection();
         return $this->predefinedMySQLCheckIfUserRegistered($login);
+    }
+    
+    public function checkIfApiExists($keyID) {
+        $this->openConnection();
+        return $this->predefinedMySQLCheckIfApiIsInDB($keyID);
     }
     
     public function registerNewUser($keyID, $vCode, $characterID, $keyStatus, $characterName, $corporationID, $corporationName, $allianceID, $allianceName, $passwordHash, $permissions, $email = NULL, $salt) {

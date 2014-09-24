@@ -109,10 +109,21 @@ class userManagement implements IuserManagement {
         return $this->pilotInfo[allianceName];
     }
     
+    public function deleteAPI() {
+        if ($this->id === -1) {
+            throw new Exception("Object created in fake user mode.", 30);
+        }
+        $query = "UPDATE `apilist` SET `keyStatus` = '0' WHERE `id` = $this->id AND keyStatus = '1'";
+        $this->db->query($query);
+        if ($this->db->affectedRows() < 1) {
+            throw new Exception("No such key found.", 15);
+        }
+    }
+
+
     public function setNewPassword($password){
         if ($id<>-1) {
-            $passwordHash = hash(sha512, $password);
-            $query = "UPDATE `users` SET `passwordHash` = '$passwordHash'";
+            
         } else {
             return "Object created in fake user mode. Can't change password.";
         }
