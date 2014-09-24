@@ -46,14 +46,10 @@ class db {
      */
     
     public function openConnection() {
-        try {
-            $this->connection = mysqli_connect($this->config[hostname], $this->config[username], $this->config[password]);
-            $this->selectdb = mysqli_select_db($this->connection, $this->config[database]);
-            if (mysqli_connect_error()) {
-                throw new mysqli_sql_exception(mysqli_connect_error(), mysqli_connect_errno());
-            }
-        } catch(mysqli_sql_exception $e) {
-            return $e->getMessage();
+        $this->connection = mysqli_connect($this->config[hostname], $this->config[username], $this->config[password]);
+        $this->selectdb = mysqli_select_db($this->connection, $this->config[database]);
+        if (mysqli_connect_error()) {
+            throw new Exception(mysqli_connect_error(), mysqli_connect_errno());
         }
     }
 
@@ -77,32 +73,22 @@ class db {
      */
     
     public function query($query) {
-        try {
-            if(empty($this->connection)) {
-                $this->openConnection();
-                if (mysqli_connect_error()) {
-                    $error = "ERROR:" . mysqli_connect_error() . " Error number:" . mysqli_connect_errno();
-                    return $error;
-                }
-                $this->lastQuery = mysqli_query($this->connection, $query);
-                if (mysqli_error($this->connection)) {
-                    $error = "ERROR:" . mysqli_error($this->connection) . " Error number:" . mysqli_errno($this->connection);
-                    return $error;
-                } else {
-                    return $this->lastQuery;
-                }
-                $this->closeConnection();
+        if(empty($this->connection)) {
+            $this->openConnection();
+            $this->lastQuery = mysqli_query($this->connection, $query);
+            if (mysqli_error($this->connection)) {
+                throw new Exception(mysqli_error($this->connection), mysqli_errno($this->connection));
             } else {
-                $this->lastQuery = mysqli_query($this->connection, $query);
-                if (mysqli_error($this->connection)) {
-                    $error = "ERROR:" . mysqli_error($this->connection) . " Error number:" . mysqli_errno($this->connection);
-                    return $error;                    
-                } else {
-                    return $this->lastQuery;
-                }
+                return $this->lastQuery;
             }
-        } catch (Exception $e) {
-            return $e;
+            $this->closeConnection();
+        } else {
+            $this->lastQuery = mysqli_query($this->connection, $query);
+            if (mysqli_error($this->connection)) {
+                throw new Exception(mysqli_error($this->connection), mysqli_errno($this->connection));
+            } else {
+                return $this->lastQuery;
+            }
         }
     }
     
@@ -113,14 +99,13 @@ class db {
      */
     
     public function hasRows($result) {
-        try {
-            if(mysqli_num_rows($result)>0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (Exception $e) {
-            return $e;
+        if (gettype($result)<> "object") {
+            throw new Exception("hasRows: Wrong input type. Object expected, " . gettype($result) . " given.");
+        }
+        if(mysqli_num_rows($result)>0) {
+            return true;
+        } else {
+            return false;
         }
     }
     
@@ -131,11 +116,10 @@ class db {
      */
     
     public function countRows($result) {
-        try {
-            return mysqli_num_rows($result);
-        } catch (Exception $e) {
-            return $e;
-        }            
+        if (gettype($result)<> "object") {
+            throw new Exception("countRows: Wrong input type. Object expected, " . gettype($result) . " given.");
+        }
+        return mysqli_num_rows($result);         
     }
     
     /**
@@ -145,11 +129,10 @@ class db {
      */
     
     public function affectedRows($result) {
-        try {
-            return mysqli_affected_rows($result);
-        } catch (Exception $e) {
-            return $e;
-        }            
+        if (gettype($result)<> "object" OR $result <> TRUE) {
+            throw new Exception("affectedRows: Wrong input type. Object or boolean true expected, " . var_dump($result) . " given.");
+        }
+        return mysqli_affected_rows($result);       
     }
     
     /**
@@ -159,20 +142,19 @@ class db {
      */
     
     public function fetchAssoc($result) {
-        try {
-            $assoc = array();
-            $numRows =$this->countRows($result);
-            if ($numRows === 1) {
-                $assoc = mysqli_fetch_assoc($result);
-            } else {
-                while ($array = mysqli_fetch_assoc($result)) {
-                    $assoc[] = $array;
-                }
-            }
-            return $assoc;
-        } catch (Exception $e) {
-            return $e;
+        if (gettype($result)<> "object") {
+            throw new Exception("fetchAssoc: Wrong input type. Object expected, " . gettype($result) . " given.");
         }
+        $assoc = array();
+        $numRows =$this->countRows($result);
+        if ($numRows === 1) {
+            $assoc = mysqli_fetch_assoc($result);
+        } else {
+            while ($array = mysqli_fetch_assoc($result)) {
+                $assoc[] = $array;
+            }
+        }
+        return $assoc;
     }
     
     /**
@@ -182,15 +164,14 @@ class db {
      */
     
     public function fetchArray($result) {
-        try {
-            $arrays = array();
-            while ($array = mysqli_fetch_array($result)) {
-                $arrays[] = $array;
-            }
-            return $arrays;
-        } catch (Exception $e) {
-            return $e;
+        if (gettype($result)<> "object") {
+            throw new Exception("fetchArray: Wrong input type. Object expected, " . gettype($result) . " given.");
         }
+        $arrays = array();
+        while ($array = mysqli_fetch_array($result)) {
+            $arrays[] = $array;
+        }
+        return $arrays;
     }
 
     /**
@@ -200,20 +181,19 @@ class db {
      */
     
     public function fetchRow($result) {
-        try {
-            $rows = array();
-            $numRows =$this->countRows($result);
-            if ($numRows === 1) {
-                $rows = mysqli_fetch_row($result);
-            }  else {
-                while ($array = mysqli_fetch_row($result)) {
-                    $rows[] = $array;
-                }
-            }
-            return $rows;
-        } catch (Exception $e) {
-            return $e;
+        if (gettype($result)<> "object") {
+            throw new Exception("fetchRow: Wrong input type. Object expected, " . gettype($result) . " given.");
         }
+        $rows = array();
+        $numRows =$this->countRows($result);
+        if ($numRows === 1) {
+            $rows = mysqli_fetch_row($result);
+        }  else {
+            while ($array = mysqli_fetch_row($result)) {
+                $rows[] = $array;
+            }
+        }
+        return $rows;
     }
     
     /**
@@ -224,15 +204,20 @@ class db {
      */
     
     public function getMysqlResult($result, $i = NULL) {
-        try {
-            $row = $this->fetchRow($result);
-            if ($i) {
-                return $row[$i];
-            } else {
-                return $row[0];
-            }
-        } catch (Exception $e) {
-            return $e;
+        if (gettype($result)<> "object") {
+            throw new Exception("getMysqlResult: Wrong input type. Object expected, " . gettype($result) . " given.");
+        }
+        $row = $this->fetchRow($result);
+        foreach ($row as $value) {
+            if(gettype($value) == "array") throw new Exception("getMysqlResult: Wrong input type. Array deeper than expected.");
+        }
+        /*if (count($row) > 1) {
+            throw new Exception("getMysqlResult: Wrong input type. Expected 1 row, got " . count($row) . " row(s).");
+        }*/
+        if ($i) {
+            return $row[$i];
+        } else {
+            return $row[0];
         }
     }
     
@@ -251,14 +236,10 @@ class db {
      */
     
     public function pingServer() {
-        try {
-            if(!mysqli_ping($this->connection)) {
-                return false;
-            } else {
-                return true;
-            }
-        } catch (Exception $e) {
-            return $e;
+        if(!mysqli_ping($this->connection)) {
+            return false;
+        } else {
+            return true;
         }
     }
     
@@ -270,52 +251,152 @@ class db {
     
     public function toArray($result) {
         $results = array();
-        try {
-            while(($row = $result->fetch_assoc()) != false) {
-                $results[] = $row;
-            }
-            return $results;
-        } catch (Exception $e) {
-            return $e;
+        while(($row = $result->fetch_assoc()) != false) {
+            $results[] = $row;
+        }
+        return $results;
+    }
+    
+    private function predefinedMySQLLogin($login, $passwordHash) {
+        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `users` WHERE `login`=? AND `passwordHash`=?");
+        mysqli_stmt_bind_param($stmt, "ss", $login, $passwordHash);
+        mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception(mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+        mysqli_stmt_bind_result($stmt, $id);
+        $success = mysqli_stmt_fetch($stmt);
+        mysqli_stmt_close($stmt);
+        if ($success === True) {
+            return $id;
+        } else {
+            $id = False;
+            return $id;
         }
     }
     
-    public function getUserLogin($login, $passwordHash) {
-        try {
-            if(empty($this->connection)) {
-                $this->openConnection();
-                if (mysqli_connect_error()) {
-                    $error = "ERROR:" . mysqli_connect_error() . " Error number:" . mysqli_connect_errno();
-                    return $error;
-                } else {
-                    $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `users` WHERE `login`=? AND `passwordHash`=?");
-                    mysqli_stmt_bind_param($stmt, "ss", $login, $passwordHash);
-                    mysqli_stmt_execute($stmt);
-                    mysqli_stmt_bind_result($stmt, $id);
-                    $success = mysqli_stmt_fetch($stmt);
-                    if ($success === True) {
-                        return $id;
-                    } else {
-                        $id = False;
-                        return $id;
-                    }
-                    $this->closeConnection();
-                }
+    private function predefinedMySQLCheckIfUserRegistered($login) {
+        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `users` WHERE `login`=?");
+        mysqli_stmt_bind_param($stmt, "s", $login);
+        mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception(mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+        mysqli_stmt_bind_result($stmt, $id);
+        $success = mysqli_stmt_fetch($stmt);
+        mysqli_stmt_close($stmt);
+        if ($id) {
+            return $id;
+        } else {
+            return False;
+        }
+    }
+    
+    private function predefinedMySQLCookie($cookie) {
+        $query = "SELECT `id` FROM `userCookies` WHERE ";
+        $cookieNumber = config::cookieNumber;
+        for ($i = 0; $i<=$cookieNumber; $i++) {
+            $fields .= '`cookie' . $i . "`=?";
+            if ($i<$cookieNumber) {
+                $fields .= ' OR ';
             } else {
-                $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `users` WHERE `login`=? AND `passwordHash`=?");
-                mysqli_stmt_bind_param($stmt, "ss", $login, $passwordHash);
-                mysqli_stmt_execute($stmt);
-                mysqli_stmt_bind_result($stmt, $id);
-                $success = mysqli_stmt_fetch($stmt);
-                if ($success === True) {
-                    return $id;
-                } else {
-                    $id = False;
-                    return $id;
-                }
+                $fields .= ' ';
             }
-        } catch (Exception $e) {
-            return $e;
+        }
+        $query .= $fields;
+        $stmt = mysqli_prepare($this->connection, $query);
+        mysqli_stmt_bind_param($stmt, "sssss", $cookie, $cookie, $cookie, $cookie, $cookie); //Repeat $cookie as many times as there cookies fields
+        mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception(mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+        mysqli_stmt_bind_result($stmt, $id);
+        $success = mysqli_stmt_fetch($stmt);
+        mysqli_stmt_close($stmt);
+        if ($success === True) {
+            return $id;
+        } else {
+            $id = False;
+            return $id;
+        }
+    }
+    
+    private function predefinedPopulateUsers($login, $passwordHash, $accessMask, $salt, $email = NULL) {
+        $this->openConnection();
+        $stmt = mysqli_prepare($this->connection, "INSERT INTO `users` SET `login`=?, `passwordHash`=?, `accessMask`=?, `email`=?, `salt`=?");
+        mysqli_stmt_bind_param($stmt, "sssss", $login, $passwordHash, $accessMask, $email, $salt);
+        $success = mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception("predefinedPopulateUsers: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+        mysqli_stmt_close($stmt);
+        $this->closeConnection();
+        return $success;
+    }
+    
+    private function predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $keyStatus) {
+        $this->openConnection();
+        $stmt = mysqli_prepare($this->connection, "INSERT INTO `apiList` SET `id`=?, `keyID`=?, `vCode`=?, `characterID`=?, `keyStatus`=?");
+        mysqli_stmt_bind_param($stmt, "sssss", $id, $keyID, $vCode, $characterID, $keyStatus);
+        $success = mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception("predefinedPopulateApiList: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+        mysqli_stmt_close($stmt);
+        $this->closeConnection();
+        return $success;
+    }
+    
+    private function predefinedPopulatePilotInfo($id, $characterID, $characterName, $corporationID, $corporationName, $allianceID, $allianceName) {
+        $this->openConnection();
+        $stmt = mysqli_prepare($this->connection, "INSERT INTO `pilotInfo` SET `id`=?, `characterID`=?, `characterName`=?, `corporationID`=?, `corporationName`=?, `allianceID`=?, `allianceName`=?");
+        mysqli_stmt_bind_param($stmt, "sssssss", $id, $characterID, $characterName, $corporationID, $corporationName, $allianceID, $allianceName);
+        $success = mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception("predefinedPopulatePilotInfo: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+        mysqli_stmt_close($stmt);
+        $this->closeConnection();
+        return $success;
+    }
+
+    public function getUserByLogin($login, $passwordHash) {
+        $this->openConnection();
+        $id = $this->predefinedMySQLLogin($login, $passwordHash);
+        return $id;
+    }
+    
+    public function getUserByCookie($cookie) {
+        $this->openConnection();
+        $id = $this->predefinedMySQLCookie($cookie);
+        return $id;
+    }
+    
+    public function getIDByName($login) {
+        $this->openConnection();
+        return $this->predefinedMySQLCheckIfUserRegistered($login);
+    }
+    
+    public function registerNewUser($keyID, $vCode, $characterID, $keyStatus, $characterName, $corporationID, $corporationName, $allianceID, $allianceName, $passwordHash, $permissions, $email = NULL, $salt) {
+        try {
+            $this->predefinedPopulateUsers($characterName, $passwordHash, $permissions, $salt, $email);
+            $id = $this->getIDByName($characterName);
+            $this->predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $keyStatus);
+            $this->predefinedPopulatePilotInfo($id, $characterID, $characterName, $corporationID, $corporationName, $allianceID, $allianceName);
+        } catch (Exception $ex) {
+            $firstException = $ex->getMessage();
+            //Rolling Back...
+            try {
+                $query = "DELETE FROM `pilotInfo` WHERE `characterID` = '$characterID'";
+                $thirdRes = strval($this->query($query));
+                $query = "DELETE FROM `apiList` WHERE `vCode` = '$vCode'";
+                $secondRes = strval($this->query($query));
+                $query = "DELETE FROM `users` WHERE `login` = '$characterName'";
+                $firstRes = strval($this->query($query));
+            } catch (Exception $ex) {
+                $secondException = $ex->getMessage();
+            }
+            throw new Exception("Something went terribly wrong. Message: " . $firstException . "\nRolling back... users: " . $firstRes . "\napiList: " . $secondRes . "\npilotInfo: " . $thirdRes . "\nErrors during rolling back: " . $secondException, 30);
         }
     }
 }

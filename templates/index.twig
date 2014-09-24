@@ -1,2 +1,33 @@
 {% extends "base.twig" %}
-{% set loggedIN = '1' %}
+{#{% set loggedIN = '1' %}#}
+{% block content %}
+<div class="container">
+    <div id="column-1">
+        <div style="margin-top: 10px;">
+            <center><img src="images/EVElogo.png"></img></center> 
+        </div>
+        <ul class="reset pull-left" type="none" style="margin-top: 10px">
+            <li>EVE-online status: <span id="online">ONLINE</span></li>
+            <li>Current Clients: <span id="online">10544</span></li>
+        </ul>
+    </div>
+    <div id="column-2">
+       <div style="margin-top: 10px;">
+            <center><img src="images/TSlogo.png"></img></center>
+       </div>
+        <ul class="reset pull-left" type="none" style="margin-top: 10px">
+            <li>TeamSpeak status: <span id="offline">OFFLINE</span></li>
+            <li>Current Clients: <span id="offline">0</span></li>
+        </ul>
+    </div>
+    <div id="column-3">
+        <div style="margin-top: 10px;">
+            <center><img src="images/Jabber_logo.png"></img></center>
+        </div>
+        <ul class="reset pull-left" type="none" style="margin-top: 10px">
+            <li>Jabber status: <span id="online">ONLINE</span></li>
+            <li>Current Clients: <span id="online">38</span></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

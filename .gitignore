@@ -4,3 +4,5 @@
 /cache
 /test.php
 .ftpsync_settings
+/test2.php
+/classes/testClass.class.php

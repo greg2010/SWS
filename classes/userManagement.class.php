@@ -1,10 +1,9 @@
 <?php
 
 interface IuserManagement {
-    function getUserInfo();
     function getUserCorpName();
     function getUserAllianceName();
-    function setNewPassword();
+    function setNewPassword($password);
     function setUserInfo();
 }
 
@@ -17,7 +16,7 @@ class userManagement implements IuserManagement {
     protected $pilotInfo;
     public $log;
 
-    public function __construct($id) {
+    public function __construct($id = NULL) {
         $this->db = db::getInstance();
         $this->log = new logging();
         $this->permissions = new permissions($id);
@@ -37,7 +36,7 @@ class userManagement implements IuserManagement {
             $this->pilotInfo = $this->db->fetchAssoc($result);
             return true;
         } catch (Exception $ex) {
-            $this->log->put("getDbPilotInfo", "err: " . $ex->getMessage());
+            $this->log->put("getDbPilotInfo", "err " . $ex->getMessage());
             return false;
         }
     }
@@ -53,7 +52,7 @@ class userManagement implements IuserManagement {
             $apiKey = $this->db->fetchRow($result);
             return $apiKey;
         } catch (Exception $ex) {
-            $this->log->put("getApiKey", "err: " . $ex->getMessage());
+            $this->log->put("getApiKey", "err " . $ex->getMessage());
         }
     }
     
@@ -94,24 +93,29 @@ class userManagement implements IuserManagement {
             }
             return $accessMask;
         } catch (Exception $ex) {
-            $this->log->put("getAllowedListMask", "err: " . $ex->getMessage());
+            $this->log->put("getAllowedListMask", "err " . $ex->getMessage());
         }
     }
     
-    public function getUserInfo() {
-        
+    public function getUserName() {
+        return $this->pilotInfo[characterName];
     }
     
     public function getUserCorpName() {
-        
+        return $this->pilotInfo[corporationName];
     }
     
     public function getUserAllianceName(){
-        
+        return $this->pilotInfo[allianceName];
     }
     
-    public function setNewPassword(){
-        
+    public function setNewPassword($password){
+        if ($id<>-1) {
+            $passwordHash = hash(sha512, $password);
+            $query = "UPDATE `users` SET `passwordHash` = '$passwordHash'";
+        } else {
+            return "Object created in fake user mode. Can't change password.";
+        }
     }
     
     public function setUserInfo() {

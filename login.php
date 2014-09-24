@@ -1,22 +1,34 @@
 <?php
 $thisPage = "login";
+require_once 'auth.php';
 include 'header.php';
 
-$templateName = "login";
-require_once 'auth.php';
-$pagePermissions = array();
+$templateName = $thisPage;
+//$pagePermissions = array();
 
-$loginFormSent = $_POST[loginFormSent];
+$loginFormSent = $_POST[form];
 $method = $_SERVER[REQUEST_METHOD];
-if ($loginFromSent === 'True' AND $method <> 'POST' OR $loginFromSent <> 'True' AND $method === 'POST') {
+if ($method <> 'POST' AND $loginFromSent === 'sent') {
     header("Location: /login.php");
-} else {
+}
+if ($loginFormSent == 'sent') {
     $login = $_POST[login];
     $password = $_POST[password];
-    $_SESSION[user]->logUserByLoginPass($login, $password);
+    $_SESSION[userObject]->logUserByLoginPass($login, $password);
+    $toTemplate['loggedIn'] = $_SESSION[userObject]->isLoggedIn();
+     if ($_POST[remember] == 1 && $toTemplate[loggedIn] == TRUE) {
+        $_SESSION[userObject]->setCookieForUser();
+    }
+    if ($toTemplate[loggedIn] == TRUE) {
+        $toTemplate['success'] = 1;
+        header("Location: /index.php");
+    } else {
+        $toTemplate['success'] = 0;
+    }
 }
-$_SESSION[user]->preparePage($pagePermissions);
+//$_SESSION[userObject]->preparePage($pagePermissions);
 
-$toTemplate['hasAccess'] = $_SESSION[user]->hasPermission();
-
+//$toTemplate['hasAccess'] = $_SESSION[userObject]->hasPermission();
+//$_SESSION[userObject]->test = 0;
+//var_dump($_SESSION[userObject]);
 require 'twigRender.php';

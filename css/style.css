@@ -1,18 +1,151 @@
 @import url(http://fonts.googleapis.com/css?family=Jura:600&subset=latin,cyrillic);
 
-* { box-sizing: border-box; padding:0; margin: 0; }
+* { 
+        -moz-box-sizing: border-box; 
+        box-sizing: border-box; 
+}
+  
+html {
+        height: 100%;
+}
 
-body {
-        font-family: 'Jura', "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif;
+body {  
+        height: 100%;  
+        min-height: 100%;  
+        position: relative;
+        font-family: 'Jura', "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",Helvetica,Arial,"Lucida Grande", sans-serif;
         color:white;
         font-size:16px;
         background:#333 ;
         background-image: url(../images/bg.jpg);
-        background-attachment:fixed;
-        height: 100%;
-        margin: 0;
-        padding: 0;
+        background-attachment:fixed; 
 }
+
+img {
+        max-width:100%;
+        height:auto;
+}
+
+span {
+        color: #ccc;
+}
+
+#header {
+        height: auto;
+}
+
+.amPmCheckbox input[type="checkbox"] {
+        display: none;
+}
+.amPmCheckbox input[type="checkbox"]+label {    
+        background: url("../images/checkbox.png") no-repeat;
+        height:18px;
+        padding-left: 30px;
+}
+.amPmCheckbox input[type="checkbox"]:checked + label {
+        background: url("../images/checkbox_active.png")  no-repeat;
+        height:18px;
+}
+
+.r_button {
+        display: none;
+}
+
+.r_button + label {
+        background: url("../images/radio.png") no-repeat scroll 0 0;
+        cursor: pointer;
+        padding-left: 30px;
+        vertical-align: middle;
+}
+
+.r_button:checked + label {
+        background: url("../images/radio_active.png") no-repeat scroll 0 0;
+        vertical-align: middle;
+}
+
+.glyphicon-ok {
+        color: #458B00;
+        margin-left: 25px;
+}
+
+.glyphicon-remove {
+        color: #FF4500;
+        margin-left: 25px;
+}
+
+label[for=r_1] {
+        color: #458B00;
+}
+
+label[for=r_2] {
+        color: #FF4500;
+}
+
+.page {
+        min-height: 100%; 
+        height: auto !important;
+}
+
+.wrap { 
+        padding-bottom: 50px;
+}
+
+ footer {
+         margin-top:-50px;
+         color:#ccc;
+         height:50px;
+         text-align: center;
+ }
+.alert {
+        color: #f6c000;
+        background:linear-gradient(#222222, #2d2d2d);
+        border-color: #f6c000;
+        text-align: center;
+}
+
+hr {
+        color: #f6c000;
+        border-color: #f6c000;
+}
+
+select {
+        background-color: #333;
+        border-color: #f6c000;
+}
+
+option:hover {
+        background-color: #ccc;
+}
+
+option{
+	    color:#f6c000;
+	    background:#333;
+        scrollbar-base-color: #ccc;
+}
+
+.new-select-style-wpandyou select {
+        border-radius: 0;
+        background: transparent;
+        height: 30px;
+        padding: 5px;
+        border: 0;
+        font-size: 14px;
+        line-height: 1;
+        -webkit-appearance: none;
+        width: 375px;
+   }
+.new-select-style-wpandyou {
+        border: 1px solid #f6c000;
+        overflow: hidden;
+        height: 30px;
+        background: url(../images/select.png) no-repeat right #333;
+        width: 360px;
+   }
+
+button, input, select, optgroup, textarea {
+        color: #f6c000;
+}
+
 
 #logo {
         background:url(../images/Logo.png) no-repeat top left;
@@ -61,6 +194,7 @@ form:after {
         height:1px;
         width:100px;
         left:20%;
+        background:-webkit-linear-gradient(left, #111, #444, #b6b6b8, #444, #111);
         background:linear-gradient(left, #111, #444, #b6b6b8, #444, #111);
         top:0;
 }
@@ -83,12 +217,13 @@ form:before {
 }
 
 form h1 {
-        font-size:18px;
         text-shadow:0 1px 0 black;
         text-align:center;
         padding:15px 0;
         border-bottom:1px solid rgba(0,0,0,1);
         position:relative;
+        color: #f6c000; 
+        font-size: 20px;
 }
 
 form h1:after {
@@ -100,8 +235,10 @@ form h1:after {
         top:0;
         left:50px;
         pointer-events:none;
+        -ms-transform:rotate(70deg);
         transform:rotate(70deg);
         -webkit-transform: rotate(70deg);
+        background:-webkit-linear-gradient(40deg, rgba(255,255,255,0.15), rgba(0,0,0,0));
         background:linear-gradient(50deg, rgba(255,255,255,0.15), rgba(0,0,0,0));
         background-image: -webkit-linear-gradient(50deg, rgba(255,255,255,0.05), rgba(0,0,0,0)); /* For Safari */
 }
@@ -119,6 +256,7 @@ input[type=password] {
         height: 30px;    
         padding:8px 5px;
         color: #f6c000;
+        background:-webkit-linear-gradient(#222222, #2d2d2d);
         background:linear-gradient(#222222, #2d2d2d);
         border:1px solid #222;
         box-shadow: 0 1px 0 rgba(255,255,255,0.1);
@@ -157,14 +295,14 @@ input[type=checkbox] {
 
 input[type=submit] {
         padding:5px 20px;
-        border:1px solid rgba(0,0,0,0.4);
+        border:1px solid #f6c000;
         text-shadow:0 -1px 0 rgba(0,0,0,0.4);
         box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.3),
         inset 0 10px 10px rgba(255,255,255,0.1);
         border-radius:0.3em;
-        background: #dcdcdc;
-        color: #333;
+        background: #333;
+        color: #ccc;
         float:right;
         font-weight:bold;
         cursor:pointer;
@@ -182,4 +320,146 @@ input[type=password]:hover,
 label:hover ~ input[type=text],
 label:hover ~ input[type=password] {
         background:#222222;
+}
+
+input[type=button] {
+        padding:5px 20px;
+        border:1px solid #f6c000;
+        text-shadow:0 -1px 0 rgba(0,0,0,0.4);
+        box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.3),
+        inset 0 10px 10px rgba(255,255,255,0.1);
+        border-radius:0.3em;
+        background: #333;
+        color: #ccc;
+        float:right;
+        font-weight:bold;
+        cursor:pointer;
+        font-size:13px;
+}
+
+input[type=button]:hover {
+        box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.3),
+        inset 0 -10px 10px rgba(255,255,255,0.1);
+}
+
+#online {
+        color: #458B00;
+}
+
+#offline {
+        color: #FF4500;
+}
+
+#column-1 {
+        width: 33%; 
+        min-height: 130px;
+        float: left;
+        border: 1px solid;
+        border-color: #000;
+        color: #ccc;
+        background: linear-gradient(#222, #2D2D2D) repeat scroll 0% 0% transparent;
+        padding: 5px;
+}
+
+#column-2 {
+        width: 34%;
+        min-height: 130px;
+        float: left;
+        border: 1px solid;
+        border-color: #000;
+        color: #ccc;
+        background: linear-gradient(#222, #2D2D2D) repeat scroll 0% 0% transparent;
+        padding: 5px;
+}
+#column-3 {
+        width: 33%;
+        min-height: 130px;
+        float: left;
+        border: 1px solid;
+        border-color: #000;   
+        color: #ccc;
+        background: linear-gradient(#222, #2D2D2D) repeat scroll 0% 0% transparent;
+        padding: 5px;
+}
+
+#reqs {
+        font-size: 13px;
+        color: #ccc;
+}
+
+#passmust {
+        color: #ccc;
+}
+
+.nav > li > a:hover,
+.nav > li > a:focus {
+  background-color: #333;
+}
+
+.nav > li > a > img {
+  max-width: none;
+}
+
+.nav-tabs > li > a {
+  border: 1px solid transparent;
+}
+.nav-tabs > li > a:hover {
+  border-color: #f6c000;
+}
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+  color: #ccc;
+  background-color: #111111;
+  border: transparent;
+  border-bottom-color: transparent;
+}
+
+
+#formSettings {
+            width:auto;
+            height: auto;
+            margin-top: 0px;
+}
+
+#formSettings:before {
+           left:12%;
+}
+        
+#email2 {
+            width: 500px;
+}
+
+#password2 {
+            width: 500px;
+}
+
+#keyID2 {
+            width: 80px;
+}
+
+#vCode2 {
+            width: 570px;
+}
+
+#danger {
+        border-color: #FF4500;
+        color: #FF4500;
+}
+
+#getAPI {
+            margin-left: 400px;
+}
+
+#success {
+            border-color: #458B00;
+            color: #458B00;
+}
+
+#SetIns {
+            margin-left: 80px;
+            margin-right: 80px;
+            margin-bottom: 80px;
 }

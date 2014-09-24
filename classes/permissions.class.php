@@ -13,7 +13,7 @@ class permissions {
     private $userMask;
     private $maskLength;
     
-    function __construct($id) {
+    function __construct($id = NULL) {
         $this->log = new logging();
         try {
             $this->db = db::getInstance();
@@ -27,7 +27,7 @@ class permissions {
             }
             return true;
         } catch (Exception $ex) {
-            $this->log->put("construct", "err: " . $ex->getMessage());
+            $this->log->put("construct", "err " . $ex->getMessage());
             return false;
         }
     }
@@ -44,21 +44,25 @@ class permissions {
             $this->bitMap = $bitNames;
             return true;
         } catch (Exception $ex) {
-            $this->log->put("getBitMapFromDb", "err: " . $ex->getMessage());
+            $this->log->put("getBitMapFromDb", "err " . $ex->getMessage());
             return false;
         }
     }
 
-    private function getUserMask() {
+    private function getUserMask($mask = NULL) {
         try {
+            if (strlen($mask) > 0) {
+                $this->userMask = $mask;
+            } else {
             $query = "SELECT `accessMask` FROM `users` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
             $this->userMask = $this->db->getMysqlResult($result);
-//            $this->userMask = 15731715; //Temp full mask for debug
+            }
+            //$this->userMask = 15731715; //Temp full mask for debug
             $this->maskLength = floor(log($this->userMask)/log(2)) + 1;
             return true;
         } catch (Exception $ex) {
-            $this->log->put("getUserMask", "err: " . $ex->getMessage());
+            $this->log->put("getUserMask", "err " . $ex->getMessage());
             return false;
         }
     }
@@ -77,7 +81,7 @@ class permissions {
             }
             return true;
         } catch (Exception $ex) {
-            $this->log->put("getUserPermissions", "err: " . $ex->getMessage());
+            $this->log->put("getUserPermissions", "err " . $ex->getMessage());
             return false;
         }
     }
@@ -95,17 +99,17 @@ class permissions {
             }
             return $rightsRequested;
         } catch (Exception $ex) {
-            $this->log->put("getPermissionsInRange", "err: " . $ex->getMessage());
+            $this->log->put("getPermissionsInRange", "err " . $ex->getMessage());
         }
     }
     
     private function updateUserMask() {
         try {
             $query = "UPDATE `users` SET `accessMask` = '$this->userMask' WHERE `id` = '$this->id'";
-            $this->db->query($query);
+            $result = $this->db->query($query);
             return true;
         } catch (Exception $ex) {
-            $this->log->put("updateUserMask", "err: " . $ex->getMessage());
+            $this->log->put("updateUserMask", "err " . $ex->getMessage());
             return false;
         }
     }
@@ -123,7 +127,7 @@ class permissions {
                 return False;
             }
         } catch (Exception $ex) {
-            $this->log->put("hasPermission", "err: " . $ex->getMessage());
+            $this->log->put("hasPermission", "err " . $ex->getMessage());
         }
     }
     
@@ -185,7 +189,7 @@ class permissions {
             $this->getUserPermissions();
             return true;
         } catch (Exception $ex) {
-            $this->log->put("setPermissions", "err: " . $ex->getMessage());
+            $this->log->put("setPermissions", "err " . $ex->getMessage());
             return false;
         }
     }
@@ -209,11 +213,28 @@ class permissions {
             $this->getUserPermissions();
             return true;
         } catch (Exception $ex) {
-            $this->log->put("unsetPermissions", "err: " . $ex->getMessage());
+            $this->log->put("unsetPermissions", "err " . $ex->getMessage());
             return false;
         }
     }
     
+    public function setUserMask($mask) {
+        try {
+            if ($this->id <> -1) {
+                throw new Exception("Method is only available in fake user mode!");
+            }
+            unset($this->userMask);
+            unset($this->userPermissions);
+            unset($this->maskLength);
+            $this->getUserMask($mask);
+            $this->getUserPermissions();
+            return true;
+        } catch (Exception $ex) {
+            $this->log->put("setUserMask", "err " . $ex->getMessage());
+            return false;
+        }
+    }
+
     public function getBitMap() {
         return $this->bitMap;
     }
