@@ -56,20 +56,24 @@ class APIUserManagement implements IAPIUserManagement {
                     $this->apiCharsInfo = $response->key->characters[0];
                     $this->apiCharsInfo[accessMask] = $response->key->accessMask;
                 } else{
-                    foreach($response->key->characters as $char) $this->apiCharsInfo[] = $char;
+                    foreach($response->key->characters as $char){
+                        $this->apiCharsInfo[] = $char;
+                    }
                 }
                 return true;
             } else{
                 for($i=0; $i<sizeof($response->key->characters); $i++){
                     if($response->key->characters[$i]->characterID == $this->apiKey[2]){
-                        $isChar = true;
+                        //$isChar = true;
                         $this->apiPilotInfo = $response->key->characters[$i];
+                        $this->apiPilotInfo[accessMask] = $response->key->accessMask;
                         return true;
-                    } else{
+                    }/* else{
                         $isChar = false;
-                    }
+                    }*/
                 }
-                if(!$isChar) throw new \Pheal\Exceptions\PhealException("Not found the right character", -30);
+                //if(!$isChar) 
+                throw new \Pheal\Exceptions\PhealException("Not found the right character", -30);
             }
         } catch (\Pheal\Exceptions\PhealException $e){
             $this->log->put("getApiPilotInfo", "err " . $e->getMessage());
@@ -86,6 +90,14 @@ class APIUserManagement implements IAPIUserManagement {
         return false;
     }
     
+    private function getCorporationTicker($id){
+        //
+    }
+
+    private function getAllianceTicker($id){
+        //
+    }
+
     public function getCorpInfo($keyID, $vCode) {
         if($this->getApiPilotInfo($keyID, $vCode, true)) return $this->apiCharsInfo;
     }
