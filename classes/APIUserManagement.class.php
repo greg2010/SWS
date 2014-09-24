@@ -91,10 +91,10 @@ class APIUserManagement implements IAPIUserManagement {
             'characterName' => $char->characterName,
             'corporationID' => $char->corporationID,
             'corporationName' => $char->corporationName,
-            'corpTicker' => $this->getCorporationTicker($char->corporationID),
+            'corporationTicker' => $this->getCorporationTicker($char->corporationID),
             'allianceID' => $char->allianceID,
             'allianceName' => $char->allianceName,
-            'alliTicker' => $this->getAllianceTicker($char->allianceID)
+            'allianceTicker' => $this->getAllianceTicker($char->allianceID)
         );
         return $charArray;
     }
