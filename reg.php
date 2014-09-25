@@ -37,10 +37,7 @@ if ($_POST[form] == 'sent') {
                 $toTemplate["errorMsg"] = "Please fill in all fields!";
                 break;
             case 11:
-                $toTemplate["errorMsg"] = "There is a problem with your password: " . $ex->getMessage();
-                break;
-            case 12:
-                $toTemplate["errorMsg"] = "Your passwords don't match!";
+                $toTemplate["errorMsg"] = "There is a problem: " . $ex->getMessage();
                 break;
             case 15:
                 $toTemplate["errorMsg"] = "There is a problem with CCP servers. Please try again later.";

@@ -1,10 +1,9 @@
 <?php
 
 interface IuserManagement {
-    function getUserCorpName();
-    function getUserAllianceName();
-    function setNewPassword($password);
-    function setUserInfo();
+    //function getUserCorpName();
+    //function getUserAllianceName();
+    function setNewPassword($password, $passwordRepeat);
     function getCorporationTicker($id);
     function getAllianceTicker($id);
     function recordCorporationInfo($id, $name, $ticker);
@@ -100,19 +99,7 @@ class userManagement implements IuserManagement {
             $this->log->put("getAllowedListMask", "err " . $ex->getMessage());
         }
     }
-    
-    public function getUserName() {
-        return $this->pilotInfo[characterName];
-    }
-    
-    public function getUserCorpName() {
-        return $this->pilotInfo[corporationName];
-    }
-    
-    public function getUserAllianceName(){
-        return $this->pilotInfo[allianceName];
-    }
-    
+
     public function deleteAPI() {
         if ($this->id === -1) {
             throw new Exception("Object created in fake user mode.", 30);
@@ -123,18 +110,38 @@ class userManagement implements IuserManagement {
             throw new Exception("No such key found.", 15);
         }
     }
-
-
-    public function setNewPassword($password){
-        if ($id<>-1) {
-            
-        } else {
-            return "Object created in fake user mode. Can't change password.";
+    
+    public function setNewEmail($email) {
+        if ($this->id === -1) {
+            throw new Exception("Object created in fake user mode. Can't change email.", 30);
+        }
+        $verify = new registerNewUser();
+        $verify->testEmail($email);
+        try {
+            $this->db->updateEmail($this->id, $email);
+        } catch (Exception $ex) {
+            throw new Exception("MySQL error: " . $ex->getMessage(), 30);
         }
     }
-    
-    public function setUserInfo() {
-        
+
+    public function setNewPassword($password, $passwordRepeat){
+        if ($this->id === -1) {
+            throw new Exception("Object created in fake user mode.", 30);
+        }
+        if ($passwordRepeat <> $password) {
+            throw new Exception("Passwords don't match!", 11);
+        }
+        $verify = new registerNewUser();
+        $verify->testPassword($password);
+        try {
+            $query = "SELECT `salt` FROM `users` WHERE `id` = '$this->id'";
+            $salt = $this->db->getMySQLResult($this->db->query($query));
+            $passwordHash = hash(config::password_hash_type, $password . $salt);
+            $query = "UPDATE `users` SET `passwordHash` = '$passwordHash' WHERE `id` = '$this->id'";
+            $result = $this->db->query($query);
+        } catch (Exception $ex) {
+            throw new Exception("MySQL error: " . $ex->getMessage(), 30);
+        }
     }
 
     public function getCorporationTicker($id){

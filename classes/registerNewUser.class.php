@@ -90,7 +90,7 @@ class registerNewUser {
     return $randomString;
     }
     
-    private function testPassword($password) {
+    public function testPassword($password) {
         $numbers = '/\d/';
         $lower = '/[a-z]/';
         $upper = '/[A-Z]/';
@@ -112,7 +112,7 @@ class registerNewUser {
         }
     }
     
-    private function testEmail($email) {
+    public function testEmail($email) {
         $pattern = "/^([a-z0-9_\.-])+@[a-z0-9-]+\.([a-z]{2,4}\.)?[a-z]{2,4}$/i";
         if (!preg_match($pattern, $email)) {
             throw new Exception("Your e-mail is invalid!", 11);
@@ -139,10 +139,11 @@ class registerNewUser {
             throw new Exception("Password repeat", 10);
         }
         if ($passwordRepeat <> $password) {
-            throw new Exception("Passwords don't match!", 12);
+            throw new Exception("Passwords don't match!", 11);
         }
         if ($email) {
             $this->testEmail($email);
+            $this->email = $email;
         }
         $alreadyRegistered = $this->db->getIDByName($this->login);
         if ($alreadyRegistered <> FALSE) {
@@ -158,9 +159,6 @@ class registerNewUser {
         $this->salt = $this->generateSalt();
         $passwordWithSalt = $password . $this->salt;
         $this->passwordHash = hash(config::password_hash_type, $passwordWithSalt);
-        if ($email) {
-            $this->email = $email;
-        }
     }
     
     public function register() {

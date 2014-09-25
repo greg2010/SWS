@@ -20,6 +20,78 @@ switch ($page) {
     default:
         $toTemplate['curForm'] = '';
         $toTemplate['active']['profile'] = $pageActive;
+        
+        $toTemplate['saveForm']['email'] = $_SESSION[userObject]->userInfo[email];
+        if ($_POST[form] == 'sent') {
+            try {
+                $currPassword = $_POST[currentPassword];
+                $_SESSION[userObject]->verifyCurrentPassword($currPassword);
+                if ($_POST[email]) {
+                    try {
+                        $email = $_POST[email];
+                        $toTemplate['saveForm']['email'] = $email;
+                        $_SESSION[userObject]->userManagement->setNewEmail($email);
+                    } catch (Exception $ex) {
+                        switch ($ex->getCode()) {
+                            case 11:
+                                $toTemplate["errorMsgEmail"] = "There is a problem: " . $ex->getMessage();
+                                break;
+                            case 30:
+                                $toTemplate["errorMsgEmail"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
+                                break;
+                        }
+                    }
+                }
+                if ($_POST[password]) {
+                    try {
+                        $password = $_POST[password];
+                        $passwordRepeat = $_POST[passwordRepeat];
+                        $_SESSION[userObject]->userManagement->setNewPassword($password, $passwordRepeat);
+                    } catch (Exception $ex) {
+                        switch ($ex->getCode()) {
+                            case 11:
+                                $toTemplate["errorMsgPassword"] = "There is a problem: " . $ex->getMessage();
+                                break;
+                            case 30:
+                                $toTemplate["errorMsgPassword"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
+                                break;
+                        }
+                    }
+                }
+            } catch (Exception $ex) {
+                switch ($ex->getCode()) {
+                    case 13:
+                        $toTemplate["errorMsg"] = "Wrong password!";
+                        break;
+                    case 30:
+                        $toTemplate["errorMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
+                        break;
+                }
+            }
+        }
 }
 
 require 'twigRender.php';
+
+/**
+ *  EMAIL:
+ *  IF EMAIL
+ *      SHOW EMAIL
+ *      IF EMAIL CORRECT
+ *          UPDATE EMAIL
+ *      ELSE
+ *          THROW ERROR EMAIL INCORRECT
+ *      ENDIF     
+ *  ENDIF
+ * 
+ * CHANGE PASSWORD:
+ *  IF CURRENT PASSWORD CORRECT
+ *      IF NEW PASSWORD CORRECT
+ *          CHANGE CURRENT PASSWORD
+ *      ELSE
+ *          THROW ERROR BAD PASSWORD
+ *      ENDIF
+ *  ELSE
+ *      THROW ERROR INCORRECT PASSWORD
+ *  ENDIF
+ */

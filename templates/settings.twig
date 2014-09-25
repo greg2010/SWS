@@ -11,7 +11,7 @@
     </ul>
  {% if curForm == 'api' %}
 <!--Форма смены API-->
-    <form id="formSettings">  
+    <form id="formSettings" action="settings.php?a=api" method="post">  
 
         <h2>CURRENT API</h2>
         <br>
@@ -51,27 +51,54 @@
             <hr />
 
             <p class="p-container">
+               <input type="hidden" name="form" value="sent">
                 <input type="submit" name="go" id="go" value="SUBMIT">
             </p>
             <!--<div class="alert alert-danger" role="alert" id="success">Your api successfully changed!</div>-->    
 <!--Конец смены API-->
+    </form>
 {% else %}
+    {% if errorMsg is defined %}
+        {% set isErrorHidden = "" %}
+        {% set isErrorEmailHidden = "hidden" %}
+        {% set isErrorPasswordHidden = "hidden" %}
+    {% else %}
+        {% set isErrorHidden = "hidden" %}
+        {% if errorMsgEmail is defined %}
+            {% set isErrorEmailHidden = "" %}
+        {% else %}
+            {% set isErrorEmailHidden = "hidden" %}
+        {% endif %}
+        {% if errorMsgPassword is defined %}
+            {% set isErrorPasswordHidden = "" %}
+        {% else %}
+            {% set isErrorPasswordHidden = "hidden" %}
+        {% endif %}
+    {% endif %}
 <!--Форма смены почты и пароля-->
-    <form id="formSettings">  
+    <form id="formSettings" action="settings.php" method="post">  
         <h1>PROFILE SETTINGS</h1>
     <div class="inset" id="SetIns">
+        <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
+            {{errorMsg}}
+        </div>
         <h2>ADD / CHANGE E-MAIL</h2>
+        <div class="alert alert-danger" role="alert" id="email2" {{isErrorEmailHidden}}>
+            {{errorMsgEmail}}
+        </div>
             <p>
                 <label for="email">E-MAIL</label>
-                <input type="text" name="email" id="email2">
+                <input type="text" name="email" value="{{saveForm.email}}" id="email2">
             </p>
-            <div class="amPmCheckbox">
+            <!--<div class="amPmCheckbox">
                 <input type="checkbox" name="allow" class="checkboxLabel main_street_input" id="ch2" value="1" />
-                <!--<label for="ch2">I allow users to send e-mail to me</label>-->
-            </div>
-        <!--<div class="alert alert-danger" role="alert" id="email2">Sorry, but this e-mail isn't suitable!</div>-->
+                <label for="ch2">I allow users to send e-mail to me</label>
+            </div>-->
 
         <h2>CHANGE PASSWORD</h2>
+        <div class="alert alert-danger" role="alert" id="email2" {{isErrorPasswordHidden}}>
+            {{errorMsgPassword}}
+        </div>
             <p>
                 <label for="password">NEW PASSWORD</label>
                 <input type="password" name="password" id="password2">
@@ -79,23 +106,22 @@
         <!--<div class="alert alert-danger" role="alert" id="password2">Sorry, but password is very simple!</div>-->
             <p>
                 <label for="password">REPEAT NEW PASSWORD</label>
-                <input type="password" name="password" id="password2">
+                <input type="password" name="passwordRepeat" id="password2">
             </p>
         <!--<div class="alert alert-danger" role="alert" id="password2">Sorry, but the password doesn't match!</div>-->
             <p>
             <hr />
                 <label for="password">CURRENT PASSWORD FOR SAVE CHANGES</label>
-                <input type="password" name="password" id="password2">
+                <input type="password" name="currentPassword" id="password2">
             </p>
         <!--<div class="alert alert-danger" role="alert" id="password2">Sorry, but login or password incorrect!</div>-->
 
             <p class="p-container">
+               <input type="hidden" name="form" value="sent">
                 <input type="submit" name="go" id="go" value="SUBMIT">
             </p>
     </div>
-    </form>
 <!--Конец формы смены почты и пароля-->
-
     </form>
 </div>
  {% endif %}    

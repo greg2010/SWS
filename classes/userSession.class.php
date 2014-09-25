@@ -18,6 +18,9 @@ class userSession {
     private $hasAccessToCurrentPage;
     
     public $userInfo;
+    public $pilotInfo;
+    public $corpInfo;
+    public $allianceInfo;
     
     public $permissions;
     public $userManagement;
@@ -31,13 +34,15 @@ class userSession {
     public function __sleep() {
          unset($this->db);
          unset($this->permissions);
-         return array('sessionID', 'id', 'isLoggedIn', 'userInfo');
+         return array('sessionID', 'id', 'isLoggedIn', 'userInfo', 'pilotInfo', 'corpInfo', 'allianceInfo', 'salt');
      }
      
      public function __wakeup() {
          $this->db = db::getInstance();
          if ($this->id) {
             $this->permissions = new permissions($this->id);
+            $this->userManagement = new userManagement($this->id);
+            $this->updateUserInfo();
          }
      }
 
@@ -159,23 +164,31 @@ class userSession {
     private function initialize() {
         $this->permissions = new permissions($this->id);
         $this->userManagement = new userManagement($this->id);
+        $this->updateUserInfo();
+    }
+    
+    public function updateUserInfo() {
         try {
-            $query = "SELECT * FROM `pilotInfo` WHERE `id` = '$this->id'";
+            $query = "SELECT `email`, `lastNotifID`, `salt` FROM `users` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
             $this->userInfo = $this->db->fetchAssoc($result);
             
-            $query = "SELECT * FROM `corporationList` WHERE `id` = '{$this->userInfo[corporationID]}'";
+            $query = "SELECT * FROM `pilotInfo` WHERE `id` = '$this->id'";
+            $result = $this->db->query($query);
+            $this->pilotInfo = $this->db->fetchAssoc($result);
+            
+            $query = "SELECT * FROM `corporationList` WHERE `id` = '{$this->pilotInfo[corporationID]}'";
             $result = $this->db->query($query);
             $this->corpInfo = $this->db->fetchAssoc($result);
             
-            $query = "SELECT * FROM `allianceList` WHERE `id` = '{$this->userInfo[allianceID]}'";
+            $query = "SELECT * FROM `allianceList` WHERE `id` = '{$this->pilotInfo[allianceID]}'";
             $result = $this->db->query($query);
             $this->allianceInfo = $this->db->fetchAssoc($result);
         } catch (Exception $ex) {
-            echo $ex->getMessage();
+            throw new Exception("MySQL error: " . $ex->getMessage(), 30);
         }
     }
-    
+
     public function logUserByLoginPass($login, $password) {
         try {
             $id = $this->db->getIDByName($login);
@@ -221,6 +234,16 @@ class userSession {
         }
     }
     
+    public function verifyCurrentPassword($password) {
+        if (!$this->isLoggedIn) {
+            throw new Exception("Not logged in.", 30);
+        }
+        $passwordHash = hash(config::password_hash_type, $password . $this->salt);
+         if (!($this->id === $this->db->getUserByLogin($this->pilotInfo[characterName], $passwordHash))) {
+             throw new Exception("Wrong password!", 13);
+         }
+    }
+    
     public function setCookieForUser() {
         if ($this->isLoggedIn) {
             $this->setCookie();
@@ -249,6 +272,6 @@ class userSession {
         setcookie('SSID', $cookieValue, time()-config::cookie_lifetime);
     }
     public function getPilotInfo() {
-        return $this->userInfo;
+        return $this->pilotInfo;
     }
 }

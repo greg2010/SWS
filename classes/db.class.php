@@ -336,6 +336,17 @@ class db {
         }
     }
     
+    private function predefinedMySQLChangeEmail($id, $email) {
+        $stmt = mysqli_prepare($this->connection, "UPDATE `users` SET `email`=? WHERE `id`=?");
+        mysqli_stmt_bind_param($stmt, "ss", $email, $id);
+        $success = mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception("predefinedMySQLChangeEmail: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+        mysqli_stmt_close($stmt);
+    }
+
+
     private function predefinedPopulateUsers($login, $passwordHash, $accessMask, $salt, $email = NULL) {
         $this->openConnection();
         $stmt = mysqli_prepare($this->connection, "INSERT INTO `users` SET `login`=?, `passwordHash`=?, `accessMask`=?, `email`=?, `salt`=?");
@@ -401,6 +412,11 @@ class db {
         $this->openConnection();
         $id = $this->predefinedMySQLCookie($cookie);
         return $id;
+    }
+    
+    public function updateEmail($id, $email) {
+        $this->openConnection();
+        $this->predefinedMySQLChangeEmail($id, $email);
     }
     
     public function getIDByName($login) {
