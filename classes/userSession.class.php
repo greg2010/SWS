@@ -92,7 +92,7 @@ class userSession {
     }
     
     private function generateCookieForCurrentUser() {
-        $cookie = hash(config::cookie_hash_type, $_SERVER[HTTP_USER_AGENT] . '@' . $_SERVER[REMOTE_ADDR] . "$this->userSalt");
+        $cookie = hash(config::cookie_hash_type, $_SERVER[HTTP_USER_AGENT] . '@' . $_SERVER[REMOTE_ADDR] . "$this->salt");
         return $cookie;
     }
     
@@ -226,6 +226,10 @@ class userSession {
             } else {
                 $this->isLoggedIn = TRUE;
                 $this->initialize();
+                if ($this->id) {
+                    $query = "SELECT `salt` FROM `users` WHERE `id` = $this->id";
+                    $this->salt = $this->db->getMySQLResult($this->db->query($query));
+                }
             }
         } catch (Exception $ex) {
             unset($this->id);
