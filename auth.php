@@ -6,6 +6,11 @@ $db = db::getInstance();
 if (!($_SESSION[userObject] instanceof userSession)) {
     $_SESSION['userObject'] = new userSession();
 }
+
+if (!($_SESSION[logObject] instanceof userLogging)) {
+    $_SESSION['logObject'] = new userLogging();
+}
+
 //var_dump($_SESSION);
 $toTemplate['loggedIN'] = $_SESSION[userObject]->isLoggedIn();
 //$_SESSION[userObject]->initialize();

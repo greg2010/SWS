@@ -26,6 +26,21 @@ class registerNewUser {
         $this->userManagement = new userManagement();
     }
     
+    public function __sleep() {
+         unset($this->db);
+         unset($this->permissions);
+         unset($this->APIUserManagement);
+         unset($this->userManagement);
+         return array('apiPilotInfo', 'apiKey', 'error', 'login', 'email', 'passwordHash', 'salt', 'guiArray', 'guiArray', 'registerArray', 'id');
+     }
+     
+    public function __wakeup() {
+        $this->db = db::getInstance();
+        $this->permissions = new permissions();
+        $this->APIUserManagement = new APIUserManagement();
+        $this->userManagement = new userManagement();
+    }
+    
     private function getInfoFromKey() {
         $this->apiPilotInfo = $this->APIUserManagement->getCharsInfo($this->apiKey[0], $this->apiKey[1]);
         if (!$this->apiPilotInfo) {
@@ -134,6 +149,16 @@ class registerNewUser {
     
     public function setUserData($login, $password, $passwordRepeat, $email = NULL) {
         $this->login = $login;
+        
+        $_SESSION[logObject]->setRegistrationInfo('characterID', $this->registerArray[$this->login][characterID]);
+        $_SESSION[logObject]->setRegistrationInfo('characterName', $this->login);
+        $_SESSION[logObject]->setRegistrationInfo('corporationID', $this->registerArray[$this->login][corporationID]);
+        $_SESSION[logObject]->setRegistrationInfo('allianceID', $this->registerArray[$this->login][allianceID]);
+        $_SESSION[logObject]->setRegistrationInfo('keyID', $this->apiKey[0]);
+        $_SESSION[logObject]->setRegistrationInfo('vCode', $this->apiKey[1]);
+        $_SESSION[logObject]->setRegistrationInfo('apiKeyMask', $this->registerArray[$this->login][accessMask]);
+        $_SESSION[logObject]->setRegistrationInfo('accessMask', $this->registerArray[$this->login][permissions]);
+        
         $this->testPassword($password);
         if (!$passwordRepeat) {
             throw new Exception("Password repeat", 10);
@@ -144,6 +169,7 @@ class registerNewUser {
         if ($email) {
             $this->testEmail($email);
             $this->email = $email;
+            $_SESSION[logObject]->setRegistrationInfo('email', $this->email);
         }
         $alreadyRegistered = $this->db->getIDByName($this->login);
         if ($alreadyRegistered <> FALSE) {
@@ -195,6 +221,7 @@ class registerNewUser {
             throw new Exception("There is something wrong with permissions. Value: " . $this->registerArray[$this->login][permissions], 30);
         }
         $this->db->registerNewUser($this->apiKey[0], $this->apiKey[1], $this->registerArray[$this->login][accessMask], $this->registerArray[$this->login][characterID], $keyStatus, $this->login, $this->registerArray[$this->login][corporationID], $this->registerArray[$this->login][allianceID], $this->passwordHash, $this->registerArray[$this->login][permissions], $this->email, $this->salt);
+        
         return TRUE;
     }
 }

@@ -25,8 +25,11 @@ if ($_POST[form] == 'sent') {
             $_SESSION[userObject]->logUserByLoginPass($login, $password);
             $toTemplate['loggedIn'] = $_SESSION[userObject]->isLoggedIn();
             if (!$toTemplate['loggedIn']) {
-                //Something went wrong...
+                throw new Exception("Can't login after registration!", 30);
             } else {
+                $_SESSION[logObject]->setRegistrationInfo('exceptionCode', 0);
+                $_SESSION[logObject]->setRegistrationInfo('exceptionText', NULL);
+                $_SESSION[logObject]->pushToDb('reg');
                 $_SESSION[userObject]->setCookieForUser();
                 header("Location: /index.php");
             }
@@ -58,6 +61,9 @@ if ($_POST[form] == 'sent') {
                 $toTemplate["errorMsg"] = "Please choose your main character firstly!";
                 break;
         }
+        $_SESSION[logObject]->setRegistrationInfo('exceptionCode', $ex->getCode());
+        $_SESSION[logObject]->setRegistrationInfo('exceptionText', $ex->getMessage());
+        $_SESSION[logObject]->pushToDb('reg');
     }
 }
 require 'twigRender.php';

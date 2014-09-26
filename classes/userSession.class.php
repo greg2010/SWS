@@ -37,14 +37,14 @@ class userSession {
          return array('sessionID', 'id', 'isLoggedIn', 'userInfo', 'pilotInfo', 'corpInfo', 'allianceInfo', 'salt');
      }
      
-     public function __wakeup() {
-         $this->db = db::getInstance();
-         if ($this->id) {
-            $this->permissions = new permissions($this->id);
-            $this->userManagement = new userManagement($this->id);
-            $this->updateUserInfo();
-         }
-     }
+    public function __wakeup() {
+        $this->db = db::getInstance();
+        if ($this->id) {
+           $this->permissions = new permissions($this->id);
+           $this->userManagement = new userManagement($this->id);
+           $this->updateUserInfo();
+        }
+    }
 
           private function sessionStart() {
         $sessionStarted = session_start();
