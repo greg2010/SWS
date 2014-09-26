@@ -63,6 +63,13 @@ return $tsAdmin;
     return $cl_list;
     }
 
+    public function status(){
+    $tsAdmin=$this->tsAdmin;
+    $info=$tsAdmin->serverInfo();
+    $status=array("status"=>$info['data']['virtualserver_status'], "online"=>($info['data']['virtualserver_clientsonline']-1));
+    return $status;
+    }
+
     public function validate($id){
     
     $ar1a=$this->grAdditDbTs($id);
