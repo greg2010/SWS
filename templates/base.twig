@@ -1,8 +1,12 @@
 {% extends "superBase.twig" %}
 {% block superContent %}
     {% if loggedIN == 1 %}
-       {% block content %}
-       {% endblock %}
+        {% if hasAccess == 1 %}
+            {% block content %}
+            {% endblock %}
+        {% else %}
+            <div class="alert alert-danger" role="alert">Access denied. Not enough permissions!.</div>
+        {% endif %}
     {% else %}
         <div class="alert alert-danger" role="alert">Access denied. Autorization required.</div>
     {% endif %}

@@ -5,6 +5,8 @@ include 'header.php';
 
 $pageActive = "class=active";
 
+$pagePermissions = array("webReg_Valid");
+
 $templateName = $thisPage;
 $page = $_GET[a];
 

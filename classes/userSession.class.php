@@ -46,7 +46,7 @@ class userSession {
         }
     }
 
-          private function sessionStart() {
+    private function sessionStart() {
         $sessionStarted = session_start();
         if ($sessionStarted === False) {
             die("Session hasn't started. Aborting...");
@@ -169,9 +169,10 @@ class userSession {
     
     public function updateUserInfo() {
         try {
-            $query = "SELECT `email`, `lastNotifID`, `salt` FROM `users` WHERE `id` = '$this->id'";
+            $query = "SELECT `email`, `lastNotifID`, `salt`, `accessMask` FROM `users` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
             $this->userInfo = $this->db->fetchAssoc($result);
+            
             
             $query = "SELECT * FROM `pilotInfo` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
