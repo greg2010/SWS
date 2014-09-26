@@ -117,6 +117,12 @@ class userManagement implements IuserManagement {
         }
         $verify = new registerNewUser();
         $verify->testEmail($email);
+        
+        $query = "SELECT `email` FROM `users` WHERE `id` = '$this->id'";
+        $oldEmail = $this->db->getMySQLResult($this->db->query($query));
+        if ($email == $oldEmail) {
+            throw new Exception("Email hasn't changed. Skipping...", -1);
+        }
         try {
             $this->db->updateEmail($this->id, $email);
         } catch (Exception $ex) {
@@ -137,8 +143,17 @@ class userManagement implements IuserManagement {
             $query = "SELECT `salt` FROM `users` WHERE `id` = '$this->id'";
             $salt = $this->db->getMySQLResult($this->db->query($query));
             $passwordHash = hash(config::password_hash_type, $password . $salt);
+        } catch (Exception $ex) {
+            throw new Exception("MySQL error: " . $ex->getMessage(), 30);
+        }
+        $query = "SELECT `passwordHash` FROM `users` WHERE `id` = '$this->id'";
+        $oldPasswordHash = $this->db->getMySQLResult($this->db->query($query));
+        if ($oldPasswordHash == $passwordHash) {
+            throw new Exception("New password is the same as old password!", 11);
+        }
+        try {
             $query = "UPDATE `users` SET `passwordHash` = '$passwordHash' WHERE `id` = '$this->id'";
-            $result = $this->db->query($query);
+            $this->db->query($query);
         } catch (Exception $ex) {
             throw new Exception("MySQL error: " . $ex->getMessage(), 30);
         }

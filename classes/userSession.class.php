@@ -275,6 +275,20 @@ class userSession {
         $cookieValue = $this->generateCookieForCurrentUser();
         setcookie('SSID', $cookieValue, time()-config::cookie_lifetime);
     }
+    
+    
+    public function getUserInfo() {
+        return $this->userInfo;
+    }
+    
+    public function getCorpInfo() {
+        return $this->corpInfo;
+    }
+    
+    public function getAllianceInfo() {
+        return $this->allianceInfo;
+    }
+    
     public function getPilotInfo() {
         return $this->pilotInfo;
     }

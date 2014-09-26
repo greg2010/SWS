@@ -5,7 +5,7 @@ function SendRequest(){
     $.ajax({
         type: "POST",
         url: "getChars.php",
-        data: "sid=<?=session_id()?>&keyID="+$('#keyID').val()+"&vCode="+$('#vCode').val(),
+        data: "sid=<?=session_id()?>&keyID="+$('input[name="keyID"]').val()+"&vCode="+$('input[name=vCode]').val(),
         datatype: 'json',
         success: function(json){
             if (json.status !== 0) {
