@@ -39,8 +39,8 @@ class userSession {
      
     public function __wakeup() {
         $this->db = db::getInstance();
-        if ($this->id) {
            $this->permissions = new permissions($this->id);
+        if ($this->id) {
            $this->userManagement = new userManagement($this->id);
            $this->updateUserInfo();
         }
