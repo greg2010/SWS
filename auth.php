@@ -18,4 +18,6 @@ if ($toTemplate['loggedIN'] == 1) {
     $pilotInfo = $_SESSION[userObject]->getPilotInfo();
     $toTemplate['characterName'] = $pilotInfo[characterName];
     $toTemplate['characterID'] = $pilotInfo[characterID];
+} else {
+    $_SESSION[userObject]->logUserByCookie();
 }

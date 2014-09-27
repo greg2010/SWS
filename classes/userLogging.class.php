@@ -7,10 +7,11 @@
 class userLogging {
     
     private $db;
+    private $basicSessionInfo;
     private $sessionInfo;
     
     private $regInfo;
-    
+    private $logInfo;
     public function __construct() {
         $this->db = db::getInstance();
         $this->getUserInfo();
@@ -39,22 +40,28 @@ class userLogging {
         return $arraySane;
     }
     
-    public function setRegistrationInfo($key, $value) {
-        $this->regInfo[$key] = $value;
+    public function setLoginInfo($key, $value) {
+        $this->logInfo[$key] = $value;
     }
     
     public function setSessionInfo() {
-        $this->sessionInfo['hasPermission'] = $_SESSION[userObject]->hasPermission();
-        if ($_SESSION[userObject]->isLoggedIn() == 1) {
-            $userInfo = $_SESSION[userObject]->getUserInfo();
-            $this->sessionInfo['accessMask'] = $userInfo[accessMask];
-            
-            $pilotInfo = $_SESSION[userObject]->getPilotInfo();
-             $this->sessionInfo['characterName'] = $pilotInfo[characterName];
-             $this->sessionInfo['characterID'] = $pilotInfo[characterID];
-             $this->sessionInfo['corporationID'] = $pilotInfo[corporationID];
-             $this->sessionInfo['allianceID'] = $pilotInfo[allianceID];
+        if (($_SESSION[userObject] instanceof userSession)) {
+            $this->sessionInfo['hasPermission'] = $_SESSION[userObject]->hasPermission();
+            if ($_SESSION[userObject]->isLoggedIn() == 1) {
+                $userInfo = $_SESSION[userObject]->getUserInfo();
+                $this->sessionInfo['accessMask'] = $userInfo[accessMask];
+
+                $pilotInfo = $_SESSION[userObject]->getPilotInfo();
+                 $this->sessionInfo['characterName'] = $pilotInfo[characterName];
+                 $this->sessionInfo['characterID'] = $pilotInfo[characterID];
+                 $this->sessionInfo['corporationID'] = $pilotInfo[corporationID];
+                 $this->sessionInfo['allianceID'] = $pilotInfo[allianceID];
+            }
         }
+    }
+    
+    public function setRegistrationInfo($key, $value) {
+        $this->regInfo[$key] = $value;
     }
     
     public function pushToDb($logType) {
@@ -76,6 +83,26 @@ class userLogging {
                 
                 foreach ($this->sessionInfo as $key => $value) {
                     $query .= ", `$key` = '$value'";
+                }
+                break;
+            case 'login':
+                $query = "INSERT INTO `log.user.login` SET";
+                $query .=  " `exceptionCode` = '{$this->logInfo[exceptionCode]}'";
+                foreach ($this->logInfo as $key => $value) {
+                    if ($key == 'exceptionCode' ) {
+                        continue;
+                    }
+                    $query .= ", `$key` = '$value'";
+                }
+                foreach ($this->sessionInfo as $key => $value) {
+                    switch ($key) {
+                        case 'characterName':
+                        case 'characterID':
+                        case 'corporationID':
+                        case 'allianceID':
+                            $query .= ", `$key` = '$value'";
+                            break;
+                    }
                 }
                 break;
         }

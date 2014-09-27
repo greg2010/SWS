@@ -18,8 +18,15 @@ if ($loginFormSent == 'sent') {
         $_SESSION[userObject]->logUserByLoginPass($login, $password);
         if ($_POST[remember] == 1) {
             $_SESSION[userObject]->setCookieForUser();
+        } else {
+            $_SESSION[userObject]->removeCookie();
         }
         header("Location: /index.php");
+            $_SESSION[logObject]->setLoginInfo('loginMethod', 'password');
+            $_SESSION[logObject]->setLoginInfo('exceptionCode', 0);
+            $_SESSION[logObject]->setLoginInfo('exceptionText', NULL);
+            $_SESSION[logObject]->setSessionInfo();
+            $_SESSION[logObject]->pushToDb('login');
     } catch (Exception $ex) {
         $toTemplate['saveform']['login'] = $login;
         switch ($ex->getCode()) {
@@ -30,6 +37,11 @@ if ($loginFormSent == 'sent') {
                 $toTemplate["errorMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
                 break;
         }
+            $_SESSION[logObject]->setLoginInfo('loginMethod', 'password');
+            $_SESSION[logObject]->setLoginInfo('exceptionCode', $ex->getCode());
+            $_SESSION[logObject]->setLoginInfo('exceptionText', $ex->getMessage());
+            $_SESSION[logObject]->setSessionInfo();
+            $_SESSION[logObject]->pushToDb('login');
     }
     $toTemplate['loggedIn'] = $_SESSION[userObject]->isLoggedIn();
 }

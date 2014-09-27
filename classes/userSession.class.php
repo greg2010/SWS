@@ -28,7 +28,8 @@ class userSession {
     public function __construct() {
         $this->sessionStart();
         $this->db = db::getInstance();
-        $this->logUserByCookie();
+        $this->permissions = new permissions();
+        $this->userManagement = new userManagement();
     }
     
     public function __sleep() {
@@ -55,6 +56,10 @@ class userSession {
     }
     
     private function setPagePermissions($permissions) {
+        if (!$permissions) {
+            $permissions = array();
+        }
+        
         $pm = new permissions();
         $bitMap = $pm->getBitMap();
         $cleanPermissions = array();
@@ -173,7 +178,6 @@ class userSession {
             $result = $this->db->query($query);
             $this->userInfo = $this->db->fetchAssoc($result);
             
-            
             $query = "SELECT * FROM `pilotInfo` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
             $this->pilotInfo = $this->db->fetchAssoc($result);
@@ -219,23 +223,31 @@ class userSession {
     }
     
     public function logUserByCookie() {
-        $cookie = $_COOKIE[SSID];
-        try {
-            $this->id = $this->db->getUserByCookie($cookie);
-            if ($this->id === FALSE) {
-                $this->isLoggedIn = FALSE;
-            } else {
-                $this->isLoggedIn = TRUE;
-                $this->initialize();
-                if ($this->id) {
+        if ($_COOKIE[SSID]) {
+            $_SESSION[logObject]->setLoginInfo('loginMethod', 'cookie');
+            $cookie = $_COOKIE[SSID];
+            try {
+                $this->id = $this->db->getUserByCookie($cookie);
+                if ($this->id === FALSE) {
+                    throw new Exception("Login failed!", 10);
+                } else {
+                    $this->isLoggedIn = TRUE;
+                    $this->initialize();
                     $query = "SELECT `salt` FROM `users` WHERE `id` = $this->id";
                     $this->salt = $this->db->getMySQLResult($this->db->query($query));
+                    $_SESSION[logObject]->setLoginInfo('exceptionCode', 0);
+                    $_SESSION[logObject]->setLoginInfo('exceptionText', NULL);
+                    $_SESSION[logObject]->setSessionInfo();
+                    $_SESSION[logObject]->pushToDb('login');
                 }
+            } catch (Exception $ex) {
+                $this->isLoggedIn = FALSE;
+                $_SESSION[logObject]->setLoginInfo('exceptionCode', $ex->getCode());
+                $_SESSION[logObject]->setLoginInfo('exceptionText', $ex->getMessage());
+                $_SESSION[logObject]->setSessionInfo();
+                $_SESSION[logObject]->pushToDb('login');
+                return FALSE;
             }
-        } catch (Exception $ex) {
-            unset($this->id);
-            unset($this->isLoggedIn);
-            return FALSE;
         }
     }
     
