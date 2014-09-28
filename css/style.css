@@ -73,11 +73,11 @@ span {
         margin-left: 25px;
 }
 
-label[for=r_1] {
+label#success {
         color: #458B00;
 }
 
-label[for=r_2] {
+label#fail {
         color: #FF4500;
 }
 

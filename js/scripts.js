@@ -18,25 +18,28 @@ function SendRequest(){
                 $('div[role="alert-api"]').attr('hidden', 1);
                 $('#charList').empty();
                 $('#chars').removeAttr('hidden');
+                var i = 0;
                 $.each(json, function(i, chars) {
                     if (typeof(chars) === "object") {
-                        $('#charList').append($('<input>').attr('type', 'radio').attr('value', chars.characterName).attr('class', 'r_button').attr('name', 'login'));
+                        var idName = 'b' + i;
+                        $('#charList').append($('<input>').attr('type', 'radio').attr('value', chars.characterName).attr('class', 'r_button').attr('name', 'login').attr('id', idName));
                         if (chars.valid === 1) {
-                            var id = "r_1";
+                            var id = "success";
                             var className = "glyphicon glyphicon-ok";
                         } else {
-                            var id = "r_2";
+                            var id = "fail";
                             var className = "glyphicon glyphicon-remove";
                         }
-                        $(':radio[value="'+chars.characterName+'"]').attr('id', id).after(function() {
+                        $(':radio[value="'+chars.characterName+'"]').after(function() {
                             var label = $("<label>");
-                            $(label).attr('for', id).text(chars.characterName).append(function() {
+                            $(label).attr('for', idName).attr('id', id).text(chars.characterName).append(function() {
                                 var span = $("<span>");
                                 $(span).attr('class', className);
                                 return $(span);
                             });
                             return $(label)
                         });
+                        i++;
                     }
                 });
             }
