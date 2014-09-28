@@ -14,10 +14,10 @@
 <!--Форма смены API-->
     <div class="container" id="formSettings">
         <h1>PROFILE SETTINGS</h1>
-    <div class="inset" id="SetIns">
-        <form id="formSettings" action="settings.php?a=api" method="post">  
-        <h2>CURRENT API</h2>
-        <br>
+    <form id="formSettings" action="settings.php?a=api" method="post">
+        <div class="inset" id="SetIns">       
+            <h2>CURRENT API</h2>
+            <br>
             <p>
                 <label for="keyIDOld">KEY ID</label>
                 <input type="text" name="keyID" value="{{saveForm.keyID}}"  id="keyID2">
@@ -42,8 +42,10 @@
                 <input type="button" name="delete" id="danger" value="DELETE">
             </p>
             <hr />
-        </form>
-        <form id="formSettings" action="settings.php?a=api" method="post">  
+        </div>
+    </form>
+    <form id="formSettings" action="settings.php?a=api" method="post">
+        <div class="inset" id="SetIns">
             <h2>ADD SECONDARY API</h2>
             <br>
                 <a href="https://support.eveonline.com/api/key/createpredefined/8" id="getAPI">Get Key ID & vCode here</a>
@@ -65,9 +67,12 @@
             </p>
             <!--<div class="alert alert-danger" role="alert" id="success">Your api successfully changed!</div>-->
             <hr />
-        <form id="formSettings" action="settings.php?a=api" method="post">  
+        </div>
+    </form>    
+    <form id="formSettings" action="settings.php?a=api" method="post">  
             {% if apiList is defined %}
             {% for api in apiList %}
+        <div class="inset" id="SetIns">
             <h2>SECONDARY API FOR {{api.charName}}</h2>
             <p>
                 <label for="username">KEY ID</label>
@@ -88,7 +93,8 @@
             <!--<div class="alert alert-danger" role="alert" id="success">Your api successfully changed!</div>-->
             {% endfor %}
             {% endif %}
-        </form>
+        </div>
+    </form>
 <!--Конец смены API-->
     </div>
 {% else %}
