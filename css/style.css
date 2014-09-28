@@ -30,6 +30,11 @@ span {
         color: #ccc;
 }
 
+h2 {
+        font-size: 20px;
+        color: #f6c000;
+}
+
 #header {
         height: auto;
 }
