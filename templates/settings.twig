@@ -164,6 +164,40 @@
     </div>
 <!--Конец формы смены почты и пароля-->
     </form>
+<!--Форма регистрации в ТС
+<form id="formSettings">            
+    <h1>TEAM SPEAK SETTINGS</h1>
+    <div class="inset" id="SetIns">
+        <span>Вот сюда надо будет вставить текст на тему того, что есть 2  варианта регистрации в ТС: с использованием Unique ID (для продвинутых пользователей) и пошагово (для неопытных)</span>
+        <br>
+        <hr />
+        <h2>REGISTRATION IN TEAMSPEAK BY UNIQUE ID:</h2>
+        <br>
+            <p>
+                <label for="UniqueID">UNIQUE ID</label>
+                <input type="text" name="UniqueID" value="" id="UID">
+            </p>
+            <span>Если вы знаете, что такое UniqueID и как его найти в ТС, вставьте его в поле и нажмите кнопку "REGISTER"</span>
+            <br>
+            <p class="p-container">
+               <input type="submit" name="go" id="go" value="REGISTER" disabled>
+            </p>           
+        <hr />
+            <h2>REGISTRATION IN TEAMSPEAK FOR NEWBIES:</h2>
+            <br>
+            <span>Если вы не знаете, что такое UniqueID, и как его найти, тогда запустите клиент TeamSpeak при помощи кнопкт "Open TeamSpeak".</span>
+            <br>
+            <span id="danger">Не нажимайте кнопку "REGISTER" пока не зайдете в TeamSpeak!</span>
+            <p class="p-container">
+                <input type="button" name="go" id="go" value="OPEN TEAMSPEAK" disabled>
+            </p>     
+            <span>After log in TS push this register button</span>       
+            <p class="p-container">
+                <input type="submit" name="go" id="go" value="REGISTER" disabled>
+            </p> 
+    </div>
+</form>
+Форма регистрации в ТС -->
 </div>
  {% endif %}    
 {% endblock %}

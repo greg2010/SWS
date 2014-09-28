@@ -565,6 +565,10 @@ input[type=button]:hover {
             width: 570px;
 }
 
+#UID {
+            width: 300px;
+}
+
 #danger {
         border-color: #FF4500;
         color: #FF4500;
