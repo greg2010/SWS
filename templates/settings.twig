@@ -14,7 +14,7 @@
 <!--Форма смены API-->
     <div class="container" id="formSettings">
         <h1>PROFILE SETTINGS</h1>
-    <form id="formSettings" action="settings.php?a=api" method="post">
+    <form id="formSettings2" action="settings.php?a=api" method="post">
         <div class="inset" id="SetIns">       
             <h2>CURRENT API</h2>
             <br>
@@ -44,7 +44,7 @@
             <hr />
         </div>
     </form>
-    <form id="formSettings" action="settings.php?a=api" method="post">
+    <form id="formSettings2" action="settings.php?a=api" method="post">
         <div class="inset" id="SetIns">
             <h2>ADD SECONDARY API</h2>
             <br>
@@ -69,7 +69,7 @@
             <hr />
         </div>
     </form>    
-    <form id="formSettings" action="settings.php?a=api" method="post">  
+    <form id="formSettings2" action="settings.php?a=api" method="post">  
             {% if apiList is defined %}
             {% for api in apiList %}
         <div class="inset" id="SetIns">
@@ -116,7 +116,7 @@
         {% endif %}
     {% endif %}
 <!--Форма смены почты и пароля-->
-    <form id="formSettings" action="settings.php" method="post">  
+    <form id="formSettings2" action="settings.php" method="post">  
         <h1>PROFILE SETTINGS</h1>
     <div class="inset" id="SetIns">
         <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
