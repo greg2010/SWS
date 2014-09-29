@@ -3,7 +3,7 @@
 use Pheal\Pheal;
 use Pheal\Core\Config as PhealConfig;
 
-class snotif {
+class notif_text {
 
     public $log;
     private $db;

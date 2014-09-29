@@ -3,7 +3,7 @@
 use Pheal\Pheal;
 use Pheal\Core\Config as PhealConfig;
 
-class notifications {
+class notif_get {
 
     protected $key = array();
     private $log;
@@ -78,8 +78,8 @@ class notifications {
                 foreach($this->notif as $key){
                     if($key['notificationID'] == $row->notificationID){
                         $arrpos = array_search($key, $this->notif);
-                        $notiftext = ($this->notif[$arrpos][typeID]==76) ? (new snotif((string)$row, $this->key[corporationID], $this->key[allianceID], true))
-                         : (new snotif((string)$row, $this->key[corporationID], $this->key[allianceID], false));
+                        $notiftext = ($this->notif[$arrpos][typeID]==76) ? (new notif_text((string)$row, $this->key[corporationID], $this->key[allianceID], true))
+                         : (new notif_text((string)$row, $this->key[corporationID], $this->key[allianceID], false));
                         $this->log->merge($notiftext->log->get(true), "getNotificationTextsXML " . $row->notificationID);
                         $this->notif[$arrpos]['NotificationText'] = $notiftext->getText();
                     }
