@@ -20,7 +20,7 @@ class notif_send {
         if($send_email || $send_jabber){
             $txt = $this->getNotifications();
             if($txt != NULL){
-                if($send_email) new email->sendmail($this->email, "New EvE Online notification update", date(DATE_RFC822) . " New notifications arrived.\n" . $txt);
+//                if($send_email) new email->sendmail($this->email, "New EvE Online notification update", date(DATE_RFC822) . " New notifications arrived.\n" . $txt);
                 // if($send_jabber) метод отправки в жабер 
                 $query = "UPDATE `users` SET `lastNotifID` = '$this->lastNotifID' WHERE `id`='$this->id'";
                 $result = $this->db->query($query);
