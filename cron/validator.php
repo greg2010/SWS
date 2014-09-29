@@ -10,10 +10,10 @@ if($pid == -2){
 	try{
 		$connection = mysqli_connect(config::hostname, config::username, config::password);
         $selectdb = mysqli_select_db($connection, config::database);
-        $query = "SELECT * FROM `users`";
+        $query = "SELECT * FROM `apiPilotList` WHERE `keyStatus` > 0";
 		$result = mysqli_query($connection, $query);
 		while($array = mysqli_fetch_assoc($result)) $userList[] = $array;
-		$query = "SELECT * FROM `apiCorpList`";
+		$query = "SELECT * FROM `apiCorpList` WHERE `keyStatus` > 0";
 		$result = mysqli_query($connection, $query);
 		while($array = mysqli_fetch_assoc($result)) $apiCorpList[] = $array;
         mysqli_close($connection);
@@ -50,13 +50,13 @@ for($t=0; $t<$thread_count; $t++){
 		$users_last = ($t==($thread_count-1)) ? ($users_count) : (($t+1)*$users_in_thread);
 		for($i=$users_first; $i<$users_last; $i++){
 			$smt = round(microtime(1)*1000);
-			$user = new validation($userList[$i][id], $userList[$i][accessMask]);
-			$drake = $user->verifyApiInfo();
+			$user = new validation();
+			$drake = $user->verifyPilotApiInfo($userList[$i]);
 			if($drake != NULL){
-				$log->merge($drake, $userList[$i][id]);
-				$log->put("name", $userList[$i][login], $userList[$i][id]);
+				$log->merge($drake, $userList[$i][characterID]);
+				$log->put("name", $userList[$i][characterName], $userList[$i][characterID]);
 				$emt = round(microtime(1)*1000) - $smt;
-				$log->put("spent", $emt . " microseconds", $userList[$i][id]);
+				$log->put("spent", $emt . " microseconds", $userList[$i][characterID]);
 			}
 		}
 
@@ -68,7 +68,7 @@ for($t=0; $t<$thread_count; $t++){
 			$drake = $corp->verifyCorpApiInfo($apiCorpList[$i]);
 			if($drake != NULL){
 				$log->merge($drake, $apiCorpList[$i][keyID]);
-				$log->put("name", $apiCorpList[$i][corporationName], $apiCorpList[$i][keyID]);
+				$log->put("id", $apiCorpList[$i][corporationID], $apiCorpList[$i][keyID]);
 				$emt = round(microtime(1)*1000) - $smt;
 				$log->put("spent", $emt . " microseconds", $apiCorpList[$i][keyID]);
 			}

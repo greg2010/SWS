@@ -1,27 +1,22 @@
 <?php
 
-interface Ivalidation {
-    function verifyApiInfo();
-}
+class validation {
 
-class validation implements Ivalidation {
-
-    protected $accessMask;
-    protected $allowedList;
-    protected $id;
+    //protected $accessMask;
+    //protected $allowedList;
+    //protected $id;
     private $log;
     private $db;    
-    private $permissions;
-    private $userManagement;
-    private $apiUserManagement;
+    //private $permissions;
+    //private $userManagement;
+    //private $apiUserManagement;
     private $dbPilotInfo;
     private $apiPilotInfo;
-    private $apiKey;
 
-	public function __construct($id = NULL, $accessMask = NULL){
+	public function __construct(){
         $this->db = db::getInstance();
         $this->log = new logging();
-        $this->apiUserManagement = new APIUserManagement($id);
+        /*$this->apiUserManagement = new APIUserManagement($id);
         if(isset($accessMask)) $this->accessMask = $accessMask;
         if(isset($id)){
             $this->id = $id;
@@ -29,7 +24,7 @@ class validation implements Ivalidation {
             $this->userManagement = new userManagement($id);
             $this->dbPilotInfo = $this->userManagement->getPilotInfo();
             $this->apiPilotInfo = $this->apiUserManagement->getPilotInfo();
-        }
+        }*/
     }
 
     private function comparePilotInfo(){
@@ -41,13 +36,7 @@ class validation implements Ivalidation {
     		return true;
     	} else{
     		try {
-            	$query = "UPDATE `apiPilotList` SET `characterID` = '{$this->apiPilotInfo[characterID]}', `characterName` = '{$this->apiPilotInfo[characterName]}', `corporationID` = '{$this->apiPilotInfo[corporationID]}',
-            	 `allianceID` = '{$this->apiPilotInfo[allianceID]}' WHERE `id` = '$this->id' AND `keyStatus` = '1'";
-            	$result = $this->db->query($query);
-                if($this->apiPilotInfo[accessMask] != $this->dbPilotInfo[accessMask]){
-                    $query = "UPDATE `apiPilotList` SET `accessMask` = '{$this->apiPilotInfo[accessMask]}' WHERE `id` = '$this->id' AND `keyStatus` = '1'";
-                    $result = $this->db->query($query);
-                }
+                $this->updatePilotInfo();
                 $this->log->put("comparePilotInfo", "ok update");
             	return true;
         	} catch (Exception $ex) {
@@ -57,48 +46,106 @@ class validation implements Ivalidation {
     	}
     }
 
-    public function verifyApiInfo(){
-        if($this->apiUserManagement->log->get() != NULL){
-            $this->apiUserManagement->log->rm("getApiPilotInfo_code");
-            $this->log->merge($this->apiUserManagement->log->get(true), "APIUserManagement");
+    private function getUserAccessMask($id){
+        try {
+            $query = "SELECT `accessMask` FROM `users` WHERE `id` = '$id'";
+            $result = $this->db->query($query);
+            return $this->db->getMysqlResult($result);
+        } catch (Exception $ex) {
+            $this->log->put("getUserAccessMask", "err " . $ex->getMessage());
         }
-        $cMask = $this->userManagement->getAllowedListMask();
-        $this->log->merge($this->userManagement->log->get(true), "userManagement");
-        if($this->comparePilotInfo()){
-        	if($cMask != $this->accessMask){
-        		try {
-            		$query = "UPDATE `users` SET `accessMask` = '$cMask' WHERE `id` = '$this->id'";
-            		$result = $this->db->query($query);
-                    $this->log->put("verifyApiInfo", "ok update correct mask " . $cMask);
-        		} catch (Exception $ex) {
-            		$this->log->put("verifyApiInfo", "err " . $ex->getMessage());
-        		}
-                // TS ban method
-        	}// else $this->log->put("verifyApiInfo", "ok: mask " . $cMask . " match");
-        } else{
+    }
+
+    private function ban($id){
+        try {
+            $permissions = new permissions($id);
+            $permissions->unsetPermissions(array('webReg_Valid', 'TS_Valid', 'XMPP_Valid'));
+            // TS ban method
+            // XMPP ban method
+        } catch (Exception $ex) {
+            $this->log->put("ban", "err " . $ex->getMessage());
+        }
+    }
+
+    private function showBans($id){
+        try {
+            $permissions = new permissions($id);
             $ban_list = "";
-            if($this->permissions->hasPermission("webReg_Valid") == false){
+            if($permissions->hasPermission("webReg_Valid") == false){
                 $ban_list .= "web ";
             }
-            if($this->permissions->hasPermission("TS_Valid") == false){
+            if($permissions->hasPermission("TS_Valid") == false){
                 $ban_list .= "TS3 ";
                 // TS ban method
             }
-            if($this->permissions->hasPermission("XMPP_Valid") == false){
+            if($permissions->hasPermission("XMPP_Valid") == false){
                 $ban_list .= "Jabber ";
                 // XMPP ban method
             }
-            if($ban_list != "") $this->log->put("verifyApiInfo", "ok update ban in " . $ban_list);
-            $this->log->merge($this->permissions->log->get(true), "permissions");
+            if($ban_list != "") return "ok update ban in " . $ban_list;
+        } catch (Exception $ex) {
+            $this->log->put("showBans", "err " . $ex->getMessage());
+        }
+    }
+
+    public function updatePilotInfo($characterID = NULL, $keyID = NULL, $vCode = NULL){
+        if($characterID != NULL){
+            $apiUserManagement = new APIUserManagement();
+            $this->apiPilotInfo = $apiUserManagement->getPilotInfo($characterID, $keyID, $vCode);
+        }
+        $query = "UPDATE `apiPilotList` SET `characterName` = '{$this->apiPilotInfo[characterName]}', `corporationID` = '{$this->apiPilotInfo[corporationID]}',
+         `allianceID` = '{$this->apiPilotInfo[allianceID]}', `accessMask` = '{$this->apiPilotInfo[accessMask]}' WHERE `characterID` = '{$this->apiPilotInfo[characterID]}'";
+        $result = $this->db->query($query);   
+    }
+
+    public function verifyPilotApiInfo($dbPilot = array()){
+        $this->dbPilotInfo = $dbPilot;
+        try {
+            $userManagement = new userManagement();
+            $cMask = $userManagement->getAllowedListMask($dbPilot);
+        } catch (Exception $ex) {
+            $this->log->put("getAllowedListMask", "err " . $ex->getMessage(), "userManagement");
+            return $this->log->get();
+        }
+        try {
+            $apiUserManagement = new APIUserManagement();
+            $this->apiPilotInfo = $apiUserManagement->getPilotInfo($dbPilot[characterID], $dbPilot[keyID], $dbPilot[vCode]);
+        } catch (Exception $ex) {
+            $this->log->put("getPilotInfo", "err " . $ex->getMessage(), "apiUserManagement");
+            $c = $ex->getCode();
+            if($c == 105 || $c == 106 || $c == 108 || $c == 112 || $c == 201 || $c == 202 || $c == 203 || $c == 204 || $c == 205 || $c == 210 || $c == 211 || $c == 212 ||
+             $c == 221 || $c == 222 || $c == 223 || $c == 516 || $c == 522 || $c == -201 || $c == -202 || $c == -203 || $c == -204 || $c == -205){
+                if($dbPilot[keyStatus] == 1) $this->ban($dbPilot[id]);
+                // а если не 1 ?
+            }
+            return $this->log->get();
+        }
+        if($this->comparePilotInfo()){
+            if($dbPilot[keyStatus] == 1){
+                $UserAccessMask = $this->getUserAccessMask($dbPilot[id]);
+                if($cMask != $UserAccessMask){
+                    try {
+                        $query = "UPDATE `users` SET `accessMask` = '$cMask' WHERE `id` = '{$dbPilot[id]}'";
+                        $result = $this->db->query($query);
+                        $this->log->put("verifyPilotApiInfo", "ok update correct mask " . $cMask);
+                    } catch (Exception $ex) {
+                        $this->log->put("verifyPilotApiInfo", "err " . $ex->getMessage());
+                    }
+                }
+                $ban_list = $this->showBans($dbPilot[id]);
+                $this->log->put("verifyPilotApiInfo", $ban_list);
+            }
         }
         return $this->log->get();
     }
 
     public function verifyCorpApiInfo($dbCorp = array()){
-        $apiCorp = $this->apiUserManagement->getCorpInfo($dbCorp[keyID], $dbCorp[vCode]);
-        if($this->apiUserManagement->log->get() != NULL){
-            $this->apiUserManagement->log->rm("getApiPilotInfo_code");
-            $this->log->merge($this->apiUserManagement->log->get(true), "APIUserManagement");
+        try {
+            $apiUserManagement = new APIUserManagement();
+            $apiCorp = $apiUserManagement->getCorpInfo($dbPilot[keyID], $dbPilot[vCode]);
+        } catch (Exception $ex) {
+            $this->log->put("getCorpInfo", "err " . $ex->getMessage(), "apiUserManagement");
+            return $this->log->get();
         }
         if($dbCorp[accessMask] != $apiCorp[accessMask] || $dbCorp[corporationID] != $apiCorp[corporationID] || $dbCorp[allianceID] != $apiCorp[allianceID]){
             try {
