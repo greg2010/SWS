@@ -56,6 +56,7 @@ class APIUserManagement{//} implements IAPIUserManagement {
                     for($i=0; $i<sizeof($response->key->characters); $i++){
                         if($response->key->characters[$i]->characterID == $characterID){
                             $this->apiPilotInfo = $this->makeCharArray($response->key->accessMask, $response->key->characters[$i]);
+                            return;
                         }
                     }
                     throw new \Pheal\Exceptions\PhealException("Not found the right character", -205);

@@ -133,7 +133,7 @@ class validation {
                     }
                 }
                 $ban_list = $this->showBans($dbPilot[id]);
-                $this->log->put("verifyPilotApiInfo", $ban_list);
+                if($ban_list != NULL) $this->log->put("verifyPilotApiInfo", $ban_list);
             }
         }
         return $this->log->get();
@@ -142,7 +142,7 @@ class validation {
     public function verifyCorpApiInfo($dbCorp = array()){
         try {
             $apiUserManagement = new APIUserManagement();
-            $apiCorp = $apiUserManagement->getCorpInfo($dbPilot[keyID], $dbPilot[vCode]);
+            $apiCorp = $apiUserManagement->getCorpInfo($dbCorp[keyID], $dbCorp[vCode]);
         } catch (Exception $ex) {
             $this->log->put("getCorpInfo", "err " . $ex->getMessage(), "apiUserManagement");
             return $this->log->get();
