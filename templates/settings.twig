@@ -69,14 +69,14 @@
             <hr />
         </div>
     </form>    
-    <form id="formSettings2" action="settings.php?a=api" method="post">  
         <div class="inset" id="SetIns">
             {% if apiList is defined %}
             {% for api in apiList %}
+            <form id="formSettings2" action="settings.php?a=api" method="post">  
             <h2>SECONDARY API FOR {{api.charName}}</h2>
             <p>
                 <label for="username">KEY ID</label>
-                <input type="text" name="usermane" id="keyID2" value="{{api.keyID}}" disabled>
+                <input type="text" name="keyDelete" id="keyID2" value="{{api.keyID}}" disabled>
             </p>
             <p>
                 <label for="vCode">VERIFICATION CODE</label>
@@ -86,15 +86,14 @@
             <!--<div class="alert alert-danger" role="alert">Sorry, but key ID or vCode incorrect!</div>-->
 
             <p class="p-container">
-               <input type="hidden" name="form" value="delete">
-                <input type="button" name="delete" id="danger" value="DELETE">
+                <input type="submit" name="delete" id="danger" value="DELETE">
             </p>
             <hr />
+            </form>
             <!--<div class="alert alert-danger" role="alert" id="success">Your api successfully changed!</div>-->
             {% endfor %}
             {% endif %}
         </div>
-    </form>
     </div>
 <!--Конец смены API-->
     </div>
