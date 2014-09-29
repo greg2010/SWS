@@ -18,37 +18,50 @@
         <div class="inset" id="SetIns">       
             <h2>CURRENT API</h2>
             <br>
-            <p>
-                <label for="keyIDOld">KEY ID</label>
-                <input type="text" name="keyID" value="{{saveForm.currKeyID}}"  id="keyID2">
-            </p>
-            <p>
-                <label for="vCodeOld">VERIFICATION CODE</label>
-                <input type="text" name="vCode" value="{{saveForm.currVCode}}" id="vCode2">
-            </p>
-            <div id="charList">
+            <div class="container" style="margin: 20px;">
+            <span>If you want change your API put new key ID and vCode in the fields.</span><br>
+            <a href="https://support.eveonline.com/api/key/createpredefined/8">You can get Key ID & vCode here</a>
             </div>
-            <input type="button" name="go" id="getChars" onclick="SendRequest()" value="Get Characters" />
-
-            <p class="p-container">
-               <input type="hidden" name="form" value="sent">
-               <input type="submit" name="go" id="go" value="SUBMIT" disabled>
-            </p>
-            <hr id="danger"/>
-                <span id="danger">If you're sure you want to delete the current api, click on this button! If you're not sure, don't touch the button!</span>
-            <br>
-            <br>
-            <p class="p-container">
-                <input type="button" name="delete" id="danger" value="DELETE">
-            </p>
-            <hr />
+                <p>
+                    <label for="keyIDOld">KEY ID</label>
+                    <input type="text" name="keyID" value="{{saveForm.currKeyID}}"  id="keyID2">
+                </p>  
+                <p>
+                    <label for="vCodeOld">VERIFICATION CODE</label>
+                    <input type="text" name="vCode" value="{{saveForm.currVCode}}" id="vCode2">
+                </p>
+                <p class="p-container">
+                    <input type="button" name="go" id="getChars" onclick="SendRequest()" value="Get Characters" />
+                </p>
+    <hr id="chars" hidden />
+                <p id="chars" hidden>
+                    <label for="SelectChar" style="color: #ccc;">SELECT CHARACTER</label><br>
+                <div id="charList">
+                </div>
+                </p> 
+                <p class="p-container">
+                    <input type="hidden" name="form" value="sent">
+                    <input type="submit" name="go" id="submit" value="SUBMIT" disabled />
+                </p>
+    <hr id="danger"/>
+            <table>
+                <tr>
+                    <td>
+                        <span id="danger">If you're sure you want to delete the current api, click on this button! If you're not sure, don't touch the button!</span>
+                    </td>
+                    <td>
+                        <p class="p-container">
+                        <input type="button" name="delete" id="danger" value="DELETE">
+                        </p>
+                    </td>
+                </tr>
+            </table>
         </div>
     </form>
+ <hr />
     <form id="formSettings2" action="settings.php?a=api" method="post">
         <div class="inset" id="SetIns">
             <h2>ADD SECONDARY API</h2>
-            <br>
-                <a href="https://support.eveonline.com/api/key/createpredefined/8" id="getAPI">Get Key ID & vCode here</a>
             <br>
             <p>
                 <label for="username">KEY ID</label>
@@ -60,15 +73,23 @@
             </p>
             <br>
             <!--<div class="alert alert-danger" role="alert">Sorry, but key ID or vCode incorrect!</div>-->
-
+             <p class="p-container">
+                <input type="button" name="go" id="getChars" onclick="SendRequest()" value="Get Characters" />
+            </p>     
+    <hr id="chars" hidden />
+            <p id="chars" hidden>
+                <label for="SelectChar" style="color: #ccc;">SELECT CHARACTER</label><br>
+                <div id="charList">
+                </div>
+            </p>  
             <p class="p-container">
-               <input type="hidden" name="form" value="sent">
-             <input type="submit" name="go" id="go" value="SUBMIT">
+                <input type="hidden" name="form" value="sent">
+                <input type="submit" name="go" id="submit" value="SUBMIT" disabled />
             </p>
-            <!--<div class="alert alert-danger" role="alert" id="success">Your api successfully changed!</div>-->
-            <hr />
+            <!--<div class="alert alert-danger" role="alert" id="success">Your api successfully added!</div>-->
         </div>
-    </form>    
+    </form>  
+ <hr />
     <form id="formSettings2" action="settings.php?a=api" method="post">  
         <div class="inset" id="SetIns">
             {% if apiList is defined %}
