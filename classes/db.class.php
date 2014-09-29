@@ -291,9 +291,9 @@ class db {
         }
     }
     
-    private function predefinedMySQLCheckIfApiIsInDB($keyID) {
-        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `apiPilotList` WHERE `keyID`=?");
-        mysqli_stmt_bind_param($stmt, "s", $keyID);
+    private function predefinedMySQLCheckIfApiIsInDB($characterID) {
+        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `apiPilotList` WHERE `characterID`=?");
+        mysqli_stmt_bind_param($stmt, "s", $characterID);
         mysqli_stmt_execute($stmt);
         if (mysqli_error($this->connection)) {
             throw new Exception(mysqli_error($this->connection), mysqli_errno($this->connection));
@@ -377,47 +377,79 @@ class db {
         return $success;
     }
     
-    private function predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $characterName, $corporationID, $allianceID, $keyStatus, $accessMask) {
-        $this->openConnection();
-        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `apiPilotList` WHERE `keyID`=? AND `keyStatus`='0'");
-        mysqli_stmt_bind_param($stmt, "s", $keyID);
-        $success = mysqli_stmt_execute($stmt);
-        mysqli_stmt_bind_result($stmt, $idNew);
-        $success = mysqli_stmt_fetch($stmt);
+    private function predefinedAddApiKey($id, $keyID, $vCode, $characterID, $keyType) {
+        $stmt = mysqli_prepare($this->connection, "SELECT `id`, `keyStatus` FROM `apiPilotList` WHERE `characterID`=?");
+        mysqli_stmt_bind_param($stmt, "s", $characterID);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_bind_result($stmt, $ownerID, $keyStatus);
+        mysqli_stmt_fetch($stmt);
         mysqli_stmt_close($stmt);
-        if (!$idNew) {
-            $stmt = mysqli_prepare($this->connection, "INSERT INTO `apiPilotList` SET `id`=?, `keyID`=?, `vCode`=?, `characterID`=?, `characterName`=?, `corporationID`=?, `allianceID`=?, `keyStatus`=?, `accessMask`=?");
-            mysqli_stmt_bind_param($stmt, "sssssssss", $id, $keyID, $vCode, $characterID, $characterName, $corporationID, $allianceID, $keyStatus, $accessMask);
-            $success = mysqli_stmt_execute($stmt);
-            if (mysqli_error($this->connection)) {
-                throw new Exception("predefinedPopulateApiList: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+        if ($ownerID) {
+            switch ($keyStatus) {
+                case 0:
+                    $stmt = mysqli_prepare($this->connection, "UPDATE `apiPilotList` SET `id`=?, `keyID`=?, `vCode`=? `keyStatus`=? WHERE `characterID`=?");
+                    mysqli_stmt_bind_param($stmt, "sssss", $id, $keyID, $vCode, $keyType, $characterID);
+                    mysqli_stmt_execute($stmt);
+                    if (mysqli_error($this->connection)) {
+                        throw new Exception("predefinedAddApiKey: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+                    }
+                    //$validation = new validation(); Fill everything else
+                    break;
+                case 1:
+                case 2:
+                    throw new Exception("Key is already used!", 22);
+                default :
+                    throw new Exception("Unkown keyStatus!", 30);
             }
-            mysqli_stmt_close($stmt);
-            $this->closeConnection();
         } else {
-            $stmt = mysqli_prepare($this->connection, "UPDATE `apiPilotList` SET `id`=?, `vCode`=?, `characterID`=?, `characterName`=?, `corporationID`=?, `allianceID`=?, `keyStatus`=?, `accessMask`=? WHERE `id`=?");
-            mysqli_stmt_bind_param($stmt, "ssssss", $id, $vCode, $characterID, $characterName, $corporationID, $allianceID, $keyStatus, $accessMask, $idNew);
-            $success = mysqli_stmt_execute($stmt);
+            $stmt = mysqli_prepare($this->connection, "INSERT INTO `apiPilotList` SET `id`=?, `keyID`=?, `vCode`=?, `characterID`=?, `keyStatus`=?");
+            mysqli_stmt_bind_param($stmt, "sssss", $id, $keyID, $vCode, $characterID, $keyType);
+            mysqli_stmt_execute($stmt);
             if (mysqli_error($this->connection)) {
-                throw new Exception("predefinedPopulateApiList: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+                throw new Exception("predefinedAddApiKey: " . mysqli_error($this->connection), mysqli_errno($this->connection));
             }
+            //$validation = new validation(); Fill everything else
             mysqli_stmt_close($stmt);
         }
-        return $success;
     }
     
-    private function predefinedPopulatePilotInfo($id, $characterID, $characterName, $corporationID, $allianceID) {
-        $this->openConnection();
-        $stmt = mysqli_prepare($this->connection, "INSERT INTO `pilotInfo` SET `id`=?, `characterID`=?, `characterName`=?, `corporationID`=?, `allianceID`=?");
-        mysqli_stmt_bind_param($stmt, "sssss", $id, $characterID, $characterName, $corporationID, $allianceID);
-        $success = mysqli_stmt_execute($stmt);
+    private function predefinedDeleteApiKey($characterID) {
+        $stmt = mysqli_prepare($this->connection, "UPDATE `apiPilotList` SET `keyStatus`='0' WHERE `characterID`=?");
+        mysqli_stmt_bind_param($stmt, "s", $characterID);
+        mysqli_stmt_execute($stmt);
         if (mysqli_error($this->connection)) {
-            throw new Exception("predefinedPopulatePilotInfo: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+            throw new Exception("predefinedAddApiKey: " . mysqli_error($this->connection), mysqli_errno($this->connection));
         }
-        mysqli_stmt_close($stmt);
-        $this->closeConnection();
-        return $success;
     }
+    
+//    private function predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $characterName, $corporationID, $allianceID, $keyStatus, $accessMask) {
+//        $this->openConnection();
+//        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `apiPilotList` WHERE `keyID`=? AND `keyStatus`='0'");
+//        mysqli_stmt_bind_param($stmt, "s", $keyID);
+//        $success = mysqli_stmt_execute($stmt);
+//        mysqli_stmt_bind_result($stmt, $idNew);
+//        $success = mysqli_stmt_fetch($stmt);
+//        mysqli_stmt_close($stmt);
+//        if (!$idNew) {
+//            $stmt = mysqli_prepare($this->connection, "INSERT INTO `apiPilotList` SET `id`=?, `keyID`=?, `vCode`=?, `characterID`=?, `characterName`=?, `corporationID`=?, `allianceID`=?, `keyStatus`=?, `accessMask`=?");
+//            mysqli_stmt_bind_param($stmt, "sssssssss", $id, $keyID, $vCode, $characterID, $characterName, $corporationID, $allianceID, $keyStatus, $accessMask);
+//            $success = mysqli_stmt_execute($stmt);
+//            if (mysqli_error($this->connection)) {
+//                throw new Exception("predefinedPopulateApiList: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+//            }
+//            mysqli_stmt_close($stmt);
+//            $this->closeConnection();
+//        } else {
+//            $stmt = mysqli_prepare($this->connection, "UPDATE `apiPilotList` SET `id`=?, `vCode`=?, `characterID`=?, `characterName`=?, `corporationID`=?, `allianceID`=?, `keyStatus`=?, `accessMask`=? WHERE `id`=?");
+//            mysqli_stmt_bind_param($stmt, "ssssss", $id, $vCode, $characterID, $characterName, $corporationID, $allianceID, $keyStatus, $accessMask, $idNew);
+//            $success = mysqli_stmt_execute($stmt);
+//            if (mysqli_error($this->connection)) {
+//                throw new Exception("predefinedPopulateApiList: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+//            }
+//            mysqli_stmt_close($stmt);
+//        }
+//        return $success;
+//    }
 
     public function getUserByLogin($login, $passwordHash) {
         $this->openConnection();
@@ -446,31 +478,58 @@ class db {
         return $this->predefinedMySQLCheckIfUserRegistered($login);
     }
     
-    public function checkIfApiExists($keyID) {
+    public function checkIfCharRegistered($characterID) {
         $this->openConnection();
-        return $this->predefinedMySQLCheckIfApiIsInDB($keyID);
+        return $this->predefinedMySQLCheckIfApiIsInDB($characterID);
     }
     
-    public function registerNewUser($keyID, $vCode, $accessMask, $characterID, $keyStatus, $characterName, $corporationID, $allianceID, $passwordHash, $permissions, $email = NULL, $salt) {
+    public function addSecApi ($id, $keyID, $vCode, $characterID) {
+        $this->openConnection();
+        $keyType = 2;
+        $this->predefinedAddApiKey($id, $keyID, $vCode, $characterID, $keyType);
+    }
+    
+    public function changeMainAPI($id, $keyID, $vCode, $characterID, $oldCharacterID) {
+        $this->openConnection();
+        
+        $this->predefinedDeleteApiKey($oldCharacterID);
+        
+        $keyType = 1;
+        $this->predefinedAddApiKey($id, $keyID, $vCode, $characterID, $keyType);
+    }
+
+    public function deleteAPI($ownerID, $characterID) {
+        $this->openConnection();
+        $id = $this->predefinedMySQLCheckIfApiIsInDB($characterID);
+        if ($id <> $ownerID) {
+            throw new Exception('Wrong characterID!', 13);
+        }
+        $this->predefinedDeleteApiKey($characterID);
+    }
+    public function registerNewUser($keyID, $vCode, $characterID, $characterName, $passwordHash, $permissions, $salt, $email = NULL) {
         try {
             $this->predefinedPopulateUsers($characterName, $passwordHash, $permissions, $salt, $email);
             $id = $this->getIDByName($characterName);
-            $this->predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $characterName, $corporationID, $allianceID, $keyStatus, $accessMask);
-//            $this->predefinedPopulatePilotInfo($id, $characterID, $characterName, $corporationID, $allianceID);
+            $keyType = 1;
+            $this->predefinedAddApiKey($id, $keyID, $vCode, $characterID, $keyType);
+//            $this->predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $characterName, $corporationID, $allianceID, $keyStatus, $accessMask);
         } catch (Exception $ex) {
             $firstException = $ex->getMessage();
             //Rolling Back...
             try {
-                $query = "DELETE FROM `pilotInfo` WHERE `characterID` = '$characterID'";
-                $secondRes = strval($this->query($query));
-//                $query = "DELETE FROM `apiList` WHERE `vCode` = '$vCode'";
-//                $secondRes = strval($this->query($query));
+                $this->predefinedDeleteApiKey($characterID);
                 $query = "DELETE FROM `users` WHERE `login` = '$characterName'";
-                $firstRes = strval($this->query($query));
+                $this->query($query);
             } catch (Exception $ex) {
-                $secondException = $ex->getMessage();
+                throw new Exception("Something went terribly wrong. Message: " . $firstException . " Attempt to roll back failed, exception: " . $ex->getMessage(), 30);
             }
-            throw new Exception("Something went terribly wrong. Message: " . $firstException . "\nRolling back... users: " . $firstRes . "\npilotInfo: " . $secondRes . "\nErrors during rolling back: " . $secondException, 30);
+            switch ($ex->getCode()) {
+                case -1:
+                case 30:
+                    throw new Exception($ex->getMessage(), $ex->getCode());
+                default :
+                    throw new Exception("MySQL error: " . $firstException . " Rolled back successfully.", 30);
+            }
         }
     }
 }

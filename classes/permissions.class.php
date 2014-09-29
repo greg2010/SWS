@@ -1,70 +1,46 @@
 <?php
-/**
- * Description of permissions
- *
- * @author greg2010
- */
+
 class permissions {
     protected $id;
     protected $db;
     protected $bitMap;
     protected $userPermissions = array();
-    public $log;
     private $userMask;
     private $maskLength;
     
     function __construct($id = NULL) {
-        $this->log = new logging();
-        try {
-            $this->db = db::getInstance();
-            $this->getBitMapFromDb();
-            if (!isset($id)) {
-                $this->id = -1;
-            } else {
-                $this->id = $id;
-                $this->getUserMask();
-                $this->getUserPermissions();
-            }
-            return true;
-        } catch (Exception $ex) {
-            $this->log->put("construct", "err " . $ex->getMessage());
-            return false;
+        $this->db = db::getInstance();
+        $this->getBitMapFromDb();
+        if (!isset($id)) {
+            $this->id = -1;
+        } else {
+            $this->id = $id;
+            $this->getUserMask();
+            $this->getUserPermissions();
         }
     }
     
     private function getBitMapFromDb() {
-        try {
-            $query = "SELECT * FROM `bitMap`";
-            $result = $this->db->query($query);
-            $bitMapRaw = $this->db->fetchArray($result);
-            $bitNames = array();
-            foreach ($bitMapRaw as $rows) {
-                $bitNames[$rows[bitPosition]] = $rows[name];
-            }
-            $this->bitMap = $bitNames;
-            return true;
-        } catch (Exception $ex) {
-            $this->log->put("getBitMapFromDb", "err " . $ex->getMessage());
-            return false;
+        $query = "SELECT * FROM `bitMap`";
+        $result = $this->db->query($query);
+        $bitMapRaw = $this->db->fetchArray($result);
+        $bitNames = array();
+        foreach ($bitMapRaw as $rows) {
+            $bitNames[$rows[bitPosition]] = $rows[name];
         }
+        $this->bitMap = $bitNames;
     }
 
     private function getUserMask($mask = NULL) {
-        try {
-            if (strlen($mask) > 0) {
-                $this->userMask = $mask;
-            } else {
+        if (strlen($mask) > 0) {
+            $this->userMask = $mask;
+        } else {
             $query = "SELECT `accessMask` FROM `users` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
             $this->userMask = $this->db->getMysqlResult($result);
-            }
-            //$this->userMask = 15731715; //Temp full mask for debug
-            $this->maskLength = floor(log($this->userMask)/log(2)) + 1;
-            return true;
-        } catch (Exception $ex) {
-            $this->log->put("getUserMask", "err " . $ex->getMessage());
-            return false;
         }
+        //$this->userMask = 15731715; //Temp full mask for debug
+        $this->maskLength = floor(log($this->userMask)/log(2)) + 1;
     }
     
     protected function returnUserMask() {
@@ -72,62 +48,42 @@ class permissions {
     }
 
     private function getUserPermissions() {
-        try {
-            for ($i = 0; $i <= $this->maskLength; $i++) {
-                $isSet = (($this->userMask >> $i)&1);
-                if ($isSet) {
-                    $this->userPermissions[$i] = $this->bitMap[$i];
-                }
+        for ($i = 0; $i <= $this->maskLength; $i++) {
+            $isSet = (($this->userMask >> $i)&1);
+            if ($isSet) {
+                $this->userPermissions[$i] = $this->bitMap[$i];
             }
-            return true;
-        } catch (Exception $ex) {
-            $this->log->put("getUserPermissions", "err " . $ex->getMessage());
-            return false;
         }
     }
     
     private function getPermissionsInRange($firstBit, $lastBit) {
-        try {
-            if ($firstBit > 62 || $lastBit > 63 || $firstBit > $lastBit) {
-                throw new Exception("Invalid bit range!");
-            }
-            $rightsRequested = array();
-            for ($i = $firstBit; $i <= $lastBit; $i++) {
-                if ($this->userPermissions[$i]) {
-                    $rightsRequested[] = $this->userPermissions[$i];
-                }
-            }
-            return $rightsRequested;
-        } catch (Exception $ex) {
-            $this->log->put("getPermissionsInRange", "err " . $ex->getMessage());
+        if ($firstBit > 62 || $lastBit > 63 || $firstBit > $lastBit) {
+            throw new Exception("Invalid bit range!", -101);
         }
+        $rightsRequested = array();
+        for ($i = $firstBit; $i <= $lastBit; $i++) {
+            if ($this->userPermissions[$i]) {
+                $rightsRequested[] = $this->userPermissions[$i];
+            }
+        }
+        return $rightsRequested;
     }
     
     private function updateUserMask() {
-        try {
-            $query = "UPDATE `users` SET `accessMask` = '$this->userMask' WHERE `id` = '$this->id'";
-            $result = $this->db->query($query);
-            return true;
-        } catch (Exception $ex) {
-            $this->log->put("updateUserMask", "err " . $ex->getMessage());
-            return false;
-        }
+        $query = "UPDATE `users` SET `accessMask` = '$this->userMask' WHERE `id` = '$this->id'";
+        $result = $this->db->query($query);
     }
     
     public function hasPermission($permission) {
-        try {
-            $permissionBit = array_search($permission, $this->bitMap);
-            if ($permissionBit === False) {
-                throw new Exception("Invalid permission!");
-            }
-            $hasPermission = $this->getPermissionsInRange($permissionBit, $permissionBit);
-            if (count($hasPermission) === 1) {
-                return True;
-            } else {
-                return False;
-            }
-        } catch (Exception $ex) {
-            $this->log->put("hasPermission", "err " . $ex->getMessage());
+        $permissionBit = array_search($permission, $this->bitMap);
+        if ($permissionBit === False) {
+            throw new Exception("Invalid permission!", -102);
+        }
+        $hasPermission = $this->getPermissionsInRange($permissionBit, $permissionBit);
+        if (count($hasPermission) === 1) {
+            return True;
+        } else {
+            return False;
         }
     }
     
@@ -170,72 +126,56 @@ class permissions {
     }
     
     public function setPermissions($newPermissions = array()) {
-        try {
-            $userMaskBeforeChanges = $this->userMask;
-            if (count($newPermissions) < 1) {
-                throw new Exception("No permissions to set!");
-            }
-            $newBits = array();
-            foreach ($newPermissions as $permission) {
-                $newBits[] = array_search($permission, $this->bitMap);
-            }
-            foreach ($newBits as $setBit) {
-                $this->userMask = ($this->userMask |  pow(2, $setBit));
-            }
-            if ($userMaskBeforeChanges === $this->userMask) {
-                throw new Exception("No changes are needed!");
-            }
-            $this->updateUserMask();
-            $this->getUserPermissions();
-            return true;
-        } catch (Exception $ex) {
-            $this->log->put("setPermissions", "err " . $ex->getMessage());
-            return false;
+        $userMaskBeforeChanges = $this->userMask;
+        if (count($newPermissions) < 1) {
+            throw new Exception("No permissions to set!", -103);
         }
+        $newBits = array();
+        foreach ($newPermissions as $permission) {
+            $newBits[] = array_search($permission, $this->bitMap);
+        }
+        foreach ($newBits as $setBit) {
+            $this->userMask = ($this->userMask |  pow(2, $setBit));
+        }
+        if ($userMaskBeforeChanges === $this->userMask) {
+            throw new Exception("No changes are needed!", -104);
+        }
+        $this->updateUserMask();
+        $this->getUserPermissions();
     }
     public function unsetPermissions($remPermissions = array()) {
-        try {
-            $userMaskBeforeChanges = $this->userMask;
-            if (count($remPermissions) < 1) {
-                throw new Exception("No permissions to set!");
-            }
-            $remBits = array();
-            foreach ($remPermissions as $permission) {
-                $remBits[] = array_search($permission, $this->bitMap);
-            }
-            foreach ($remBits as $unsetBit) {
-                $this->userMask = ($this->userMask & ~(pow(2, $unsetBit)));
-            }
-            if ($userMaskBeforeChanges === $this->userMask) {
-                throw new Exception("No changes are needed!");
-            }
-            $this->updateUserMask();
-            $this->getUserPermissions();
-            return true;
-        } catch (Exception $ex) {
-            $this->log->put("unsetPermissions", "err " . $ex->getMessage());
-            return false;
+        $userMaskBeforeChanges = $this->userMask;
+        if (count($remPermissions) < 1) {
+            throw new Exception("No permissions to set!", -105);
         }
+        $remBits = array();
+        foreach ($remPermissions as $permission) {
+            $remBits[] = array_search($permission, $this->bitMap);
+        }
+        foreach ($remBits as $unsetBit) {
+            $this->userMask = ($this->userMask & ~(pow(2, $unsetBit)));
+        }
+        if ($userMaskBeforeChanges === $this->userMask) {
+            throw new Exception("No changes are needed!", -106);
+        }
+        $this->updateUserMask();
+        $this->getUserPermissions();
     }
     
     public function setUserMask($mask) {
-        try {
-            if ($this->id <> -1) {
-                throw new Exception("Method is only available in fake user mode!");
-            }
-            unset($this->userMask);
-            unset($this->userPermissions);
-            unset($this->maskLength);
-            $this->getUserMask($mask);
-            $this->getUserPermissions();
-            return true;
-        } catch (Exception $ex) {
-            $this->log->put("setUserMask", "err " . $ex->getMessage());
-            return false;
+        if ($this->id <> -1) {
+            throw new Exception("Method is only available in fake user mode!", -107);
         }
+        unset($this->userMask);
+        unset($this->userPermissions);
+        unset($this->maskLength);
+        $this->getUserMask($mask);
+        $this->getUserPermissions();
     }
 
     public function getBitMap() {
         return $this->bitMap;
     }
 }
+
+?>

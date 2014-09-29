@@ -32,7 +32,7 @@ switch ($page) {
             unset($i);
         }
         break;
-    case 'teamSpeak':
+    case 'teamspeak':
         $toTemplate['curForm'] = 'teamspeak';
         $toTemplate['active']['teamspeak'] = $pageActive;
         break;
