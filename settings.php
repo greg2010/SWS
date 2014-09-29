@@ -5,7 +5,7 @@ include 'header.php';
 
 $pageActive = "class=active";
 
-$pagePermissions = array("webReg_Valid");
+//$pagePermissions = array("webReg_Valid");
 
 $templateName = $thisPage;
 $page = $_GET[a];
@@ -14,6 +14,23 @@ switch ($page) {
     case 'api':
         $toTemplate['curForm'] = 'api';
         $toTemplate['active']['api'] = $pageActive;
+        
+        $API = $_SESSION[userObject]->getApiPilotInfo();
+        $toTemplate['saveForm']['currKeyID'] = $API[mainAPI][keyID];
+        $toTemplate['saveForm']['currVCode'] = $API[mainAPI][vCode];
+        
+        if (!is_array($API[secAPI][0])) {
+            $toTemplate['apiList'][0]['keyID'] = $API[secAPI][keyID];
+            $toTemplate['apiList'][0]['vCode'] = $API[secAPI][vCode];
+        } elseif (count($API[secAPI]) > 1) {
+            $i = 0;
+            foreach ($API[secAPI] as $apilist) {
+                $toTemplate['apiList'][$i]['keyID'] = $apilist[keyID];
+                $toTemplate['apiList'][$i]['vCode'] = $apilist[vCode];
+                $i++;
+            }
+            unset($i);
+        }
         break;
     case 'teamSpeak':
         $toTemplate['curForm'] = 'teamspeak';
@@ -31,6 +48,9 @@ switch ($page) {
                 if ($_POST[email]) {
                     try {
                         $email = $_POST[email];
+                        if ($toTemplate['saveForm']['email'] === $email) {
+                            throw new Exception('', 0);
+                        }
                         $toTemplate['saveForm']['email'] = $email;
                         $_SESSION[userObject]->userManagement->setNewEmail($email);
                     } catch (Exception $ex) {

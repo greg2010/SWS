@@ -51,7 +51,7 @@ class userLogging {
                 $userInfo = $_SESSION[userObject]->getUserInfo();
                 $this->sessionInfo['accessMask'] = $userInfo[accessMask];
 
-                $pilotInfo = $_SESSION[userObject]->getPilotInfo();
+                $pilotInfo = $_SESSION[userObject]->getApiPilotInfo();
                  $this->sessionInfo['characterName'] = $pilotInfo[characterName];
                  $this->sessionInfo['characterID'] = $pilotInfo[characterID];
                  $this->sessionInfo['corporationID'] = $pilotInfo[corporationID];

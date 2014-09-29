@@ -15,9 +15,9 @@ if (!($_SESSION[logObject] instanceof userLogging)) {
 $toTemplate['loggedIN'] = $_SESSION[userObject]->isLoggedIn();
 //$_SESSION[userObject]->initialize();
 if ($toTemplate['loggedIN'] == 1) {
-    $pilotInfo = $_SESSION[userObject]->getPilotInfo();
-    $toTemplate['characterName'] = $pilotInfo[characterName];
-    $toTemplate['characterID'] = $pilotInfo[characterID];
+    $pilotInfo = $_SESSION[userObject]->getApiPilotInfo();
+    $toTemplate['characterName'] = $pilotInfo[mainAPI][characterName];
+    $toTemplate['characterID'] = $pilotInfo[mainAPI][characterID];
 } else {
     $_SESSION[userObject]->logUserByCookie();
 }

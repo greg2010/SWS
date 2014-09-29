@@ -292,7 +292,7 @@ class db {
     }
     
     private function predefinedMySQLCheckIfApiIsInDB($keyID) {
-        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `apiList` WHERE `keyID`=?");
+        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `apiPilotList` WHERE `keyID`=?");
         mysqli_stmt_bind_param($stmt, "s", $keyID);
         mysqli_stmt_execute($stmt);
         if (mysqli_error($this->connection)) {
@@ -336,6 +336,23 @@ class db {
         }
     }
     
+    private function predefinedMySQLFindIDByEmail($email) {
+        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `users` WHERE `email`=?");
+        mysqli_stmt_bind_param($stmt, "s", $email);
+        mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception(mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+        mysqli_stmt_bind_result($stmt, $id);
+        $success = mysqli_stmt_fetch($stmt);
+        mysqli_stmt_close($stmt);
+        if ($id) {
+            return $id;
+        } else {
+            return False;
+        }
+    }
+    
     private function predefinedMySQLChangeEmail($id, $email) {
         $stmt = mysqli_prepare($this->connection, "UPDATE `users` SET `email`=? WHERE `id`=?");
         mysqli_stmt_bind_param($stmt, "ss", $email, $id);
@@ -360,17 +377,17 @@ class db {
         return $success;
     }
     
-    private function predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $keyStatus, $accessMask) {
+    private function predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $characterName, $corporationID, $allianceID, $keyStatus, $accessMask) {
         $this->openConnection();
-        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `apiList` WHERE `keyID`=? AND `keyStatus`='0'");
+        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `apiPilotList` WHERE `keyID`=? AND `keyStatus`='0'");
         mysqli_stmt_bind_param($stmt, "s", $keyID);
         $success = mysqli_stmt_execute($stmt);
         mysqli_stmt_bind_result($stmt, $idNew);
         $success = mysqli_stmt_fetch($stmt);
         mysqli_stmt_close($stmt);
         if (!$idNew) {
-            $stmt = mysqli_prepare($this->connection, "INSERT INTO `apiList` SET `id`=?, `keyID`=?, `vCode`=?, `characterID`=?, `keyStatus`=?, `accessMask`=?");
-            mysqli_stmt_bind_param($stmt, "ssssss", $id, $keyID, $vCode, $characterID, $keyStatus, $accessMask);
+            $stmt = mysqli_prepare($this->connection, "INSERT INTO `apiPilotList` SET `id`=?, `keyID`=?, `vCode`=?, `characterID`=?, `characterName`=?, `corporationID`=?, `allianceID`=?, `keyStatus`=?, `accessMask`=?");
+            mysqli_stmt_bind_param($stmt, "sssssssss", $id, $keyID, $vCode, $characterID, $characterName, $corporationID, $allianceID, $keyStatus, $accessMask);
             $success = mysqli_stmt_execute($stmt);
             if (mysqli_error($this->connection)) {
                 throw new Exception("predefinedPopulateApiList: " . mysqli_error($this->connection), mysqli_errno($this->connection));
@@ -378,8 +395,8 @@ class db {
             mysqli_stmt_close($stmt);
             $this->closeConnection();
         } else {
-            $stmt = mysqli_prepare($this->connection, "UPDATE `apiList` SET `id`=?, `vCode`=?, `characterID`=?, `keyStatus`=?, `accessMask`=? WHERE `id`=?");
-            mysqli_stmt_bind_param($stmt, "ssssss", $id, $vCode, $characterID, $keyStatus, $accessMask, $idNew);
+            $stmt = mysqli_prepare($this->connection, "UPDATE `apiPilotList` SET `id`=?, `vCode`=?, `characterID`=?, `characterName`=?, `corporationID`=?, `allianceID`=?, `keyStatus`=?, `accessMask`=? WHERE `id`=?");
+            mysqli_stmt_bind_param($stmt, "ssssss", $id, $vCode, $characterID, $characterName, $corporationID, $allianceID, $keyStatus, $accessMask, $idNew);
             $success = mysqli_stmt_execute($stmt);
             if (mysqli_error($this->connection)) {
                 throw new Exception("predefinedPopulateApiList: " . mysqli_error($this->connection), mysqli_errno($this->connection));
@@ -419,6 +436,11 @@ class db {
         $this->predefinedMySQLChangeEmail($id, $email);
     }
     
+    public function getIDByEmail($email) {
+        $this->openConnection();
+        return $this->predefinedMySQLFindIDByEmail($email);
+    }
+    
     public function getIDByName($login) {
         $this->openConnection();
         return $this->predefinedMySQLCheckIfUserRegistered($login);
@@ -433,22 +455,22 @@ class db {
         try {
             $this->predefinedPopulateUsers($characterName, $passwordHash, $permissions, $salt, $email);
             $id = $this->getIDByName($characterName);
-            $this->predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $keyStatus, $accessMask);
-            $this->predefinedPopulatePilotInfo($id, $characterID, $characterName, $corporationID, $allianceID);
+            $this->predefinedPopulateApiList($id, $keyID, $vCode, $characterID, $characterName, $corporationID, $allianceID, $keyStatus, $accessMask);
+//            $this->predefinedPopulatePilotInfo($id, $characterID, $characterName, $corporationID, $allianceID);
         } catch (Exception $ex) {
             $firstException = $ex->getMessage();
             //Rolling Back...
             try {
                 $query = "DELETE FROM `pilotInfo` WHERE `characterID` = '$characterID'";
-                $thirdRes = strval($this->query($query));
-                $query = "DELETE FROM `apiList` WHERE `vCode` = '$vCode'";
                 $secondRes = strval($this->query($query));
+//                $query = "DELETE FROM `apiList` WHERE `vCode` = '$vCode'";
+//                $secondRes = strval($this->query($query));
                 $query = "DELETE FROM `users` WHERE `login` = '$characterName'";
                 $firstRes = strval($this->query($query));
             } catch (Exception $ex) {
                 $secondException = $ex->getMessage();
             }
-            throw new Exception("Something went terribly wrong. Message: " . $firstException . "\nRolling back... users: " . $firstRes . "\napiList: " . $secondRes . "\npilotInfo: " . $thirdRes . "\nErrors during rolling back: " . $secondException, 30);
+            throw new Exception("Something went terribly wrong. Message: " . $firstException . "\nRolling back... users: " . $firstRes . "\npilotInfo: " . $secondRes . "\nErrors during rolling back: " . $secondException, 30);
         }
     }
 }

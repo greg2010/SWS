@@ -132,6 +132,9 @@ class registerNewUser {
         if (!preg_match($pattern, $email)) {
             throw new Exception("Your e-mail is invalid!", 11);
         }
+        if ($this->db->getIDByEmail($email)) {
+            throw new Exception("This email is already used!", 11);
+        }
     }
 
 

@@ -18,7 +18,7 @@ class userSession {
     private $hasAccessToCurrentPage;
     
     public $userInfo;
-    public $pilotInfo;
+    public $apiPilotList;
     public $corpInfo;
     public $allianceInfo;
     
@@ -35,7 +35,7 @@ class userSession {
     public function __sleep() {
          unset($this->db);
          unset($this->permissions);
-         return array('sessionID', 'id', 'isLoggedIn', 'userInfo', 'pilotInfo', 'corpInfo', 'allianceInfo', 'salt');
+         return array('sessionID', 'id', 'isLoggedIn', 'userInfo', 'apiPilotList', 'corpInfo', 'allianceInfo', 'salt');
      }
      
     public function __wakeup() {
@@ -59,7 +59,6 @@ class userSession {
         if (!$permissions) {
             $permissions = array();
         }
-        
         $pm = new permissions();
         $bitMap = $pm->getBitMap();
         $cleanPermissions = array();
@@ -76,11 +75,7 @@ class userSession {
 
     private function hasAccess() {
         if (count($this->pagePermissions) === 0) {
-            if ($this->isLoggedIn === TRUE) {
-                $this->hasAccessToCurrentPage = FALSE;
-            } else {
-                $this->hasAccessToCurrentPage = TRUE;
-            }
+            $this->hasAccessToCurrentPage = TRUE;
         } else {
             $neededPermissions = array();
             foreach ($this->pagePermissions as $permission) {
@@ -178,9 +173,17 @@ class userSession {
             $result = $this->db->query($query);
             $this->userInfo = $this->db->fetchAssoc($result);
             
-            $query = "SELECT * FROM `pilotInfo` WHERE `id` = '$this->id'";
+            $query = "SELECT * FROM `apiPilotList` WHERE `id` = '$this->id' AND `keyStatus` = '1'";
             $result = $this->db->query($query);
-            $this->pilotInfo = $this->db->fetchAssoc($result);
+            $this->apiPilotList['mainAPI'] = $this->db->fetchAssoc($result);
+            
+            $query = "SELECT * FROM `apiPilotList` WHERE `id` = '$this->id' AND `keyStatus` = '2'";
+            $result = $this->db->query($query);
+            $this->apiPilotList['secAPI'] = $this->db->fetchAssoc($result);
+            
+//            $query = "SELECT * FROM `pilotInfo` WHERE `id` = '$this->id'";
+//            $result = $this->db->query($query);
+//            $this->pilotInfo = $this->db->fetchAssoc($result);
             
             $query = "SELECT * FROM `corporationList` WHERE `id` = '{$this->pilotInfo[corporationID]}'";
             $result = $this->db->query($query);
@@ -281,6 +284,9 @@ class userSession {
     }
     
     public function hasPermission() {
+//        if (!isset($this->pagePermissions)) {
+//            throw new Exception("You have to call setPermissions() firstly!", 30);
+//        }
         return $this->hasAccessToCurrentPage;
     }
     
@@ -294,6 +300,10 @@ class userSession {
         return $this->userInfo;
     }
     
+    public function getApiPilotInfo() {
+        return $this->apiPilotList;
+    }
+    
     public function getCorpInfo() {
         return $this->corpInfo;
     }
@@ -302,7 +312,7 @@ class userSession {
         return $this->allianceInfo;
     }
     
-    public function getPilotInfo() {
-        return $this->pilotInfo;
-    }
+//    public function getPilotInfo() {
+//        return $this->pilotInfo;
+//    }
 }

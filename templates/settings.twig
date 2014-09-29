@@ -13,18 +13,18 @@
  {% if curForm == 'api' %}
 <!--Форма смены API-->
     <div class="container" id="formSettings">
-        <h1>PROFILE SETTINGS</h1>
+        <h1>PROFILE SETTINGS - API</h1>
     <form id="formSettings2" action="settings.php?a=api" method="post">
         <div class="inset" id="SetIns">       
             <h2>CURRENT API</h2>
             <br>
             <p>
                 <label for="keyIDOld">KEY ID</label>
-                <input type="text" name="keyID" value="{{saveForm.keyID}}"  id="keyID2">
+                <input type="text" name="keyID" value="{{saveForm.currKeyID}}"  id="keyID2">
             </p>
             <p>
                 <label for="vCodeOld">VERIFICATION CODE</label>
-                <input type="text" name="vCode" value="{{saveForm.vCode}}" id="vCode2">
+                <input type="text" name="vCode" value="{{saveForm.currVCode}}" id="vCode2">
             </p>
             <div id="charList">
             </div>
@@ -70,9 +70,9 @@
         </div>
     </form>    
     <form id="formSettings2" action="settings.php?a=api" method="post">  
+        <div class="inset" id="SetIns">
             {% if apiList is defined %}
             {% for api in apiList %}
-        <div class="inset" id="SetIns">
             <h2>SECONDARY API FOR {{api.charName}}</h2>
             <p>
                 <label for="username">KEY ID</label>
@@ -80,7 +80,7 @@
             </p>
             <p>
                 <label for="vCode">VERIFICATION CODE</label>
-                <input type="text" name="vCode" value="{{api.keyID}}" id="vCode2" disabled>
+                <input type="text" name="vCode" value="{{api.vCode}}" id="vCode2" disabled>
             </p>
             <br>
             <!--<div class="alert alert-danger" role="alert">Sorry, but key ID or vCode incorrect!</div>-->
@@ -118,7 +118,7 @@
     {% endif %}
 <!--Форма смены почты и пароля-->
     <form id="formSettings" action="settings.php" method="post">  
-        <h1>PROFILE SETTINGS</h1>
+        <h1>PROFILE SETTINGS - MAIN</h1>
     <div class="inset" id="SetIns">
         <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
             {{errorMsg}}
