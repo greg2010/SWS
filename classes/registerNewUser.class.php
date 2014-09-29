@@ -87,8 +87,6 @@ class registerNewUser {
             $this->registerArray[$char[characterName]] = array (
                 "accessMask" => $char[accessMask],
                 "characterID" => $char[characterID],
-                "corporationID" => $char[corporationID],
-                "allianceID" => $char[allianceID],
                 "permissions" => $keyPermissions,
                 "valid" => $canRegister
             );
@@ -154,12 +152,8 @@ class registerNewUser {
         $this->login = $login;
         
         $_SESSION[logObject]->setRegistrationInfo('characterID', $this->registerArray[$this->login][characterID]);
-        $_SESSION[logObject]->setRegistrationInfo('characterName', $this->login);
-        $_SESSION[logObject]->setRegistrationInfo('corporationID', $this->registerArray[$this->login][corporationID]);
-        $_SESSION[logObject]->setRegistrationInfo('allianceID', $this->registerArray[$this->login][allianceID]);
         $_SESSION[logObject]->setRegistrationInfo('keyID', $this->apiKey[0]);
         $_SESSION[logObject]->setRegistrationInfo('vCode', $this->apiKey[1]);
-        $_SESSION[logObject]->setRegistrationInfo('apiKeyMask', $this->registerArray[$this->login][accessMask]);
         $_SESSION[logObject]->setRegistrationInfo('accessMask', $this->registerArray[$this->login][permissions]);
         
         $this->testPassword($password);
@@ -173,14 +167,6 @@ class registerNewUser {
             $this->testEmail($email);
             $this->email = $email;
             $_SESSION[logObject]->setRegistrationInfo('email', $this->email);
-        }
-        $alreadyRegistered = $this->db->getIDByName($this->login);
-        if ($alreadyRegistered <> FALSE) {
-            throw new Exception("Already registered!", 21);
-        }
-        $hasApi = $this->db->checkIfApiExists($apiKey[0]);
-        if ($alreadyRegistered <> FALSE) {
-            throw new Exception("This api is already used here!", 22);
         }
         if ($this->registerArray[$this->login][valid] <> 1) {
             throw new Exception("Not valid character!", 20);
@@ -200,30 +186,25 @@ class registerNewUser {
             throw new Exception("There is something wrong with characterID. Value: " . $this->registerArray[$this->login][characterID], 15);
         }
         
-        if (!$this->registerArray[$this->login][accessMask]) {
-            throw new Exception("There is something wrong with accessMask. Value: " . $this->registerArray[$this->login][accessMask], 15);
-        }
-        
         if (!$this->login) {
             throw new Exception("There is something wrong with login. Value: " . $this->login, 10);
-        }
-
-        if (!$this->registerArray[$this->login][corporationID]) {
-            throw new Exception("There is something wrong with CorporationID. Value: " . $this->registerArray[$this->login][corporationID], 15);
-        }
-
-        if (!$this->registerArray[$this->login][allianceID]) {
-            throw new Exception("There is something wrong with AllianceID. Value: " . $this->registerArray[$this->login][allianceID], 15);
         }
 
         if (!$this->passwordHash) {
             throw new Exception("There is something wrong with passwordHash. Value: " . $this->passwordHash, 10);
         }
 
-        if (!$this->registerArray[$this->login][permissions]) {
+        if (!isset($this->registerArray[$this->login][permissions])) {
             throw new Exception("There is something wrong with permissions. Value: " . $this->registerArray[$this->login][permissions], 30);
         }
-        $this->db->registerNewUser($this->apiKey[0], $this->apiKey[1], $this->registerArray[$this->login][accessMask], $this->registerArray[$this->login][characterID], $keyStatus, $this->login, $this->registerArray[$this->login][corporationID], $this->registerArray[$this->login][allianceID], $this->passwordHash, $this->registerArray[$this->login][permissions], $this->email, $this->salt);
+        $this->db->registerNewUser($this->apiKey[0], $this->apiKey[1], $this->registerArray[$this->login][characterID], $this->login, $this->passwordHash, $this->registerArray[$this->login][permissions], $this->salt, $this->email);
+        
+        $query = "SELECT * from `apiPilotList` WHERE `characterID` = '{$this->registerArray[$this->login][characterID]}'";
+        $result = $this->db->fetchAssoc($this->db->query($query));
+        $_SESSION[logObject]->setRegistrationInfo('characterName', $result[characterName]);
+        $_SESSION[logObject]->setRegistrationInfo('corporationID', $result[corporationID]);
+        $_SESSION[logObject]->setRegistrationInfo('allianceID', $result[allianceID]);
+        $_SESSION[logObject]->setRegistrationInfo('apiKeyMask', $result[accessMask]);
         
         return TRUE;
     }
