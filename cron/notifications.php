@@ -10,26 +10,12 @@ if($pid == -2){
 	try{
 		$connection = mysqli_connect(config::hostname, config::username, config::password);
         $selectdb = mysqli_select_db($connection, config::database);
-        $query = "SELECT `characterID`, `keyID`, `vCode`, `accessMask` FROM `apiList` WHERE `keyStatus` > 0";
+        $query = "SELECT * FROM `apiPilotList` WHERE `keyStatus` > 0";
 		$result = mysqli_query($connection, $query);
 		while($array = mysqli_fetch_assoc($result)){
 			if(($array[accessMask] & 49152) > 0) $userList[] = $array;
 		}
-		$query = "SELECT * FROM `pilotInfo`";
-		$result = mysqli_query($connection, $query);
-		while($array = mysqli_fetch_assoc($result)) $tmpArr[] = $array;
         mysqli_close($connection);
-
-        for($i=0; $i<count($userList); $i++){
-        	foreach($tmpArr as $row){
-        		if($row[characterID] == $userList[$i][characterID]){
-        			$userList[$i][characterName] = $row[characterName];
-        			$userList[$i][corporationID] = $row[corporationID];
-        			$userList[$i][allianceID] = $row[allianceID];
-        			break;
-        		}
-        	}
-        }
 
         $users_count = count($userList);
         if($users_count > $users_max){
@@ -50,7 +36,9 @@ if($pid == -2){
 }
 for($t=0; $t<$thread_count; $t++){
 	$pid = pcntl_fork();
-	if(!$pid){
+	if($pid==-1) die("Error: impossible to pcntl_fork()\n");
+	else if($pid) $pid_arr[$t] = $pid;
+	else if(!$pid){
 		$smta = round(microtime(1));
 		$log = new logging();
 		$log->put("select keys", $tolog);
@@ -61,10 +49,10 @@ for($t=0; $t<$thread_count; $t++){
 			$notification = new notif_get($userList[$i]);
 			$drake = $notification->processNotif();
 			if($drake != NULL){
-				$log->merge($drake, $userList[$i][keyID]);
-				$log->put("name", $userList[$i][characterName], $userList[$i][keyID]);
+				$log->merge($drake, $userList[$i][characterID]);
+				$log->put("name", $userList[$i][characterName], $userList[$i][characterID]);
 				$emt = round(microtime(1)*1000) - $smt;
-				$log->put("spent", $emt . " microseconds", $userList[$i][keyID]);
+				$log->put("spent", $emt . " microseconds", $userList[$i][characterID]);
 			}
 		}
 		$emta = round(microtime(1)) - $smta;
@@ -73,5 +61,24 @@ for($t=0; $t<$thread_count; $t++){
 		posix_kill(posix_getpid(), SIGTERM);
 	}
 }
+
+foreach ($pid_arr as $pid) pcntl_waitpid($pid, $status);
+
+$smta = round(microtime(1));
+$log = new logging();
+for($i=0; $i<count($userList); $i++){
+	try{
+		$notification = new notif_send($userList[$i][id], $userList[$i][corporationID], $userList[$i][allianceID]);
+	} catch (Exception $ex){	
+		$log->put("name", $userList[$i][characterName], $userList[$i][characterID]);
+		$log->put("exception", $ex->getMessage(), $userList[$i][characterID]);
+	}
+}
+if($log->get() != NULL){
+	$emta = round(microtime(1)) - $smta;
+	$log->put("total spent", $emta . " seconds");
+	$log->record("log.notifications");
+}
+exit();
 
 ?>

@@ -34,7 +34,7 @@ class userManagement implements IuserManagement {
     private function getDbPilotInfo() {
         //Populates $dbPilotInfo
         try {
-            $query = "SELECT * FROM `pilotInfo` WHERE `id` = '$this->id'";
+            $query = "SELECT * FROM `apiPilotList` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
             $this->pilotInfo = $this->db->fetchAssoc($result);
             return true;
@@ -50,7 +50,7 @@ class userManagement implements IuserManagement {
 
     public function getApiKey($keyStatus) {
         try {
-            $query = "SELECT `keyID`, `vCode`, `characterID` FROM `apiList` WHERE `id` = '$this->id' AND `keyStatus` = '$keyStatus'";
+            $query = "SELECT `keyID`, `vCode`, `characterID` FROM `apiPilotList` WHERE `id` = '$this->id' AND `keyStatus` = '$keyStatus'";
             $result = $this->db->query($query);
             $apiKey = $this->db->fetchRow($result);
             return $apiKey;
@@ -104,7 +104,7 @@ class userManagement implements IuserManagement {
         if ($this->id === -1) {
             throw new Exception("Object created in fake user mode.", 30);
         }
-        $query = "UPDATE `apilist` SET `keyStatus` = '0' WHERE `id` = $this->id AND keyStatus = '1'";
+        $query = "UPDATE `apiPilotList` SET `keyStatus` = '0' WHERE `id` = $this->id AND keyStatus = '1'";
         $this->db->query($query);
         if ($this->db->affectedRows() < 1) {
             throw new Exception("No such key found.", 15);

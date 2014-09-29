@@ -41,11 +41,11 @@ class validation implements Ivalidation {
     		return true;
     	} else{
     		try {
-            	$query = "UPDATE `pilotInfo` SET `characterID` = '{$this->apiPilotInfo[characterID]}', `characterName` = '{$this->apiPilotInfo[characterName]}', `corporationID` = '{$this->apiPilotInfo[corporationID]}',
+            	$query = "UPDATE `apiPilotList` SET `characterID` = '{$this->apiPilotInfo[characterID]}', `characterName` = '{$this->apiPilotInfo[characterName]}', `corporationID` = '{$this->apiPilotInfo[corporationID]}',
             	 `allianceID` = '{$this->apiPilotInfo[allianceID]}' WHERE `id` = '$this->id'";
             	$result = $this->db->query($query);
                 if($this->apiPilotInfo[accessMask] != $this->dbPilotInfo[accessMask]){
-                    $query = "UPDATE `apiList` SET `accessMask` = '{$this->apiPilotInfo[accessMask]}' WHERE `id` = '$this->id'";
+                    $query = "UPDATE `apiPilotList` SET `accessMask` = '{$this->apiPilotInfo[accessMask]}' WHERE `id` = '$this->id'";
                     $result = $this->db->query($query);
                 }
                 $this->log->put("comparePilotInfo", "ok update");
