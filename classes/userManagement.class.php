@@ -34,7 +34,7 @@ class userManagement implements IuserManagement {
     private function getDbPilotInfo() {
         //Populates $dbPilotInfo
         try {
-            $query = "SELECT * FROM `apiPilotList` WHERE `id` = '$this->id'";
+            $query = "SELECT * FROM `apiPilotList` WHERE `id` = '$this->id' AND `keyStatus` = '1'";
             $result = $this->db->query($query);
             $this->pilotInfo = $this->db->fetchAssoc($result);
             return true;
