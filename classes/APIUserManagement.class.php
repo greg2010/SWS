@@ -3,83 +3,46 @@
 use Pheal\Pheal;
 use Pheal\Core\Config as PhealConfig;
 
-/*interface IAPIUserManagement {
-    function getPilotInfo();
-    function getUserKeyMask();
-    function changeUserApiKey($keyID, $vCode, $characterID);
-    function getCharsInfo($keyID, $vCode); 
-    function getCorpInfo($keyID, $vCode);   
-}*/
-
-class APIUserManagement{//} implements IAPIUserManagement {
+class APIUserManagement{
     
-    //protected $accessMask;
-    //protected $allowedList;
-    //protected $id;
-    //private $db;
     private $userManagement;
     private $apiPilotInfo;
     private $apiCharsInfo;
-    //private $apiKey;
     
     public function __construct() {
-        //$this->db = db::getInstance();
         //PhealConfig::getInstance()->cache = new \Pheal\Cache\PdoStorage("mysql:host=" . config::hostname . ";dbname=" . config::database, config::username, config::password, "phealng-cache");
         PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage(dirname(__FILE__) . '/../phealcache/');
         $this->userManagement = new userManagement();
-        /*if(!isset($id)) {
-            $this->id = -1;
-        } else {
-            $this->id = $id;
-            $this->apiKey = $this->userManagement->getApiKey(1);
-            $this->getApiPilotInfo();
-        }*/
     }
 
     private function getApiPilotInfo($characterID, $keyID, $vCode, $corp = false){
-        //try {
-            if(isset($keyID) && isset($vCode)){
-                $pheal = new Pheal($keyID, $vCode);
-            } else{
-                throw new \Pheal\Exceptions\PhealException("Incorrect keyID or vCode", -201);
-            }
-            $correctKeyMask = config::correctKeyMask;
-            $response = $pheal->APIKeyInfo();
-            if($corp){
-                if($response->key->type != "Corporation") throw new \Pheal\Exceptions\PhealException("Not corporation key", -202);
-                $this->apiPilotInfo = $this->makeCharArray($response->key->accessMask, $response->key->characters[0]);
-            } else{
-                if($correctKeyMask > 0 && ($response->key->accessMask & $correctKeyMask) == 0) throw new \Pheal\Exceptions\PhealException("Incorrect key mask", -204);
-                if($response->key->type != "Account") throw new \Pheal\Exceptions\PhealException("Not account key", -203);
-                if(isset($characterID))
-                {
-                    for($i=0; $i<sizeof($response->key->characters); $i++){
-                        if($response->key->characters[$i]->characterID == $characterID){
-                            $this->apiPilotInfo = $this->makeCharArray($response->key->accessMask, $response->key->characters[$i]);
-                            return;
-                        }
-                    }
-                    throw new \Pheal\Exceptions\PhealException("Not found the right character", -205);
-                } else{
-                    foreach($response->key->characters as $char){
-                        $this->apiCharsInfo[] = $this->makeCharArray($response->key->accessMask, $char);
+        if(isset($keyID) && isset($vCode)){
+            $pheal = new Pheal($keyID, $vCode);
+        } else{
+            throw new \Pheal\Exceptions\PhealException("Incorrect keyID or vCode", -201);
+        }
+        $correctKeyMask = config::correctKeyMask;
+        $response = $pheal->APIKeyInfo();
+        if($corp){
+            if($response->key->type != "Corporation") throw new \Pheal\Exceptions\PhealException("Not corporation key", -202);
+            $this->apiPilotInfo = $this->makeCharArray($response->key->accessMask, $response->key->characters[0]);
+        } else{
+            if($correctKeyMask > 0 && ($response->key->accessMask & $correctKeyMask) == 0) throw new \Pheal\Exceptions\PhealException("Incorrect key mask", -204);
+            if($response->key->type != "Account") throw new \Pheal\Exceptions\PhealException("Not account key", -203);
+            if(isset($characterID)){
+                for($i=0; $i<sizeof($response->key->characters); $i++){
+                    if($response->key->characters[$i]->characterID == $characterID){
+                        $this->apiPilotInfo = $this->makeCharArray($response->key->accessMask, $response->key->characters[$i]);
+                        return;
                     }
                 }
+                throw new \Pheal\Exceptions\PhealException("Not found the right character", -205);
+            } else{
+                foreach($response->key->characters as $char){
+                    $this->apiCharsInfo[] = $this->makeCharArray($response->key->accessMask, $char);
+                }
             }
-        //} catch (\Pheal\Exceptions\PhealException $e){
-            /*$c = $e->getCode();
-            if($c == 105 || $c == 106 || $c == 108 || $c == 112 || $c == 201 || $c == 202 || $c == 203 || $c == 204 || $c == 205 || $c == 210 || $c == 211 || $c == 212 ||
-             $c == 221 || $c == 222 || $c == 223 || $c == 516 || $c == 522 || $c == -201 || $c == -202 || $c == -203 || $c == -204 || $c == -205){
-                throw new Exception($e->getMessage(), -200);
-            }
-                    try{
-                        $permissions = new permissions($this->id);
-                        $permissions->unsetPermissions(array('webReg_Valid', 'TS_Valid', 'XMPP_Valid'));
-                    } catch(Exception $ex){
-                        throw new Exception($ex->getMessage(), $ex->getCode());
-                    }*/
-        //    throw new Exception($e->getMessage(), $e->getCode());
-        //}
+        }
     }
 
     private function makeCharArray($mask, $char){
