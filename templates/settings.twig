@@ -12,11 +12,20 @@
     </ul>
  {% if curForm == 'api' %}
 <!--Форма смены API-->
+    {% if errorMsg is defined %}
+        {% set isErrorHidden = "" %}
+    {% else %}
+        {% set isErrorHidden = "hidden" %}
+    {% endif %}
     <div class="container" id="formSettings">
         <h1>PROFILE SETTINGS - API</h1>
+        <div class="inset" id="SetIns">
     <form id="formSettings2" action="settings.php?a=api" method="post">
-        <div class="inset" id="SetIns">       
-            <h2>CURRENT API</h2>
+            <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
+                {{errorMsg}}
+            </div> 
+          <div class="alert alert-danger" role="alert-api" hidden></div>
+            <h2>CURRENT API</h2
             <br>
             <div class="container" style="margin: 20px;">
             <span>If you want change your API put new key ID and vCode in the fields.</span><br>
@@ -41,7 +50,9 @@
                 </p> 
                 <p class="p-container">
                     <input type="hidden" name="form" value="sent">
+                        <input type="hidden" name="action" value="changeMain">
                     <input type="submit" name="go" id="submit" value="SUBMIT" disabled />
+    </form>
                 </p>
     <hr id="danger"/>
             <table>
@@ -51,13 +62,16 @@
                     </td>
                     <td>
                         <p class="p-container">
-                        <input type="button" name="delete" id="danger" value="DELETE">
+                        <form id="formSettings2" action="settings.php?a=api" method="post">
+                            <input type="hidden" name="form" value="sent">
+                            <input type="hidden" name="action" value="ban">
+                            <input type="button" name="delete" id="danger" value="DELETE">
+                        </form>
                         </p>
                     </td>
                 </tr>
             </table>
         </div>
-    </form>
  <hr />
     <form id="formSettings2" action="settings.php?a=api" method="post">
         <div class="inset" id="SetIns">
@@ -84,6 +98,7 @@
             </p>  
             <p class="p-container">
                 <input type="hidden" name="form" value="sent">
+                <input type="hidden" name="action" value="addSec">
                 <input type="submit" name="go" id="submit" value="SUBMIT" disabled />
             </p>
             <!--<div class="alert alert-danger" role="alert" id="success">Your api successfully added!</div>-->
@@ -93,7 +108,7 @@
             {% if apiList is defined %}
             {% for api in apiList %}
             <form id="formSettings2" action="settings.php?a=api" method="post">  
-            <h2>SECONDARY API FOR {{api.charName}}</h2>
+            <h2>SECONDARY API FOR {{api.characterName}}</h2>
             <p>
                 <label for="username">KEY ID</label>
                 <input type="text" name="keyDelete" id="keyID2" value="{{api.keyID}}" disabled>
@@ -106,6 +121,9 @@
             <!--<div class="alert alert-danger" role="alert">Sorry, but key ID or vCode incorrect!</div>-->
 
             <p class="p-container">
+                <input type="hidden" name="characterID" value="{{ api.characterID }}">
+                <input type="hidden" name="form" value="sent">
+                <input type="hidden" name="action" value="deleteSec">
                 <input type="submit" name="delete" id="danger" value="DELETE">
             </p>
             <hr />

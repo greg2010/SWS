@@ -19,17 +19,68 @@ switch ($page) {
         $toTemplate['saveForm']['currKeyID'] = $API[mainAPI][keyID];
         $toTemplate['saveForm']['currVCode'] = $API[mainAPI][vCode];
         
-        if (!is_array($API[secAPI][0])) {
-            $toTemplate['apiList'][0]['keyID'] = $API[secAPI][keyID];
-            $toTemplate['apiList'][0]['vCode'] = $API[secAPI][vCode];
-        } elseif (count($API[secAPI]) > 1) {
-            $i = 0;
-            foreach ($API[secAPI] as $apilist) {
-                $toTemplate['apiList'][$i]['keyID'] = $apilist[keyID];
-                $toTemplate['apiList'][$i]['vCode'] = $apilist[vCode];
-                $i++;
+        if ($_POST[form] == 'sent') {
+            try {
+                switch (($_POST[action])) {
+                    case 'changeMain':
+                            $_SESSION[userObject]->userManagement->changeMainAPI($_POST[keyID], $_POST[vCode], $_POST[login]);
+                        break;
+                    case 'ban':
+                        break;
+                    case 'addSec':
+                        break;
+                    case 'deleteSec':
+                        $_SESSION[userObject]->userManagement->deleteSecAPI($_POST[characterID]);
+                        $_SESSION[userObject]->updateUserInfo();
+                        break;
+                }
+            } catch (Exception $ex) {
+                switch ($ex->getCode()) {
+                    case 10:
+                        $toTemplate["errorMsg"] = "Please fill in all fields!";
+                        break;
+                    case 11:
+                        $toTemplate["errorMsg"] = "There is a problem: " . $ex->getMessage();
+                        break;
+                    case 15:
+                        $toTemplate["errorMsg"] = "There is a problem with CCP servers. Please try again later.";
+                        break;
+                    case 20:
+                        $toTemplate["errorMsg"] = "Please choose eligible charater.";
+                        break;
+                    case 21:
+                        $toTemplate["errorMsg"] = "This character is already registered!";
+                        break;
+                    case 22:
+                        $toTemplate["errorMsg"] = "This api is already used!";
+                        break;
+                    case 30:
+                        $toTemplate["errorMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
+                        break;
+                    case 31:
+                        $toTemplate["errorMsg"] = "Please choose your main character firstly!";
+                        break;
+                }
             }
-            unset($i);
+        }
+        
+        if (is_array($API[secAPI])) {
+            if (!is_array($API[secAPI][0])) {
+                $toTemplate['apiList'][0]['keyID'] = $API[secAPI][keyID];
+                $toTemplate['apiList'][0]['vCode'] = $API[secAPI][vCode];
+                $toTemplate['apiList'][0]['characterName'] = $API[secAPI][characterName];
+                $toTemplate['apiList'][0]['characterID'] = $API[secAPI][characterID];
+            } elseif (count($API[secAPI]) > 1) {
+                $i = 0;
+                foreach ($API[secAPI] as $apilist) {
+                    $toTemplate['apiList'][$i]['keyID'] = $apilist[keyID];
+                    $toTemplate['apiList'][$i]['vCode'] = $apilist[vCode];
+                    $toTemplate['apiList'][$i]['characterName'] = $apilist[characterName];
+                    $toTemplate['apiList'][$i]['characterID'] = $apilist[characterID];
+                    $i++;
+                }
+                unset($i);
+            }
         }
         break;
     case 'teamspeak':
