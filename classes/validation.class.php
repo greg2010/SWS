@@ -40,6 +40,21 @@ class validation {
         }
     }
 
+    private function checkManuallyBanned($id){
+        try {
+            $query = "SELECT `banID` FROM `users` WHERE `id` = '$id'";
+            $result = $this->db->query($query);
+            return ($this->db->getMysqlResult($result) == "-1") ? true : false;
+        } catch (Exception $ex) {
+            $this->log->put("checkManuallyBanned", "err " . $ex->getMessage());
+        }
+    }
+
+    private function setBanMessage($id, $code, $text){
+        $query = "UPDATE `users` SET `banID` = '$code', `banMessage` = '$text' WHERE `id` = '$id'";
+        $result = $this->db->query($query);
+    }
+
     private function ban($id){
         try {
             $permissions = new permissions($id);
@@ -83,6 +98,7 @@ class validation {
     }
 
     public function verifyPilotApiInfo($dbPilot = array()){
+        if($this->checkManuallyBanned($dbPilot[id])) return $this->log->get();
         try {
             $userManagement = new userManagement();
             $cMask = $userManagement->getAllowedListMask($dbPilot);
@@ -98,7 +114,10 @@ class validation {
             $c = $ex->getCode();
             if($c == 105 || $c == 106 || $c == 108 || $c == 112 || $c == 201 || $c == 202 || $c == 203 || $c == 204 || $c == 205 || $c == 210 || $c == 211 || $c == 212 ||
              $c == 221 || $c == 222 || $c == 223 || $c == 516 || $c == 522 || $c == -201 || $c == -202 || $c == -203 || $c == -204 || $c == -205){
-                if($dbPilot[keyStatus] == 1) $this->ban($dbPilot[id]);
+                if($dbPilot[keyStatus] == 1){
+                    $this->ban($dbPilot[id]);
+                    $this->setBanMessage($dbPilot[id], $c, $ex->getMessage());
+                }
                 // if not 1 ?
             }
             return $this->log->get();
