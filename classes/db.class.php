@@ -408,7 +408,8 @@ class db {
             if (mysqli_error($this->connection)) {
                 throw new Exception("predefinedAddApiKey: " . mysqli_error($this->connection), mysqli_errno($this->connection));
             }
-            //$validation = new validation(); Fill everything else
+            $validation = new validation();
+            $validation->updatePilotInfo($characterID, $keyID, $vCode);
             mysqli_stmt_close($stmt);
         }
     }
