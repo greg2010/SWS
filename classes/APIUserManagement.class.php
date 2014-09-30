@@ -54,7 +54,7 @@ class APIUserManagement{
             'corporationName' => $char->corporationName,
             'corporationTicker' => $this->getCorporationTicker($char->corporationID)
         );
-        if(isset($char->allianceID)){
+        if($char->allianceID <> 0){
             $charArray[allianceID] = $char->allianceID;
             $charArray[allianceName] = $char->allianceName;
             $charArray[allianceTicker] = $this->getAllianceTicker($char->allianceID);
