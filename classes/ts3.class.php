@@ -63,6 +63,16 @@ return $tsAdmin;
     return $cl_list;
     }
 
+    public function nickname($id){
+    $this->db=db::getInstance();
+    $query = "SELECT apiPilotList.characterName, allianceList.ticker, corporationList.ticker 
+    FROM apiPilotList INNER JOIN allianceList ON apiPilotList.allianceID = allianceList.id INNER JOIN corporationList ON apiPilotList.corporationID = corporationList.id 
+    WHERE apiPilotList.id = $id ";
+    $result = $this->db->query($query);
+    $nick_raw=$this->db->fetchRow($result);
+    return $nickname="$nick_raw[1] | $nick_raw[2] | $nick_raw[0]";
+    }
+
     public function status(){
     $tsAdmin=$this->tsAdmin;
     $info=$tsAdmin->serverInfo();
