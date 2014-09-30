@@ -1,51 +1,57 @@
 var charReady;
 var passReady;
 var repPassReady;
-function SendRequest(){
+
+function SendRequest(toPut, alertPlace, prefix){
     $.ajax({
         type: "POST",
         url: "getChars.php",
-        data: "sid=<?=session_id()?>&keyID="+$('input[name="keyID"]').val()+"&vCode="+$('input[name=vCode]').val(),
+        data: "keyID="+$('input[role=keyID-'+prefix+']').val()+"&vCode="+$('input[role=vCode-'+prefix+']').val(),
         datatype: 'json',
         success: function(json){
-            if (json.status !== 0) {
-                $('#chars').empty();
-                $('#chars').attr('hidden', 1);
-                $('div[role="alert-api"]').empty();
-                $('div[role="alert-api"]').removeAttr('hidden').text("API server has responed with an error: "+json.message);
-            } else {
-                $('div[role="alert-api"]').empty();
-                $('div[role="alert-api"]').attr('hidden', 1);
-                $('#charList').empty();
-                $('#chars').removeAttr('hidden');
-                var i = 0;
-                $.each(json, function(i, chars) {
-                    if (typeof(chars) === "object") {
-                        var idName = 'b' + i;
-                        $('#charList').append($('<input>').attr('type', 'radio').attr('value', chars.characterName).attr('class', 'r_button').attr('name', 'login').attr('id', idName));
-                        if (chars.valid === 1) {
-                            var id = "success";
-                            var className = "glyphicon glyphicon-ok";
-                        } else {
-                            var id = "fail";
-                            var className = "glyphicon glyphicon-remove";
-                        }
-                        $(':radio[value="'+chars.characterName+'"]').after(function() {
-                            var label = $("<label>");
-                            $(label).attr('for', idName).attr('id', id).text(chars.characterName).append(function() {
-                                var span = $("<span>");
-                                $(span).attr('class', className);
-                                return $(span);
-                            });
-                            return $(label)
-                        });
-                        i++;
-                    }
-                });
-            }
-            window.charReady = 1;
+            parseApiResult(json, toPut, alertPlace);
         }
     });
+}
+
+function parseApiResult(json, toPut, alertPlace) {
+    if (json.status !== 0) {
+        $('#chars').empty();
+        $('#chars').attr('hidden', 1);
+        $('div[role="'+alertPlace+'"]').empty();
+        $('div[role="'+alertPlace+'"]').removeAttr('hidden').text("API server has responed with an error: "+json.message);
+    } else {
+        $('div[role="'+alertPlace+'"]').empty();
+        $('div[role="'+alertPlace+'"]').attr('hidden', 1);
+        $(toPut).empty();
+        $('#chars').removeAttr('hidden');
+        var i = 0;
+        $.each(json, function(i, chars) {
+            if (typeof(chars) === "object") {
+                var idName = 'b' + i;
+                $(toPut).append($('<input>').attr('type', 'radio').attr('value', chars.characterName).attr('class', 'r_button').attr('name', 'login').attr('id', idName));
+                if (chars.valid === 1) {
+                    var id = "success";
+                    var className = "glyphicon glyphicon-ok";
+                } else {
+                    var id = "fail";
+                    var className = "glyphicon glyphicon-remove";
+                }
+                $(':radio[value="'+chars.characterName+'"]').after(function() {
+                    var label = $("<label>");
+                    $(label).attr('for', idName).attr('id', id).text(chars.characterName).append(function() {
+                        var span = $("<span>");
+                        $(span).attr('class', className);
+                        return $(span);
+                    });
+                    return $(label)
+                });
+                i++;
+            }
+        });
+    }
+    window.charReady = 1;
+    
 }
 
 $(document).ready(function() {

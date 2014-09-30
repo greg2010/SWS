@@ -52,10 +52,10 @@ class userLogging {
                 $this->sessionInfo['accessMask'] = $userInfo[accessMask];
 
                 $pilotInfo = $_SESSION[userObject]->getApiPilotInfo();
-                 $this->sessionInfo['characterName'] = $pilotInfo[characterName];
-                 $this->sessionInfo['characterID'] = $pilotInfo[characterID];
-                 $this->sessionInfo['corporationID'] = $pilotInfo[corporationID];
-                 $this->sessionInfo['allianceID'] = $pilotInfo[allianceID];
+                 $this->sessionInfo['characterName'] = $pilotInfo[mainAPI][characterName];
+                 $this->sessionInfo['characterID'] = $pilotInfo[mainAPI][characterID];
+                 $this->sessionInfo['corporationID'] = $pilotInfo[mainAPI][corporationID];
+                 $this->sessionInfo['allianceID'] = $pilotInfo[mainAPI][allianceID];
             }
         }
     }

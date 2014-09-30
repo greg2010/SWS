@@ -2,6 +2,12 @@
 
 $_SESSION[userObject]->preparePage($pagePermissions);
 
+if ($toTemplate[loggedIN] == 1) {
+    $pilotInfo = $_SESSION[userObject]->getApiPilotInfo();
+    $toTemplate['characterName'] = $pilotInfo[mainAPI][characterName];
+    $toTemplate['characterID'] = $pilotInfo[mainAPI][characterID];
+}
+
 $_SESSION[logObject]->setSessionInfo();
 $_SESSION[logObject]->pushToDb('hits');
 $toTemplate['hasAccess'] = strval($_SESSION[userObject]->hasPermission());

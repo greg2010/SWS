@@ -42,20 +42,19 @@ class registerNewUser {
     }
     
     private function getInfoFromKey() {
-        $this->apiPilotInfo = $this->APIUserManagement->getCharsInfo($this->apiKey[0], $this->apiKey[1]);
-        if (!$this->apiPilotInfo) {
-            $error = $this->APIUserManagement->log->get();
-            $this->error = array (
-                "status" => -30000,
-                "message" => ltrim($error[getApiPilotInfo], "err ")
-            );
-            return FALSE;
-        } else {
+        try {
+            $this->apiPilotInfo = $this->APIUserManagement->getCharsInfo($this->apiKey[0], $this->apiKey[1]);
             $this->error = array (
                 "status" => 0,
                 "message" => ""
                 );
             return TRUE;
+        } catch (Exception $ex) {
+            $this->error = array (
+                "status" => -30000,
+                "message" => $ex->getMessage()
+            );
+            return FALSE;
         }
     }
     
@@ -137,6 +136,8 @@ class registerNewUser {
 
 
     public function AjaxAnswer() {
+        $_SESSION['regArray'] = $this->registerArray;
+        
         $returnArray = array_merge($this->guiArray, $this->error);
         return json_encode($returnArray);
     }

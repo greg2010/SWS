@@ -2,36 +2,20 @@
 
 class validation {
 
-    //protected $accessMask;
-    //protected $allowedList;
-    //protected $id;
     private $log;
-    private $db;    
-    //private $permissions;
-    //private $userManagement;
-    //private $apiUserManagement;
-    private $dbPilotInfo;
+    private $db;
     private $apiPilotInfo;
 
 	public function __construct(){
         $this->db = db::getInstance();
         $this->log = new logging();
-        /*$this->apiUserManagement = new APIUserManagement($id);
-        if(isset($accessMask)) $this->accessMask = $accessMask;
-        if(isset($id)){
-            $this->id = $id;
-            $this->permissions = new permissions($id);
-            $this->userManagement = new userManagement($id);
-            $this->dbPilotInfo = $this->userManagement->getPilotInfo();
-            $this->apiPilotInfo = $this->apiUserManagement->getPilotInfo();
-        }*/
     }
 
-    private function comparePilotInfo(){
+    private function comparePilotInfo($dbPilotInfo =array()){
     	if($this->apiPilotInfo[characterID] == NULL){
             return false;
-        } elseif($this->apiPilotInfo[characterID] == $this->dbPilotInfo[characterID] && $this->apiPilotInfo[corporationID] == $this->dbPilotInfo[corporationID]
-         && $this->apiPilotInfo[allianceID] == $this->dbPilotInfo[allianceID] && $this->apiPilotInfo[accessMask] == $this->dbPilotInfo[accessMask]){
+        } elseif($this->apiPilotInfo[characterID] == $dbPilotInfo[characterID] && $this->apiPilotInfo[corporationID] == $dbPilotInfo[corporationID]
+         && $this->apiPilotInfo[allianceID] == $dbPilotInfo[allianceID] && $this->apiPilotInfo[accessMask] == $dbPilotInfo[accessMask]){
             //$this->log->put("comparePilotInfo", "ok: IDs match (char: " . $this->apiPilotInfo[characterID] . ", corp: " . $this->apiPilotInfo[corporationID] . ", alli: " . $this->apiPilotInfo[allianceID] . ")");
     		return true;
     	} else{
@@ -99,7 +83,6 @@ class validation {
     }
 
     public function verifyPilotApiInfo($dbPilot = array()){
-        $this->dbPilotInfo = $dbPilot;
         try {
             $userManagement = new userManagement();
             $cMask = $userManagement->getAllowedListMask($dbPilot);
@@ -116,11 +99,11 @@ class validation {
             if($c == 105 || $c == 106 || $c == 108 || $c == 112 || $c == 201 || $c == 202 || $c == 203 || $c == 204 || $c == 205 || $c == 210 || $c == 211 || $c == 212 ||
              $c == 221 || $c == 222 || $c == 223 || $c == 516 || $c == 522 || $c == -201 || $c == -202 || $c == -203 || $c == -204 || $c == -205){
                 if($dbPilot[keyStatus] == 1) $this->ban($dbPilot[id]);
-                // а если не 1 ?
+                // if not 1 ?
             }
             return $this->log->get();
         }
-        if($this->comparePilotInfo()){
+        if($this->comparePilotInfo($dbPilot)){
             if($dbPilot[keyStatus] == 1){
                 $UserAccessMask = $this->getUserAccessMask($dbPilot[id]);
                 if($cMask != $UserAccessMask){
