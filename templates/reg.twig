@@ -28,15 +28,15 @@
           <div class="alert alert-danger" role="alert-api" hidden></div>
           <p>
             <label for="keyID">KEY ID</label>
-            <input type="text" name="keyID" value="{{saveForm.keyID}}" id="keyID">
+            <input type="text" role="keyID-reg" name="keyID" value="{{saveForm.keyID}}" id="keyID">
           </p>
           <p>
             <label for="vCode">VERIFICATION CODE</label>
-            <input type="text" name="vCode" value="{{saveForm.vCode}}" id="vCode">
+            <input type="text" role="vCode-reg" name="vCode" value="{{saveForm.vCode}}" id="vCode">
           </p>
           <p class="p-container">
             <a href="https://support.eveonline.com/api/key/createpredefined/8">Get Key ID & vCode</a>
-            <input type="button" name="go" id="getChars" onclick="SendRequest()" value="Get Characters" />
+            <input type="button" name="go" id="getChars" onclick="SendRequest('#charList', 'alert-api', 'reg')" value="Get Characters" />
           </p>     
     <hr id="chars" hidden />
         <p id="chars" hidden>

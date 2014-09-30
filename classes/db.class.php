@@ -402,7 +402,6 @@ class db {
         mysqli_stmt_bind_result($stmt, $ownerID, $keyStatus);
         mysqli_stmt_fetch($stmt);
         mysqli_stmt_close($stmt);
-        var_dump($ownerID);
         if ($ownerID) {
             switch ($keyStatus) {
                 case 0:

@@ -65,17 +65,35 @@ class userManagement implements IuserManagement {
             $this->db->changeMainAPI($this->id, $keyID, $vCode, $_SESSION[regArray][$characterName][characterID]);
             $_SESSION[userObject]->updateUserInfo();
             $pilotInfo = $_SESSION[userObject]->getApiPilotInfo();
-            $newMask = $this->getAllowedListMask($pilotInfo);
+            $newMask = $this->getAllowedListMask($pilotInfo[mainAPI]);
             $query = "UPDATE `users` SET `login` = '$characterName', `accessMask` = '$newMask' WHERE `id` = '$this->id'";
             $this->db->query($query);
         } catch (Exception $ex) {
             switch ($ex->getCode()) {
                 case 22:
                     throw new Exception($ex->getMessage(), 22);
-                    break;
                 default:
                     throw new Exception($ex->getMessage(), 30);
-                    break;
+            }
+        }
+    }
+    
+    public function addSecAPI($keyID, $vCode, $characterName) {
+        if (!isset($_SESSION[regArray])) {
+            throw new Exception('Please select character firstly!', 31);
+        }
+        if ($_SESSION[regArray][$characterName][valid] <> 1) {
+            throw new Exception("Not valid character!", 20);
+        }
+        try {
+            $this->db->addSecAPI($this->id, $keyID, $vCode, $_SESSION[regArray][$characterName][characterID]);
+            $_SESSION[userObject]->updateUserInfo();
+        } catch (Exception $ex) {
+            switch ($ex->getCode()) {
+                case 22:
+                    throw new Exception($ex->getMessage(), 22);
+                default:
+                    throw new Exception($ex->getMessage(), 30);
             }
         }
     }

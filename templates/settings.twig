@@ -24,7 +24,7 @@
             <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
                 {{errorMsg}}
             </div> 
-          <div class="alert alert-danger" role="alert-api" hidden></div>
+          <div class="alert alert-danger" role="alert-api-main" hidden></div>
             <h2>CURRENT API</h2
             <br>
             <div class="container" style="margin: 20px;">
@@ -33,14 +33,14 @@
             </div>
                 <p>
                     <label for="keyIDOld">KEY ID</label>
-                    <input type="text" name="keyID" value="{{saveForm.currKeyID}}"  id="keyID2">
+                    <input type="text" role="keyID-main" name="keyID" value="{{saveForm.currKeyID}}"  id="keyID2">
                 </p>  
                 <p>
                     <label for="vCodeOld">VERIFICATION CODE</label>
-                    <input type="text" name="vCode" value="{{saveForm.currVCode}}" id="vCode2">
+                    <input type="text" role="vCode-main" name="vCode" value="{{saveForm.currVCode}}" id="vCode2">
                 </p>
                 <p class="p-container">
-                    <input type="button" name="go" id="getChars" onclick="SendRequest()" value="Get Characters" />
+                    <input type="button" name="go" id="getChars" onclick="SendRequest('#charList', 'alert-api-main', 'main')" value="Get Characters" />
                 </p>
     <hr id="chars" hidden />
                 <p id="chars" hidden>
@@ -75,25 +75,26 @@
  <hr />
     <form id="formSettings2" action="settings.php?a=api" method="post">
         <div class="inset" id="SetIns">
+          <div class="alert alert-danger" role="alert-api-sec" hidden></div>
             <h2>ADD SECONDARY API</h2>
             <br>
             <p>
                 <label for="username">KEY ID</label>
-                <input type="text" name="usermane" id="keyID2">
+                <input type="text" role="keyID-sec" name="keyID" id="keyID2">
             </p>
             <p>
                 <label for="vCode">VERIFICATION CODE</label>
-                <input type="text" name="vCode" id="vCode2">
+                <input type="text" role="vCode-sec" name="vCode" id="vCode2">
             </p>
             <br>
             <!--<div class="alert alert-danger" role="alert">Sorry, but key ID or vCode incorrect!</div>-->
              <p class="p-container">
-                <input type="button" name="go" id="getChars" onclick="SendRequest()" value="Get Characters" />
+                <input type="button" name="go" id="getChars" onclick="SendRequest('#charListSec', 'alert-api-sec', 'sec')" value="Get Characters" />
             </p>     
     <hr id="chars" hidden />
             <p id="chars" hidden>
                 <label for="SelectChar" style="color: #ccc;">SELECT CHARACTER</label><br>
-                <div id="charList">
+                <div id="charListSec">
                 </div>
             </p>  
             <p class="p-container">

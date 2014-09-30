@@ -24,10 +24,15 @@ switch ($page) {
                 switch (($_POST[action])) {
                     case 'changeMain':
                             $_SESSION[userObject]->userManagement->changeMainAPI($_POST[keyID], $_POST[vCode], $_POST[login]);
+                            $toTemplate['saveForm']['currKeyID'] = $_POST[keyID];
+                            $toTemplate['saveForm']['currVCode'] = $_POST[vCode];
                         break;
                     case 'ban':
                         break;
                     case 'addSec':
+                            $_SESSION[userObject]->userManagement->addSecAPI($_POST[keyID], $_POST[vCode], $_POST[login]);
+                            $toTemplate['saveForm']['currKeyID'] = $_POST[keyID];
+                            $toTemplate['saveForm']['currVCode'] = $_POST[vCode];
                         break;
                     case 'deleteSec':
                         $_SESSION[userObject]->userManagement->deleteSecAPI($_POST[characterID]);
@@ -36,9 +41,6 @@ switch ($page) {
                 }
             } catch (Exception $ex) {
                 switch ($ex->getCode()) {
-                    case 10:
-                        $toTemplate["errorMsg"] = "Please fill in all fields!";
-                        break;
                     case 11:
                         $toTemplate["errorMsg"] = "There is a problem: " . $ex->getMessage();
                         break;
@@ -48,11 +50,8 @@ switch ($page) {
                     case 20:
                         $toTemplate["errorMsg"] = "Please choose eligible charater.";
                         break;
-                    case 21:
-                        $toTemplate["errorMsg"] = "This character is already registered!";
-                        break;
                     case 22:
-                        $toTemplate["errorMsg"] = "This api is already used!";
+                        $toTemplate["errorMsg"] = "This character is already registered!";
                         break;
                     case 30:
                         $toTemplate["errorMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
@@ -64,7 +63,7 @@ switch ($page) {
             }
         }
         
-        if (is_array($API[secAPI])) {
+        if (count($API[secAPI])>0) {
             if (!is_array($API[secAPI][0])) {
                 $toTemplate['apiList'][0]['keyID'] = $API[secAPI][keyID];
                 $toTemplate['apiList'][0]['vCode'] = $API[secAPI][vCode];
