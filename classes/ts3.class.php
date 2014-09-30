@@ -80,6 +80,39 @@ return $tsAdmin;
     return $status;
     }
 
+    public function nick_verify(){
+    $tsAdmin=$this->tsAdmin;
+    $this->db=db::getInstance();
+    $info=$tsAdmin->clientList('-uid');
+	    foreach ($info['data'] as $key=>$val){
+	        if ($info['data'][$key]['client_type']=='1'){
+	        unset($info['data'][$key]);
+	        }else{
+	    	    $uniID = $info['data'][$key]['client_unique_identifier'];
+	        
+	            $query = "SELECT `id` FROM `teamspeak` WHERE `uniqueID`= '$uniID'";
+		    $result = $this->db->query($query);
+		    $id_raw=$this->db->fetchRow($result);
+		    $id=$id_raw[0];
+		    if($id==NULL){
+		    $clid=$info['data'][$key]['clid'];
+	    	    $tsAdmin->clientKick($clid,'server','register now! fucking evilrax');
+	    	    $kickusers[$key]=$uniID;
+		    }else{
+	    		$need_nickname=$this->nickname($id);
+	    	    
+	    		if($need_nickname != $info['data'][$key]['client_nickname']){
+	    		$clid=$info['data'][$key]['clid'];
+	    		$tsAdmin->clientKick($clid,'server','check nickname');
+	    		$kickusers[$key]=$uniID;
+	    		}
+	    	    }
+	        
+	        }
+	    }
+    return $kickusers;
+    }
+
     public function validate($id){
     
     $ar1a=$this->grAdditDbTs($id);
