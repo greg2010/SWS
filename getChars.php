@@ -9,8 +9,6 @@ $vCode = $_POST[vCode];
 
 unset($_SESSION[regObject]);
 $_SESSION["regObject"] = new registerNewUser();
-
 $_SESSION[regObject]->setUserApi($keyID, $vCode);
-
 header('Content-Type: application/json');
 echo $_SESSION[regObject]->AjaxAnswer();

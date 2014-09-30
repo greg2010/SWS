@@ -179,7 +179,7 @@ class userSession {
             
             if (count($this->apiPilotList['mainAPI']) == 0) {
                 $this->apiPilotList['mainAPI']['characterID'] = 1;
-                $this->apiPilotList['mainAPI']['characterName'] = "No API!";
+                $this->apiPilotList['mainAPI']['characterName'] = "NoName";
             }
             
             $query = "SELECT * FROM `apiPilotList` WHERE `id` = '$this->id' AND `keyStatus` = '2'";
