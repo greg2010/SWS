@@ -1,7 +1,7 @@
 var charReady;
 var passReady;
 var repPassReady;
-
+var i = 0;
 function SendRequest(toPut, alertPlace, prefix){
     $.ajax({
         type: "POST",
@@ -25,10 +25,9 @@ function parseApiResult(json, toPut, alertPlace) {
         $('div[role="'+alertPlace+'"]').attr('hidden', 1);
         $(toPut).empty();
         $('#chars').removeAttr('hidden');
-        var i = 0;
-        $.each(json, function(i, chars) {
+        $.each(json, function(t, chars) {
             if (typeof(chars) === "object") {
-                var idName = 'b' + i;
+                var idName = 'b' + window.i;
                 $(toPut).append($('<input>').attr('type', 'radio').attr('value', chars.characterName).attr('class', 'r_button').attr('name', 'login').attr('id', idName));
                 if (chars.valid === 1) {
                     var id = "success";
@@ -46,7 +45,7 @@ function parseApiResult(json, toPut, alertPlace) {
                     });
                     return $(label)
                 });
-                i++;
+                window.i++;
             }
         });
     }

@@ -27,7 +27,15 @@ class userManagement implements IuserManagement {
         }
     }
 
-    public function getApiKey($keyStatus) {
+    private function banQuery($id) {
+        $query = "UPDATE `apiPilotList` SET `keyStatus` = '0' WHERE `id` = '$id'";
+        $this->db->query($query);
+        
+        $permissions = new permissions($id);
+        $permissions->unsetPermissions(array('webReg_Valid', 'TS_Valid', 'XMPP_Valid'));
+    }
+
+        public function getApiKey($keyStatus) {
         $query = "SELECT `keyID`, `vCode`, `characterID` FROM `apiPilotList` WHERE `id` = '$this->id' AND `keyStatus` = '$keyStatus'";
         $result = $this->db->query($query);
         $apiKey = $this->db->fetchRow($result);
@@ -55,6 +63,9 @@ class userManagement implements IuserManagement {
     }
     
     public function changeMainAPI($keyID, $vCode, $characterName) {
+        if ($this->id === -1) {
+            throw new Exception("Object created in fake user mode. Can't change API.", 30);
+        }
         if (!isset($_SESSION[regArray])) {
             throw new Exception('Please select character firstly!', 31);
         }
@@ -62,6 +73,11 @@ class userManagement implements IuserManagement {
             throw new Exception("Not valid character!", 20);
         }
         try {
+            $query = "SELECT `banID`, `banMessage` FROM `users` WHERE `id` = $this->id";
+            $result = $this->db->fetchAssoc($this->db->query($query));
+            if ($result[banID] == -1) {
+                throw new Exception("You're banned forever! Ban message: " . $result[banMessage], 11);
+            }
             $this->db->changeMainAPI($this->id, $keyID, $vCode, $_SESSION[regArray][$characterName][characterID]);
             $_SESSION[userObject]->updateUserInfo();
             $pilotInfo = $_SESSION[userObject]->getApiPilotInfo();
@@ -79,6 +95,9 @@ class userManagement implements IuserManagement {
     }
     
     public function addSecAPI($keyID, $vCode, $characterName) {
+        if ($this->id === -1) {
+            throw new Exception("Object created in fake user mode. Can't add API.", 30);
+        }
         if (!isset($_SESSION[regArray])) {
             throw new Exception('Please select character firstly!', 31);
         }
@@ -106,6 +125,22 @@ class userManagement implements IuserManagement {
         $this->db->deleteAPI($this->id, $characterID);
         } catch (Exception $ex) {
             throw new Exception($ex->getMessage(), 30);
+        }
+    }
+    
+    public function ban($id = null, $message = null) {
+        if ($this->id === -1) {
+            throw new Exception("Object created in fake user mode. Can't ban user.", 30);
+        }
+        if ($id) {
+            if (!$this->permissions->hasPermission("webReg_AdminPanel")) {
+                throw new Exception("Can't ban. Not enough permissions.", 12);
+            }
+            $this->banQuery($id);
+            $query = "UPDATE `users` SET `banID` = '-1', `banMessage` = '$message' WHERE `id` = '$id'";
+            $this->db->query($query);
+        } else {
+            $this->banQuery($this->id);
         }
     }
     

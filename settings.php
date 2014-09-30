@@ -20,47 +20,79 @@ switch ($page) {
         $toTemplate['saveForm']['currVCode'] = $API[mainAPI][vCode];
         
         if ($_POST[form] == 'sent') {
-            try {
                 switch (($_POST[action])) {
                     case 'changeMain':
+                        try {
                             $_SESSION[userObject]->userManagement->changeMainAPI($_POST[keyID], $_POST[vCode], $_POST[login]);
                             $toTemplate['saveForm']['currKeyID'] = $_POST[keyID];
                             $toTemplate['saveForm']['currVCode'] = $_POST[vCode];
+                        } catch (Exception $ex) {
+                            switch ($ex->getCode()) {
+                                case 11:
+                                    $toTemplate["errorMsg"] = "There is a problem: " . $ex->getMessage();
+                                    break;
+                                case 15:
+                                    $toTemplate["errorMsg"] = "There is a problem with CCP servers. Please try again later.";
+                                    break;
+                                case 20:
+                                    $toTemplate["errorMsg"] = "Please choose eligible charater.";
+                                    break;
+                                case 22:
+                                    $toTemplate["errorMsg"] = "This character is already registered!";
+                                    break;
+                                case 30:
+                                    $toTemplate["errorMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
+                                    break;
+                                case 31:
+                                    $toTemplate["errorMsg"] = "Please choose your main character firstly!";
+                                    break;
+                            }
+                        }
                         break;
                     case 'ban':
+                        try {
+                        $_SESSION[userObject]->userManagement->ban();
+                        $_SESSION[userObject]->updateUserInfo();
+                        } catch (Exception $ex) {
+                             $toTemplate["errorMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
+                        }
                         break;
                     case 'addSec':
+                        try {
                             $_SESSION[userObject]->userManagement->addSecAPI($_POST[keyID], $_POST[vCode], $_POST[login]);
                             $toTemplate['saveForm']['currKeyID'] = $_POST[keyID];
                             $toTemplate['saveForm']['currVCode'] = $_POST[vCode];
+                            $_SESSION[userObject]->updateUserInfo();
+                            $API = $_SESSION[userObject]->getApiPilotInfo();
+                        } catch (Exception $ex) {
+                            switch ($ex->getCode()) {
+                                case 11:
+                                    $toTemplate["errorSecMsg"] = "There is a problem: " . $ex->getMessage();
+                                    break;
+                                case 15:
+                                    $toTemplate["errorSecMsg"] = "There is a problem with CCP servers. Please try again later.";
+                                    break;
+                                case 20:
+                                    $toTemplate["errorSecMsg"] = "Please choose eligible charater.";
+                                    break;
+                                case 22:
+                                    $toTemplate["errorSecMsg"] = "This character is already registered!";
+                                    break;
+                                case 30:
+                                    $toTemplate["errorSecMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
+                                    break;
+                                case 31:
+                                    $toTemplate["errorSecMsg"] = "Please choose your main character firstly!";
+                                    break;
+                            }
+                        }
                         break;
                     case 'deleteSec':
                         $_SESSION[userObject]->userManagement->deleteSecAPI($_POST[characterID]);
                         $_SESSION[userObject]->updateUserInfo();
+                        $API = $_SESSION[userObject]->getApiPilotInfo();
                         break;
                 }
-            } catch (Exception $ex) {
-                switch ($ex->getCode()) {
-                    case 11:
-                        $toTemplate["errorMsg"] = "There is a problem: " . $ex->getMessage();
-                        break;
-                    case 15:
-                        $toTemplate["errorMsg"] = "There is a problem with CCP servers. Please try again later.";
-                        break;
-                    case 20:
-                        $toTemplate["errorMsg"] = "Please choose eligible charater.";
-                        break;
-                    case 22:
-                        $toTemplate["errorMsg"] = "This character is already registered!";
-                        break;
-                    case 30:
-                        $toTemplate["errorMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
-                        break;
-                    case 31:
-                        $toTemplate["errorMsg"] = "Please choose your main character firstly!";
-                        break;
-                }
-            }
         }
         
         if (count($API[secAPI])>0) {

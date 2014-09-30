@@ -65,7 +65,7 @@
                         <form id="formSettings2" action="settings.php?a=api" method="post">
                             <input type="hidden" name="form" value="sent">
                             <input type="hidden" name="action" value="ban">
-                            <input type="button" name="delete" id="danger" value="DELETE">
+                            <input type="submit" name="delete" id="danger" value="DELETE">
                         </form>
                         </p>
                     </td>
@@ -73,8 +73,17 @@
             </table>
         </div>
  <hr />
-    <form id="formSettings2" action="settings.php?a=api" method="post">
-        <div class="inset" id="SetIns">
+    
+    {% if errorSecMsg is defined %}
+        {% set isErrorSecHidden = "" %}
+    {% else %}
+        {% set isErrorSecHidden = "hidden" %}
+    {% endif %}
+    <div class="inset" id="SetIns">
+        <form id="formSettings2" action="settings.php?a=api" method="post">
+            <div class="alert alert-danger" role="alert" {{isErrorSecHidden}}>
+                {{errorSecMsg}}
+            </div> 
           <div class="alert alert-danger" role="alert-api-sec" hidden></div>
             <h2>ADD SECONDARY API</h2>
             <br>
@@ -100,11 +109,11 @@
             <p class="p-container">
                 <input type="hidden" name="form" value="sent">
                 <input type="hidden" name="action" value="addSec">
-                <input type="submit" name="go" id="submit" value="SUBMIT" disabled />
+                <input type="submit" name="go" id="submit" value="SUBMIT" />
             </p>
             <!--<div class="alert alert-danger" role="alert" id="success">Your api successfully added!</div>-->
-        </div>
-    </form>
+        </form>
+    </div>
         <div class="inset" id="SetIns">
             {% if apiList is defined %}
             {% for api in apiList %}

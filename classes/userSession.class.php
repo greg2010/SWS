@@ -177,13 +177,14 @@ class userSession {
             $result = $this->db->query($query);
             $this->apiPilotList['mainAPI'] = $this->db->fetchAssoc($result);
             
+            if (count($this->apiPilotList['mainAPI']) == 0) {
+                $this->apiPilotList['mainAPI']['characterID'] = 1;
+                $this->apiPilotList['mainAPI']['characterName'] = "No API!";
+            }
+            
             $query = "SELECT * FROM `apiPilotList` WHERE `id` = '$this->id' AND `keyStatus` = '2'";
             $result = $this->db->query($query);
             $this->apiPilotList['secAPI'] = $this->db->fetchAssoc($result);
-            
-//            $query = "SELECT * FROM `pilotInfo` WHERE `id` = '$this->id'";
-//            $result = $this->db->query($query);
-//            $this->pilotInfo = $this->db->fetchAssoc($result);
             
             $query = "SELECT * FROM `corporationList` WHERE `id` = '{$this->pilotInfo[corporationID]}'";
             $result = $this->db->query($query);
