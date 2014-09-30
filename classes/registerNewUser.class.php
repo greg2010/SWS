@@ -137,6 +137,8 @@ class registerNewUser {
 
 
     public function AjaxAnswer() {
+        $_SESSION['regArray'] = $this->registerArray;
+        
         $returnArray = array_merge($this->guiArray, $this->error);
         return json_encode($returnArray);
     }

@@ -54,6 +54,43 @@ class userManagement implements IuserManagement {
         return $accessMask;
     }
     
+    public function changeMainAPI($keyID, $vCode, $characterName) {
+        if (!isset($_SESSION[regArray])) {
+            throw new Exception('Please select character firstly!', 31);
+        }
+        if ($_SESSION[regArray][$characterName][valid] <> 1) {
+            throw new Exception("Not valid character!", 20);
+        }
+        try {
+            $this->db->changeMainAPI($this->id, $keyID, $vCode, $_SESSION[regArray][$characterName][characterID]);
+            $_SESSION[userObject]->updateUserInfo();
+            $pilotInfo = $_SESSION[userObject]->getApiPilotInfo();
+            $newMask = $this->getAllowedListMask($pilotInfo);
+            $query = "UPDATE `users` SET `login` = '$characterName', `accessMask` = '$newMask' WHERE `id` = '$this->id'";
+            $this->db->query($query);
+        } catch (Exception $ex) {
+            switch ($ex->getCode()) {
+                case 22:
+                    throw new Exception($ex->getMessage(), 22);
+                    break;
+                default:
+                    throw new Exception($ex->getMessage(), 30);
+                    break;
+            }
+        }
+    }
+    
+    public function deleteSecAPI($characterID) {
+        if ($this->id === -1) {
+            throw new Exception("Object created in fake user mode. Can't delete API.", 30);
+        }
+        try {
+        $this->db->deleteAPI($this->id, $characterID);
+        } catch (Exception $ex) {
+            throw new Exception($ex->getMessage(), 30);
+        }
+    }
+    
     public function setNewEmail($email) {
         if ($this->id === -1) {
             throw new Exception("Object created in fake user mode. Can't change email.", 30);
