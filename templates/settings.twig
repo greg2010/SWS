@@ -17,10 +17,9 @@
     {% else %}
         {% set isErrorHidden = "hidden" %}
     {% endif %}
-    <div class="container" id="formSettings">
+  <form id="formSettings" action="settings.php?a=api" method="post">  
         <h1>PROFILE SETTINGS - API</h1>
         <div class="inset" id="SetIns">
-    <form id="formSettings2" action="settings.php?a=api" method="post">
             <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
                 {{errorMsg}}
             </div> 
@@ -52,7 +51,6 @@
                     <input type="hidden" name="form" value="sent">
                         <input type="hidden" name="action" value="changeMain">
                     <input type="submit" name="go" id="submit" value="SUBMIT" disabled />
-    </form>
                 </p>
     <hr id="danger"/>
             <table>
@@ -62,11 +60,11 @@
                     </td>
                     <td>
                         <p class="p-container">
-                        <form id="formSettings2" action="settings.php?a=api" method="post">
-                            <input type="hidden" name="form" value="sent">
-                            <input type="hidden" name="action" value="ban">
-                            <input type="submit" name="delete" id="danger" value="DELETE">
-                        </form>
+        <form id="formSettings2" action="settings.php?a=api" method="post">
+            <input type="hidden" name="form" value="sent">
+            <input type="hidden" name="action" value="ban">
+            <input type="submit" name="delete" id="danger" value="DELETE">
+        </form>
                         </p>
                     </td>
                 </tr>
@@ -142,7 +140,7 @@
             {% endfor %}
             {% endif %}
         </div>
-    </div>
+</form>
 <!--Конец смены API-->
  {% elseif curForm == 'teamspeak' %}
      
