@@ -158,9 +158,7 @@
             <div class="alert alert-danger" role="alert" {{isErrorTSHidden}}>
                 {{errorMsgTS}}
             </div> 
-            <div id="success" role="alert" >
-                123
-            </div> 
+            <div class="alert alert-danger" role="alert" id="success2">SUCCESS</div>
     <div class="inset" id="SetIns">
         <!--<span>Вот сюда надо будет вставить текст на тему того, что есть 2  варианта регистрации в ТС: с использованием Unique ID (для продвинутых пользователей) и пошагово (для неопытных)</span>-->
         <br>
@@ -175,7 +173,7 @@
             <!--<span>Если вы знаете, что такое UniqueID и как его найти в ТС, вставьте его в поле и нажмите кнопку "REGISTER"</span>-->
             <br>
             <p class="p-container">
-                <input type="hidden" name="typeReg" value="UID">
+                <input type="hidden" name="action" value="UID">
                <input type="hidden" name="form" value="sent">
                <input type="submit" name="go" id="go" value="REGISTER">
                </form>
@@ -192,10 +190,14 @@
             <span>After log in TS push this register button</span>       
             <form id="formSettings2" action="settings.php?a=teamspeak" method="post">            
             <p class="p-container">
-                <input type="hidden" name="typeReg" value="TS">
+                <input type="hidden" name="action" value="TS">
                 <input type="hidden" name="form" value="sent">
                 <input type="submit" name="go" id="go" value="REGISTER">
-            </p>    
+            </p> 
+        <hr id="danger"/>  
+            <p class="p-container">
+                <input type="submit" name="delete" id="danger" value="DELETE">
+            </p>
             </form>
     </div>
 </form>           
