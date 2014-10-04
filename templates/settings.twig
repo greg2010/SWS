@@ -153,6 +153,7 @@
         {% set isErrorTSHidden = "hidden" %}
     {% endif %}
 <!--Форма регистрации в ТС-->
+{% if hasReg == 0 %}
 <form id="formSettings" action="settings.php?a=teamspeak" method="post">  
     <h1>TEAM SPEAK SETTINGS</h1>
             <div class="alert alert-danger" role="alert" {{isErrorTSHidden}}>
@@ -202,6 +203,9 @@
     </div>
 </form>           
 <!--Форма регистрации в ТС -->
+{% elseif hasReg == 1 %}
+    
+{% endif %}
 {% else %}
     {% if errorMsg is defined %}
         {% set isErrorHidden = "" %}

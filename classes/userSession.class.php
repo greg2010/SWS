@@ -292,6 +292,16 @@ class userSession {
         return $this->hasAccessToCurrentPage;
     }
     
+    public function hasTSRegistration() {
+        $query = "SELECT * FROM `teamspeak` WHERE `id` = '$this->id' LIMIT 1";
+        $hasReg = $this->db->countRows($this->db->query($query));
+        if ($hasReg == 1) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+    
     public function removeCookie() {
         $cookieValue = $this->generateCookieForCurrentUser();
         setcookie('SSID', $cookieValue, time()-config::cookie_lifetime);
