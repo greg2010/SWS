@@ -170,7 +170,7 @@ return $tsAdmin;
 
     private function alliUser($id){
 	    $this->db=db::getInstance();
-            $query = "SELECT `allianceID` FROM `apiPilotList` WHERE `id`=$id AND keyStatus = '1'";
+            $query = "SELECT `allianceID` FROM `apiPilotList` WHERE `id`=$id AND `keyStatus` = '1'";
             $result = $this->db->query($query);
             return $this->db->getMysqlResult($result);
     }
