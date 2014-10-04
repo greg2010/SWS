@@ -52,11 +52,13 @@ class APIUserManagement{
             'characterName' => $char->characterName,
             'corporationID' => $char->corporationID,
             'corporationName' => $char->corporationName,
-            'corporationTicker' => $this->getCorporationTicker($char->corporationID),
-            'allianceID' => $char->allianceID,
-            'allianceName' => $char->allianceName,
-            'allianceTicker' => $this->getAllianceTicker($char->allianceID)
+            'corporationTicker' => $this->getCorporationTicker($char->corporationID)
         );
+        if($char->allianceID <> 0){
+            $charArray[allianceID] = $char->allianceID;
+            $charArray[allianceName] = $char->allianceName;
+            $charArray[allianceTicker] = $this->getAllianceTicker($char->allianceID);
+        }
         return $charArray;
     }
     

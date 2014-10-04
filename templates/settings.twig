@@ -17,10 +17,9 @@
     {% else %}
         {% set isErrorHidden = "hidden" %}
     {% endif %}
-    <div class="container" id="formSettings">
+  <form id="formSettings" action="settings.php?a=api" method="post">  
         <h1>PROFILE SETTINGS - API</h1>
         <div class="inset" id="SetIns">
-    <form id="formSettings2" action="settings.php?a=api" method="post">
             <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
                 {{errorMsg}}
             </div> 
@@ -42,18 +41,19 @@
                 <p class="p-container">
                     <input type="button" name="go" id="getChars" onclick="SendRequest('#charList', 'alert-api-main', 'main')" value="Get Characters" />
                 </p>
-    <hr id="chars" hidden />
-                <p id="chars" hidden>
-                    <label for="SelectChar" style="color: #ccc;">SELECT CHARACTER</label><br>
-                <div id="charList">
-                </div>
-                </p> 
+                <div id="charListContainer-main" hidden>
+                    <hr id="chars" />
+                    <p id="chars">
+                        <label for="SelectChar" style="color: #ccc;">SELECT CHARACTER</label><br>
+                        <div id="charList">
+                        </div>
+                    </p>
                 <p class="p-container">
                     <input type="hidden" name="form" value="sent">
-                        <input type="hidden" name="action" value="changeMain">
+                    <input type="hidden" name="action" value="changeMain">
                     <input type="submit" name="go" id="submit" value="SUBMIT" disabled />
-    </form>
                 </p>
+                </div>
     <hr id="danger"/>
             <table>
                 <tr>
@@ -62,19 +62,28 @@
                     </td>
                     <td>
                         <p class="p-container">
-                        <form id="formSettings2" action="settings.php?a=api" method="post">
-                            <input type="hidden" name="form" value="sent">
-                            <input type="hidden" name="action" value="ban">
-                            <input type="button" name="delete" id="danger" value="DELETE">
-                        </form>
+        <form id="formSettings2" action="settings.php?a=api" method="post">
+            <input type="hidden" name="form" value="sent">
+            <input type="hidden" name="action" value="ban">
+            <input type="submit" name="delete" id="danger" value="DELETE">
+        </form>
                         </p>
                     </td>
                 </tr>
             </table>
         </div>
  <hr />
-    <form id="formSettings2" action="settings.php?a=api" method="post">
-        <div class="inset" id="SetIns">
+    
+    {% if errorSecMsg is defined %}
+        {% set isErrorSecHidden = "" %}
+    {% else %}
+        {% set isErrorSecHidden = "hidden" %}
+    {% endif %}
+    <div class="inset" id="SetIns">
+        <form id="formSettings2" action="settings.php?a=api" method="post">
+            <div class="alert alert-danger" role="alert" {{isErrorSecHidden}}>
+                {{errorSecMsg}}
+            </div> 
           <div class="alert alert-danger" role="alert-api-sec" hidden></div>
             <h2>ADD SECONDARY API</h2>
             <br>
@@ -90,21 +99,23 @@
             <!--<div class="alert alert-danger" role="alert">Sorry, but key ID or vCode incorrect!</div>-->
              <p class="p-container">
                 <input type="button" name="go" id="getChars" onclick="SendRequest('#charListSec', 'alert-api-sec', 'sec')" value="Get Characters" />
-            </p>     
-    <hr id="chars" hidden />
-            <p id="chars" hidden>
+            </p>
+            <div id="charListContainer-sec" hidden>
+            <hr id="chars" />
+            <p id="chars">
                 <label for="SelectChar" style="color: #ccc;">SELECT CHARACTER</label><br>
                 <div id="charListSec">
                 </div>
-            </p>  
+            </p>
             <p class="p-container">
                 <input type="hidden" name="form" value="sent">
                 <input type="hidden" name="action" value="addSec">
-                <input type="submit" name="go" id="submit" value="SUBMIT" disabled />
+                <input type="submit" name="go" id="submit" value="SUBMIT" />
             </p>
+            </div>  
             <!--<div class="alert alert-danger" role="alert" id="success">Your api successfully added!</div>-->
-        </div>
-    </form>
+        </form>
+    </div>
         <div class="inset" id="SetIns">
             {% if apiList is defined %}
             {% for api in apiList %}
@@ -133,12 +144,12 @@
             {% endfor %}
             {% endif %}
         </div>
-    </div>
+</form>
 <!--Конец смены API-->
  {% elseif curForm == 'teamspeak' %}
      
 <!--Форма регистрации в ТС-->
-<form id="formSettings">            
+<div class="inset" id="SetIns">
     <h1>TEAM SPEAK SETTINGS</h1>
     <div class="inset" id="SetIns">
         <!--<span>Вот сюда надо будет вставить текст на тему того, что есть 2  варианта регистрации в ТС: с использованием Unique ID (для продвинутых пользователей) и пошагово (для неопытных)</span>-->
@@ -146,14 +157,18 @@
         <hr />
         <h2>REGISTRATION IN TEAMSPEAK BY UNIQUE ID:</h2>
         <br>
+            <form id="formSettings2" action="settings.php?a=teamspeak" method="post">            
             <p>
                 <label for="UniqueID">UNIQUE ID</label>
-                <input type="text" name="UniqueID" value="" id="UID">
+                <input type="text" name="UniqueID" value="{{saveForm.uniqueID}}" id="UID">
             </p>
             <!--<span>Если вы знаете, что такое UniqueID и как его найти в ТС, вставьте его в поле и нажмите кнопку "REGISTER"</span>-->
             <br>
             <p class="p-container">
-               <input type="submit" name="go" id="go" value="REGISTER" disabled>
+                <input type="hidden" name="typeReg" value="UID">
+               <input type="hidden" name="form" value="sent">
+               <input type="submit" name="go" id="go" value="REGISTER">
+               </form>
             </p>           
         <hr />
             <h2>REGISTRATION IN TEAMSPEAK FOR NEWBIES:</h2>
@@ -162,14 +177,17 @@
             <br>
             <!--<span id="danger">Не нажимайте кнопку "REGISTER" пока не зайдете в TeamSpeak!</span>-->
             <p class="p-container">
-                <input type="button" name="go" id="go" value="OPEN TEAMSPEAK" disabled>
+                <input type="button" name="go" id="go" value="OPEN TEAMSPEAK">
             </p>     
             <span>After log in TS push this register button</span>       
+            <form id="formSettings2" action="settings.php?a=teamspeak" method="post">            
             <p class="p-container">
-                <input type="submit" name="go" id="go" value="REGISTER" disabled>
+                <input type="hidden" name="typeReg" value="TS">
+                <input type="hidden" name="form" value="sent">
+                <input type="submit" name="go" id="go" value="REGISTER">
+            </form>
             </p> 
     </div>
-</form>
 <!--Форма регистрации в ТС -->
 {% else %}
     {% if errorMsg is defined %}

@@ -1,7 +1,7 @@
 var charReady;
 var passReady;
 var repPassReady;
-
+var i = 0;
 function SendRequest(toPut, alertPlace, prefix){
     $.ajax({
         type: "POST",
@@ -9,26 +9,24 @@ function SendRequest(toPut, alertPlace, prefix){
         data: "keyID="+$('input[role=keyID-'+prefix+']').val()+"&vCode="+$('input[role=vCode-'+prefix+']').val(),
         datatype: 'json',
         success: function(json){
-            parseApiResult(json, toPut, alertPlace);
+            parseApiResult(json, toPut, alertPlace, prefix);
         }
     });
 }
 
-function parseApiResult(json, toPut, alertPlace) {
+function parseApiResult(json, toPut, alertPlace, prefix) {
     if (json.status !== 0) {
-        $('#chars').empty();
-        $('#chars').attr('hidden', 1);
+        $('#charListContainer-'+prefix).attr('hidden', 1);
         $('div[role="'+alertPlace+'"]').empty();
         $('div[role="'+alertPlace+'"]').removeAttr('hidden').text("API server has responed with an error: "+json.message);
     } else {
         $('div[role="'+alertPlace+'"]').empty();
         $('div[role="'+alertPlace+'"]').attr('hidden', 1);
         $(toPut).empty();
-        $('#chars').removeAttr('hidden');
-        var i = 0;
-        $.each(json, function(i, chars) {
+        $('#charListContainer-'+prefix).removeAttr('hidden');
+        $.each(json, function(t, chars) {
             if (typeof(chars) === "object") {
-                var idName = 'b' + i;
+                var idName = 'b' + window.i;
                 $(toPut).append($('<input>').attr('type', 'radio').attr('value', chars.characterName).attr('class', 'r_button').attr('name', 'login').attr('id', idName));
                 if (chars.valid === 1) {
                     var id = "success";
@@ -37,7 +35,7 @@ function parseApiResult(json, toPut, alertPlace) {
                     var id = "fail";
                     var className = "glyphicon glyphicon-remove";
                 }
-                $(':radio[value="'+chars.characterName+'"]').after(function() {
+                $(':radio[id="'+idName+'"]').after(function() {
                     var label = $("<label>");
                     $(label).attr('for', idName).attr('id', id).text(chars.characterName).append(function() {
                         var span = $("<span>");
@@ -46,7 +44,7 @@ function parseApiResult(json, toPut, alertPlace) {
                     });
                     return $(label)
                 });
-                i++;
+                window.i++;
             }
         });
     }

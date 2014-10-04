@@ -20,47 +20,79 @@ switch ($page) {
         $toTemplate['saveForm']['currVCode'] = $API[mainAPI][vCode];
         
         if ($_POST[form] == 'sent') {
-            try {
                 switch (($_POST[action])) {
                     case 'changeMain':
+                        try {
                             $_SESSION[userObject]->userManagement->changeMainAPI($_POST[keyID], $_POST[vCode], $_POST[login]);
                             $toTemplate['saveForm']['currKeyID'] = $_POST[keyID];
                             $toTemplate['saveForm']['currVCode'] = $_POST[vCode];
+                        } catch (Exception $ex) {
+                            switch ($ex->getCode()) {
+                                case 11:
+                                    $toTemplate["errorMsg"] = "There is a problem: " . $ex->getMessage();
+                                    break;
+                                case 15:
+                                    $toTemplate["errorMsg"] = "There is a problem with CCP servers. Please try again later.";
+                                    break;
+                                case 20:
+                                    $toTemplate["errorMsg"] = "Please choose eligible charater.";
+                                    break;
+                                case 22:
+                                    $toTemplate["errorMsg"] = "This character is already registered!";
+                                    break;
+                                case 30:
+                                    $toTemplate["errorMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
+                                    break;
+                                case 31:
+                                    $toTemplate["errorMsg"] = "Please choose your main character firstly!";
+                                    break;
+                            }
+                        }
                         break;
                     case 'ban':
+                        try {
+                        $_SESSION[userObject]->userManagement->ban();
+                        $_SESSION[userObject]->updateUserInfo();
+                        } catch (Exception $ex) {
+                             $toTemplate["errorMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
+                        }
                         break;
                     case 'addSec':
+                        try {
                             $_SESSION[userObject]->userManagement->addSecAPI($_POST[keyID], $_POST[vCode], $_POST[login]);
                             $toTemplate['saveForm']['currKeyID'] = $_POST[keyID];
                             $toTemplate['saveForm']['currVCode'] = $_POST[vCode];
+                            $_SESSION[userObject]->updateUserInfo();
+                            $API = $_SESSION[userObject]->getApiPilotInfo();
+                        } catch (Exception $ex) {
+                            switch ($ex->getCode()) {
+                                case 11:
+                                    $toTemplate["errorSecMsg"] = "There is a problem: " . $ex->getMessage();
+                                    break;
+                                case 15:
+                                    $toTemplate["errorSecMsg"] = "There is a problem with CCP servers. Please try again later.";
+                                    break;
+                                case 20:
+                                    $toTemplate["errorSecMsg"] = "Please choose eligible charater.";
+                                    break;
+                                case 22:
+                                    $toTemplate["errorSecMsg"] = "This character is already registered!";
+                                    break;
+                                case 30:
+                                    $toTemplate["errorSecMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
+                                    break;
+                                case 31:
+                                    $toTemplate["errorSecMsg"] = "Please choose your main character firstly!";
+                                    break;
+                            }
+                        }
                         break;
                     case 'deleteSec':
                         $_SESSION[userObject]->userManagement->deleteSecAPI($_POST[characterID]);
                         $_SESSION[userObject]->updateUserInfo();
+                        $API = $_SESSION[userObject]->getApiPilotInfo();
                         break;
                 }
-            } catch (Exception $ex) {
-                switch ($ex->getCode()) {
-                    case 11:
-                        $toTemplate["errorMsg"] = "There is a problem: " . $ex->getMessage();
-                        break;
-                    case 15:
-                        $toTemplate["errorMsg"] = "There is a problem with CCP servers. Please try again later.";
-                        break;
-                    case 20:
-                        $toTemplate["errorMsg"] = "Please choose eligible charater.";
-                        break;
-                    case 22:
-                        $toTemplate["errorMsg"] = "This character is already registered!";
-                        break;
-                    case 30:
-                        $toTemplate["errorMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
-                        break;
-                    case 31:
-                        $toTemplate["errorMsg"] = "Please choose your main character firstly!";
-                        break;
-                }
-            }
         }
         
         if (count($API[secAPI])>0) {
@@ -85,6 +117,14 @@ switch ($page) {
     case 'teamspeak':
         $toTemplate['curForm'] = 'teamspeak';
         $toTemplate['active']['teamspeak'] = $pageActive;
+        
+        //id-uniqueID
+        //$ts3->validate($id);
+        
+        //$ts3->nickname($id);
+        //$ts3->getUid($nick);
+        //$ts3->validate($id);
+        
         break;
     default:
         $toTemplate['curForm'] = '';
@@ -144,61 +184,3 @@ switch ($page) {
 }
 
 require 'twigRender.php';
-
-/**
- *  EMAIL:
- *  IF EMAIL
- *      SHOW EMAIL
- *      IF EMAIL CORRECT
- *          UPDATE EMAIL
- *      ELSE
- *          THROW ERROR EMAIL INCORRECT
- *      ENDIF     
- *  ENDIF
- * 
- * CHANGE PASSWORD:
- *  IF CURRENT PASSWORD CORRECT
- *      IF NEW PASSWORD CORRECT
- *          CHANGE CURRENT PASSWORD
- *      ELSE
- *          THROW ERROR BAD PASSWORD
- *      ENDIF
- *  ELSE
- *      THROW ERROR INCORRECT PASSWORD
- *  ENDIF
- * 
- * API:
- * Current API:
- *  IF CHANGED:
- *      IF GetChars PRESSED:
- *          IF CHAR ALLOWED:
- *              CHECK IF NOT ALREADY THERE:
- *                  CHANGE API, UPDATE ALL THE INFORMATION, UNSET & CREATE $_SESSION[userObject]
- *              ELSE
- *                  CHECK IF HAS keyStatus 0:
- *                      CHANGE API, UPDATE ALL THE INFORMATION, UNSET & CREATE $_SESSION[userObject]
- *                  ELSE
- *                      SHOW ERROR
- *                  ENDIF
- *              ENDIF
- *          ELSE
- *              SHOW ERROR
- *          ENDIF
- *      E:SE
- *          SHOW  ERROR
- *      ENDIF
- *  ENDIF
- * 
- * Secondary API:
- *  IF ADDED:
- *      CHECK IF NOT ALREADY THERE:
- *          ADD WITH keyStatus = 2
- *      ELSE
- *          CHECK IF HAS keyStatus 0:
- *              CHANGE keyStatus & vCode
- *          ELSE
- *              SHOW ERROR
- *          ENDIF
- *      ENDIF
- *  ENDIF
- */
