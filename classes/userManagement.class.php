@@ -196,6 +196,18 @@ class userManagement implements IuserManagement {
         }
     }
 
+    public function registerInTeamspeak($UID = NULL) {
+        if ($this->id === -1) {
+            throw new Exception("Object created in fake user mode.", 30);
+        }
+        $ts3 = new ts3();
+        if (!$UID) {
+            $UID = $ts3->getUid($ts3->nickname($this->id));
+        }
+        $this->db->registerInTeamspeak($this->id, $UID);
+        $ts3->validate($this->id);
+    }
+    
     public function getCorporationTicker($id){
         $query = "SELECT `ticker` FROM `corporationList` WHERE `id` = '$id'";
         $result = $this->db->query($query);

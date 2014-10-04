@@ -118,6 +118,33 @@ switch ($page) {
         $toTemplate['curForm'] = 'teamspeak';
         $toTemplate['active']['teamspeak'] = $pageActive;
         
+        if ($_POST[form] == 'sent') {
+            $toTemplate['saveForm']['uniqueID'] = $_POST[uniqueID];
+            try {
+                switch ((typeReg[action])) {
+                    case 'UID':
+                    case 'TS':
+                        $_SESSION[userObject]->userManagement->registerInTeamspeak($_POST[UniqueID]);
+                        break;
+                    case 'delete':
+                        break;
+                }
+            } catch (Exception $ex) {
+                switch ($ex->getCode()) {
+                    case 11:
+                        if ($_POST[typeReg] == 'UID') {
+                            $toTemplate["errorMsgTS"] = "Please enter your uniqueID!";
+                        } elseif($_POST[typeReg] == 'TS') {
+                            $toTemplate["errorMsgTS"] = "Please hit /'Open Teamspeak/' button firstly!";
+                        }
+                        break;
+                    case 30:
+                        $toTemplate["errorMsgTS"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
+                        break;
+                }
+            }
+        }
+        
         //id-uniqueID
         //$ts3->validate($id);
         
