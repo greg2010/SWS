@@ -119,6 +119,11 @@ return $tsAdmin;
     $ar1m=array($this->grMaDbTs($id));
     $ar1=array_merge($ar1a,$ar1m);
     $ar2t=$this->perm_user($this->getTsUid($id));
+    if($ar2t==false){
+    return "user not find";
+    exit;
+    }
+    
     foreach($ar2t as $ar2_v){
     $i2v++;
     $ar2[$i2v]=$ar2_v[sgid];
@@ -232,10 +237,8 @@ return $tsAdmin;
     }
 
     private function perm_user($nick){
-#    $tsAdmin=$this->tsAdmin;
      $tsAdmin=$this->tsAdmin;
     $info=$tsAdmin->clientDbFind("$nick",'-uid');
-#    $info=$tsAdmin->clientDbFind("$nick");
     $cl_id=$info['data'][0]['cldbid'];
     $s_gr_clid=$tsAdmin->serverGroupsByClientID("$cl_id");
     $perm=$s_gr_clid['data'];
