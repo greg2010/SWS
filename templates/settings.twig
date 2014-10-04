@@ -41,17 +41,19 @@
                 <p class="p-container">
                     <input type="button" name="go" id="getChars" onclick="SendRequest('#charList', 'alert-api-main', 'main')" value="Get Characters" />
                 </p>
-    <hr id="chars" hidden />
-                <p id="chars" hidden>
-                    <label for="SelectChar" style="color: #ccc;">SELECT CHARACTER</label><br>
-                <div id="charList">
-                </div>
-                </p> 
+                <div id="charListContainer-main" hidden>
+                    <hr id="chars" />
+                    <p id="chars">
+                        <label for="SelectChar" style="color: #ccc;">SELECT CHARACTER</label><br>
+                        <div id="charList">
+                        </div>
+                    </p>
                 <p class="p-container">
                     <input type="hidden" name="form" value="sent">
-                        <input type="hidden" name="action" value="changeMain">
+                    <input type="hidden" name="action" value="changeMain">
                     <input type="submit" name="go" id="submit" value="SUBMIT" disabled />
                 </p>
+                </div>
     <hr id="danger"/>
             <table>
                 <tr>
@@ -97,18 +99,20 @@
             <!--<div class="alert alert-danger" role="alert">Sorry, but key ID or vCode incorrect!</div>-->
              <p class="p-container">
                 <input type="button" name="go" id="getChars" onclick="SendRequest('#charListSec', 'alert-api-sec', 'sec')" value="Get Characters" />
-            </p>     
-    <hr id="chars" hidden />
-            <p id="chars" hidden>
+            </p>
+            <div id="charListContainer-sec" hidden>
+            <hr id="chars" />
+            <p id="chars">
                 <label for="SelectChar" style="color: #ccc;">SELECT CHARACTER</label><br>
                 <div id="charListSec">
                 </div>
-            </p>  
+            </p>
             <p class="p-container">
                 <input type="hidden" name="form" value="sent">
                 <input type="hidden" name="action" value="addSec">
                 <input type="submit" name="go" id="submit" value="SUBMIT" />
             </p>
+            </div>  
             <!--<div class="alert alert-danger" role="alert" id="success">Your api successfully added!</div>-->
         </form>
     </div>
