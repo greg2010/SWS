@@ -27,6 +27,8 @@ if ($loginFormSent == 'sent') {
             $_SESSION[logObject]->setLoginInfo('exceptionText', NULL);
             $_SESSION[logObject]->setSessionInfo();
             $_SESSION[logObject]->pushToDb('login');
+            
+            $_SESSION[successLogin] = "Login successful";
     } catch (Exception $ex) {
         $toTemplate['saveform']['login'] = $login;
         switch ($ex->getCode()) {

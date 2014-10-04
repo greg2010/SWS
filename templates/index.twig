@@ -1,7 +1,16 @@
 {% extends "base.twig" %}
-{#{% set loggedIN = '1' %}#}
 {% block content %}
 <div class="container">
+    
+    {% if successLogin is defined %}
+        {% set isSuccessHidden = "" %}
+    {% else %}
+        {% set isSuccessHidden = "hidden" %}
+    {% endif %}
+    <div class="alert alert-danger" role="alert" id="success2" {{isSuccessHidden}}>
+        {{successLogin}}
+    </div>
+    
     <div id="column-1">
         <div style="margin-top: 10px;">
             <center><img src="images/EVElogo.png"></img></center> 
