@@ -121,7 +121,7 @@ switch ($page) {
         if ($_POST[form] == 'sent') {
             $toTemplate['saveForm']['uniqueID'] = $_POST[uniqueID];
             try {
-                switch ((typeReg[action])) {
+                switch (($_POST[typeReg])) {
                     case 'UID':
                     case 'TS':
                         $_SESSION[userObject]->userManagement->registerInTeamspeak($_POST[UniqueID]);
