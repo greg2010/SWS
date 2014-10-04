@@ -19,7 +19,7 @@
     {% endif %}
   <form id="formSettings" action="settings.php?a=api" method="post">  
         <h1>PROFILE SETTINGS - API</h1>
-        <div class="inset" id="SetIns">
+        <div class="inset" id="SetIns" style="margin-bottom:0px;">
             <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
                 {{errorMsg}}
             </div> 
@@ -149,7 +149,7 @@
  {% elseif curForm == 'teamspeak' %}
      
 <!--Форма регистрации в ТС-->
-<div class="inset" id="SetIns">
+<form id="formSettings" action="settings.php?a=teamspeak" method="post">  
     <h1>TEAM SPEAK SETTINGS</h1>
     <div class="inset" id="SetIns">
         <!--<span>Вот сюда надо будет вставить текст на тему того, что есть 2  варианта регистрации в ТС: с использованием Unique ID (для продвинутых пользователей) и пошагово (для неопытных)</span>-->
@@ -177,17 +177,18 @@
             <br>
             <!--<span id="danger">Не нажимайте кнопку "REGISTER" пока не зайдете в TeamSpeak!</span>-->
             <p class="p-container">
-                <input type="button" name="go" id="go" value="OPEN TEAMSPEAK">
-            </p>     
+                <input type="button" name="go" id="go" value="OPEN TEAMSPEAK" onclick="location.href='#'">
+            </p>   
             <span>After log in TS push this register button</span>       
             <form id="formSettings2" action="settings.php?a=teamspeak" method="post">            
             <p class="p-container">
                 <input type="hidden" name="typeReg" value="TS">
                 <input type="hidden" name="form" value="sent">
                 <input type="submit" name="go" id="go" value="REGISTER">
+            </p>    
             </form>
-            </p> 
     </div>
+</form>           
 <!--Форма регистрации в ТС -->
 {% else %}
     {% if errorMsg is defined %}
