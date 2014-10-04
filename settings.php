@@ -117,6 +117,14 @@ switch ($page) {
     case 'teamspeak':
         $toTemplate['curForm'] = 'teamspeak';
         $toTemplate['active']['teamspeak'] = $pageActive;
+        
+        //id-uniqueID
+        //$ts3->validate($id);
+        
+        //$ts3->nickname($id);
+        //$ts3->getUid($nick);
+        //$ts3->validate($id);
+        
         break;
     default:
         $toTemplate['curForm'] = '';
@@ -176,61 +184,3 @@ switch ($page) {
 }
 
 require 'twigRender.php';
-
-/**
- *  EMAIL:
- *  IF EMAIL
- *      SHOW EMAIL
- *      IF EMAIL CORRECT
- *          UPDATE EMAIL
- *      ELSE
- *          THROW ERROR EMAIL INCORRECT
- *      ENDIF     
- *  ENDIF
- * 
- * CHANGE PASSWORD:
- *  IF CURRENT PASSWORD CORRECT
- *      IF NEW PASSWORD CORRECT
- *          CHANGE CURRENT PASSWORD
- *      ELSE
- *          THROW ERROR BAD PASSWORD
- *      ENDIF
- *  ELSE
- *      THROW ERROR INCORRECT PASSWORD
- *  ENDIF
- * 
- * API:
- * Current API:
- *  IF CHANGED:
- *      IF GetChars PRESSED:
- *          IF CHAR ALLOWED:
- *              CHECK IF NOT ALREADY THERE:
- *                  CHANGE API, UPDATE ALL THE INFORMATION, UNSET & CREATE $_SESSION[userObject]
- *              ELSE
- *                  CHECK IF HAS keyStatus 0:
- *                      CHANGE API, UPDATE ALL THE INFORMATION, UNSET & CREATE $_SESSION[userObject]
- *                  ELSE
- *                      SHOW ERROR
- *                  ENDIF
- *              ENDIF
- *          ELSE
- *              SHOW ERROR
- *          ENDIF
- *      E:SE
- *          SHOW  ERROR
- *      ENDIF
- *  ENDIF
- * 
- * Secondary API:
- *  IF ADDED:
- *      CHECK IF NOT ALREADY THERE:
- *          ADD WITH keyStatus = 2
- *      ELSE
- *          CHECK IF HAS keyStatus 0:
- *              CHANGE keyStatus & vCode
- *          ELSE
- *              SHOW ERROR
- *          ENDIF
- *      ENDIF
- *  ENDIF
- */

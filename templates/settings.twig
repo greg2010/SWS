@@ -149,7 +149,7 @@
  {% elseif curForm == 'teamspeak' %}
      
 <!--Форма регистрации в ТС-->
-<form id="formSettings">            
+<div class="inset" id="SetIns">
     <h1>TEAM SPEAK SETTINGS</h1>
     <div class="inset" id="SetIns">
         <!--<span>Вот сюда надо будет вставить текст на тему того, что есть 2  варианта регистрации в ТС: с использованием Unique ID (для продвинутых пользователей) и пошагово (для неопытных)</span>-->
@@ -157,14 +157,18 @@
         <hr />
         <h2>REGISTRATION IN TEAMSPEAK BY UNIQUE ID:</h2>
         <br>
+            <form id="formSettings2" action="settings.php?a=teamspeak" method="post">            
             <p>
                 <label for="UniqueID">UNIQUE ID</label>
-                <input type="text" name="UniqueID" value="" id="UID">
+                <input type="text" name="UniqueID" value="{{saveForm.uniqueID}}" id="UID">
             </p>
             <!--<span>Если вы знаете, что такое UniqueID и как его найти в ТС, вставьте его в поле и нажмите кнопку "REGISTER"</span>-->
             <br>
             <p class="p-container">
-               <input type="submit" name="go" id="go" value="REGISTER" disabled>
+                <input type="hidden" name="typeReg" value="UID">
+               <input type="hidden" name="form" value="sent">
+               <input type="submit" name="go" id="go" value="REGISTER">
+               </form>
             </p>           
         <hr />
             <h2>REGISTRATION IN TEAMSPEAK FOR NEWBIES:</h2>
@@ -173,14 +177,17 @@
             <br>
             <!--<span id="danger">Не нажимайте кнопку "REGISTER" пока не зайдете в TeamSpeak!</span>-->
             <p class="p-container">
-                <input type="button" name="go" id="go" value="OPEN TEAMSPEAK" disabled>
+                <input type="button" name="go" id="go" value="OPEN TEAMSPEAK">
             </p>     
             <span>After log in TS push this register button</span>       
+            <form id="formSettings2" action="settings.php?a=teamspeak" method="post">            
             <p class="p-container">
-                <input type="submit" name="go" id="go" value="REGISTER" disabled>
+                <input type="hidden" name="typeReg" value="TS">
+                <input type="hidden" name="form" value="sent">
+                <input type="submit" name="go" id="go" value="REGISTER">
+            </form>
             </p> 
     </div>
-</form>
 <!--Форма регистрации в ТС -->
 {% else %}
     {% if errorMsg is defined %}

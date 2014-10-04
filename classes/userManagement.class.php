@@ -35,7 +35,11 @@ class userManagement implements IuserManagement {
         $permissions->unsetPermissions(array('webReg_Valid', 'TS_Valid', 'XMPP_Valid'));
     }
 
-        public function getApiKey($keyStatus) {
+    public function tsReg() {
+        
+    }
+    
+    public function getApiKey($keyStatus) {
         $query = "SELECT `keyID`, `vCode`, `characterID` FROM `apiPilotList` WHERE `id` = '$this->id' AND `keyStatus` = '$keyStatus'";
         $result = $this->db->query($query);
         $apiKey = $this->db->fetchRow($result);
