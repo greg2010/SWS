@@ -117,6 +117,12 @@ switch ($page) {
     case 'teamspeak':
         $toTemplate['curForm'] = 'teamspeak';
         $toTemplate['active']['teamspeak'] = $pageActive;
+        $ts3 = new ts3();
+        try {
+            $toTemplate['TSNickname'] = $ts3->nickname($_SESSION[userObject]->getID());
+        } catch (Exception $ex) {
+            $toTemplate["errorMsgTS"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
+        }
         
         if ($_POST[form] == 'sent') {
             $toTemplate['saveForm']['uniqueID'] = $_POST[uniqueID];

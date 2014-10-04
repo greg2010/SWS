@@ -67,10 +67,10 @@ return $tsAdmin;
     $this->db=db::getInstance();
     $query = "SELECT apiPilotList.characterName, allianceList.ticker, corporationList.ticker 
     FROM apiPilotList INNER JOIN allianceList ON apiPilotList.allianceID = allianceList.id INNER JOIN corporationList ON apiPilotList.corporationID = corporationList.id 
-    WHERE apiPilotList.id = $id ";
+    WHERE apiPilotList.id = $id AND apiPilotList.keyStatus = 1";
     $result = $this->db->query($query);
     $nick_raw=$this->db->fetchRow($result);
-    return $nickname="$nick_raw[1] | $nick_raw[2] | $nick_raw[0]";
+    return $nickname="{$nick_raw[1]} | {$nick_raw[2]} | {$nick_raw[0]}";
     }
 
     public function status(){
@@ -170,7 +170,7 @@ return $tsAdmin;
 
     private function alliUser($id){
 	    $this->db=db::getInstance();
-            $query = "SELECT `allianceID` FROM `apiPilotList` WHERE `id`=$id";
+            $query = "SELECT `allianceID` FROM `apiPilotList` WHERE `id`=$id AND keyStatus = '1'";
             $result = $this->db->query($query);
             return $this->db->getMysqlResult($result);
     }

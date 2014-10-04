@@ -313,8 +313,7 @@ class userSession {
     public function getAllianceInfo() {
         return $this->allianceInfo;
     }
-    
-//    public function getPilotInfo() {
-//        return $this->pilotInfo;
-//    }
+    public function getID() {
+        return $this->id;
+    }
 }
