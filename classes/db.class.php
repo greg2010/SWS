@@ -441,7 +441,16 @@ class db {
             throw new Exception("predefinedAddApiKey: " . mysqli_error($this->connection), mysqli_errno($this->connection));
         }
     }
-
+    
+    private function predefinedAddUniqueID($id, $UID) {
+        $stmt = mysqli_prepare($this->connection, "INSERT INTO `teamspeak` SET `id`=?, `uniqueID`=?");
+        mysqli_stmt_bind_param($stmt, "ss", $id, $UID);
+        mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception("predefinedAddApiKey: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+    }
+    
     public function getUserByLogin($login, $passwordHash) {
         $this->openConnection();
         $id = $this->predefinedMySQLLogin($login, $passwordHash);
@@ -521,5 +530,10 @@ class db {
                     throw new Exception("MySQL error: " . $firstException . " Rolled back successfully.", 30);
             }
         }
+    }
+    
+    public function registerInTeamspeak($id, $UID) {
+        $this->openConnection();
+        $this->predefinedAddUniqueID($id, $UID);
     }
 }
