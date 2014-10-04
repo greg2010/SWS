@@ -253,6 +253,25 @@ return $tsAdmin;
     return $Uid;
     }
 
+    public function deleteTsUser($id){
+     $tsAdmin=$this->tsAdmin;
+    $Uid=$this->getTsUid($id);
+    $info=$tsAdmin->clientGetIds($Uid);
+    $info2=$tsAdmin->clientDbFind("$Uid",'-uid');
+    $cl_id=$info2['data'][0]['cldbid'];
+	if($info['success']=false){
+	    $delete=$tsAdmin->clientDbDelete("$cl_id");
+	    }elseif($info['success']=true){
+					    $cid=$info['data'][0]['clid'];
+					    $kick=$tsAdmin->clientKick($cid,'server','User delete request');
+					    $delete=$tsAdmin->clientDbDelete("$cl_id");
+					}else{
+					
+					$delete=false;
+					}
+    return $delete;
+    }
+
 
     
     private function setGrUser($sgid,$nick){
