@@ -159,7 +159,7 @@
             <div class="alert alert-danger" role="alert" {{isErrorTSHidden}}>
                 {{errorMsgTS}}
             </div> 
-            <div class="alert alert-danger" role="alert" id="success2">SUCCESS</div>
+            <!--<div class="alert alert-danger" role="alert" id="success2">SUCCESS</div>-->
     <div class="inset" id="SetIns">
         <!--<span>Вот сюда надо будет вставить текст на тему того, что есть 2  варианта регистрации в ТС: с использованием Unique ID (для продвинутых пользователей) и пошагово (для неопытных)</span>-->
         <br>
@@ -200,16 +200,17 @@
 </form>           
 <!--Форма регистрации в ТС -->
 {% elseif hasReg == 1 %}
-<h2>You are already registered in Teamspeak as:<span style="margin: 20px;">sabercat07</span></h2>
+<h2>You are already registered in Teamspeak as:<span style="margin: 20px;">{{hasTSReg.nickName}}</span></h2>
 <form id="formSettings2">
 <br>
     <p>
         <label for="UniqueID">UNIQUE ID</label>
-        <input type="text" name="UniqueID" value="#" id="UID">
+        <input type="text" name="UniqueID" value="{{hasTSReg.uniqueID}}" id="UID">
     </p>  
 <hr id="danger"/>
     <span id="danger">you can delete your account in Teamspeak. Be careful removal will not be restored</span>
     <p class="p-container">
+        <input type="hidden" name="action" value="delete">
         <input type="submit" name="delete" id="danger" value="DELETE">
     </p> 
 </form>

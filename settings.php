@@ -117,8 +117,8 @@ switch ($page) {
     case 'teamspeak':
         $toTemplate['curForm'] = 'teamspeak';
         $toTemplate['active']['teamspeak'] = $pageActive;
-        
-        if ($_SESSION[userObject]->hasTSRegistration()) {
+        $toTemplate['hasReg'] = $_SESSION[userObject]->hasTSRegistration();
+        if ($toTemplate[hasReg]) {
             $TSInfo = $_SESSION[userObject]->getTSInfo();
             $toTemplate['hasTSReg'] = $TSInfo;
             if ($_POST[form] == 'sent') {
