@@ -583,6 +583,12 @@ input[type=button]:hover {
             border-color: #458B00;
             color: #458B00;
 }
+#success2 {
+            border-color: #458B00;
+            color: #458B00;
+            margin-left: 100px;
+            margin-right: 100px;
+}
 
 #SetIns {
             margin-left: 80px;
