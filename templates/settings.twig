@@ -147,10 +147,20 @@
 </form>
 <!--Конец смены API-->
  {% elseif curForm == 'teamspeak' %}
-     
+    {% if errorMsgTS is defined %}
+        {% set isErrorTSHidden = "" %}
+    {% else %}
+        {% set isErrorTSHidden = "hidden" %}
+    {% endif %}
 <!--Форма регистрации в ТС-->
 <form id="formSettings" action="settings.php?a=teamspeak" method="post">  
     <h1>TEAM SPEAK SETTINGS</h1>
+            <div class="alert alert-danger" role="alert" {{isErrorTSHidden}}>
+                {{errorMsgTS}}
+            </div> 
+            <div id="success" role="alert" >
+                123
+            </div> 
     <div class="inset" id="SetIns">
         <!--<span>Вот сюда надо будет вставить текст на тему того, что есть 2  варианта регистрации в ТС: с использованием Unique ID (для продвинутых пользователей) и пошагово (для неопытных)</span>-->
         <br>
