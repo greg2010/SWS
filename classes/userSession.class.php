@@ -92,7 +92,7 @@ class userSession {
     }
     
     private function generateCookieForCurrentUser() {
-        $cookie = hash(config::cookie_hash_type, $_SERVER[HTTP_USER_AGENT] . '@' . $_SERVER[REMOTE_ADDR] . "$this->salt");
+        $cookie = hash(config::cookie_hash_type, $_SERVER[HTTP_USER_AGENT] . '@' . $_SERVER[REMOTE_ADDR] . $this->salt);
         return $cookie;
     }
     
@@ -109,7 +109,7 @@ class userSession {
             }
             $query = "SELECT $fields FROM `userCookies` WHERE `id` = $this->id";
             $result = $this->db->query($query);
-            if ($this->db->hasRows($result) === FALSE) {
+            if ($this->db->hasRows($result) == FALSE) {
                 $query = "INSERT INTO `userCookies` SET `id` = $this->id";
                 $result = $this->db->query($query);
                 $query = "SELECT $fields FROM `userCookies` WHERE `id` = $this->id";
@@ -122,6 +122,7 @@ class userSession {
     }
     
     private function setCookie() {
+        setcookie('SSID', '', time()-config::cookie_lifetime);
         try {
             $newCookieValue = $this->generateCookieForCurrentUser();
             if (!$this->cookiesArray) {
@@ -151,7 +152,7 @@ class userSession {
             } else {
                 $pointer = NULL;
             }
-            $query = "UPDATE `userCookies` SET `$cookiePush` = '$newCookieValue', `pointer` = '$pointer'";
+            $query = "UPDATE `userCookies` SET `$cookiePush` = '$newCookieValue', `pointer` = '$pointer' WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
             $this->getCookies();
         } catch (Exception $ex) {
@@ -233,7 +234,7 @@ class userSession {
             try {
                 $this->id = $this->db->getUserByCookie($cookie);
                 if ($this->id === FALSE) {
-                    throw new Exception("Login failed!", 10);
+                    //hack attempt
                 } else {
                     $this->isLoggedIn = TRUE;
                     $this->initialize();
