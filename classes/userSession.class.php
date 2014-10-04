@@ -326,4 +326,12 @@ class userSession {
     public function getID() {
         return $this->id;
     }
+    
+    public function getTSInfo() {
+        $query = "SELECT `uniqueID` FROM `teamspeak` WHERE `id` = $this->id LIMIT 1";
+        $TSInfo['uniqueID'] = $this->db->getMySQLResult($this->db->query($query));
+        $ts3 = new ts3();
+        $TSInfo['nickName'] = $ts3->nickname($this->id);
+        return $TSInfo;
+    }
 }

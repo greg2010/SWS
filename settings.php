@@ -117,6 +117,20 @@ switch ($page) {
     case 'teamspeak':
         $toTemplate['curForm'] = 'teamspeak';
         $toTemplate['active']['teamspeak'] = $pageActive;
+        
+        if ($_SESSION[userObject]->hasTSRegistration()) {
+            $TSInfo = $_SESSION[userObject]->getTSInfo();
+            $toTemplate['hasTSReg'] = $TSInfo;
+            if ($_POST[form] == 'sent') {
+                try {
+                    if ($_POST[action] == 'delete') {
+                        $_SESSION[userObject]->userManagement->deleteFromTeamspeak();
+                    }
+                } catch (Exception $ex) {
+                    $toTemplate["errorMsgTS"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
+                }
+            }
+        } else {
         $ts3 = new ts3();
         try {
             $toTemplate['TSNickname'] = $ts3->nickname($_SESSION[userObject]->getID());
@@ -132,9 +146,6 @@ switch ($page) {
                     case 'TS':
                         $_SESSION[userObject]->userManagement->registerInTeamspeak($_POST[UniqueID]);
                         break;
-                    case 'delete':
-                        $_SESSION[userObject]->userManagement->deleteFromTeamspeak();
-                        break;
                 }
             } catch (Exception $ex) {
                 switch ($ex->getCode()) {
@@ -143,8 +154,6 @@ switch ($page) {
                             $toTemplate["errorMsgTS"] = "Please enter your uniqueID!";
                         } elseif($_POST[action] == 'TS') {
                             $toTemplate["errorMsgTS"] = "Please hit /'Open Teamspeak/' button firstly!";
-                        } elseif($_POST[action] == 'delete') {
-                            //error
                         }
                         break;
                     case 30:
@@ -160,7 +169,7 @@ switch ($page) {
         //$ts3->nickname($id);
         //$ts3->getUid($nick);
         //$ts3->validate($id);
-        
+        }
         break;
     default:
         $toTemplate['curForm'] = '';

@@ -143,8 +143,10 @@ class userManagement implements IuserManagement {
             $this->banQuery($id);
             $query = "UPDATE `users` SET `banID` = '-1', `banMessage` = '$message' WHERE `id` = '$id'";
             $this->db->query($query);
+            $this->deleteFromTeamspeak($id);
         } else {
             $this->banQuery($this->id);
+            $this->deleteFromTeamspeak();
         }
     }
     
@@ -208,13 +210,16 @@ class userManagement implements IuserManagement {
         $ts3->validate($this->id);
     }
     
-    public function deleteFromTeamspeak() {
+    public function deleteFromTeamspeak($id = NULL) {
         if ($this->id === -1) {
             throw new Exception("Object created in fake user mode.", 30);
         }
-        $this->db->deleteFromTeamspeak($this->id);
+        if (!$id) {
+            $id = $this->id;
+        }
+        $this->db->deleteFromTeamspeak($id);
         $ts3 = new ts3();
-        $ts3->deleteTsUser($this->id);
+        $ts3->deleteTsUser($id);
     }
     
     public function getCorporationTicker($id){
