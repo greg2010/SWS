@@ -208,6 +208,15 @@ class userManagement implements IuserManagement {
         $ts3->validate($this->id);
     }
     
+    public function deleteFromTeamspeak() {
+        if ($this->id === -1) {
+            throw new Exception("Object created in fake user mode.", 30);
+        }
+        $this->db->deleteFromTeamspeak($this->id);
+        $ts3 = new ts3();
+        $ts3->deleteTsUser($this->id);
+    }
+    
     public function getCorporationTicker($id){
         $query = "SELECT `ticker` FROM `corporationList` WHERE `id` = '$id'";
         $result = $this->db->query($query);

@@ -447,7 +447,16 @@ class db {
         mysqli_stmt_bind_param($stmt, "ss", $id, $UID);
         mysqli_stmt_execute($stmt);
         if (mysqli_error($this->connection)) {
-            throw new Exception("predefinedAddApiKey: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+            throw new Exception("predefinedAddUniqueID: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+    }
+    
+    private function predefinedRemoveUniqueID($id) {
+        $stmt = mysqli_prepare($this->connection, "DELETE FROM `teamspeak` WHERE id=?");
+        mysqli_stmt_bind_param($stmt, "s", $id);
+        mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception("predefinedRemoveUniqueID: " . mysqli_error($this->connection), mysqli_errno($this->connection));
         }
     }
     
@@ -535,5 +544,10 @@ class db {
     public function registerInTeamspeak($id, $UID) {
         $this->openConnection();
         $this->predefinedAddUniqueID($id, $UID);
+    }
+    
+    public function DeleteFromTeamspeak($id) {
+        $this->openConnection();
+        $this->predefinedAddUniqueID($id);
     }
 }

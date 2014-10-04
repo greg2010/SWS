@@ -127,21 +127,24 @@ switch ($page) {
         if ($_POST[form] == 'sent') {
             $toTemplate['saveForm']['uniqueID'] = $_POST[uniqueID];
             try {
-                switch (($_POST[typeReg])) {
+                switch (($_POST[action])) {
                     case 'UID':
                     case 'TS':
                         $_SESSION[userObject]->userManagement->registerInTeamspeak($_POST[UniqueID]);
                         break;
                     case 'delete':
+                        $_SESSION[userObject]->userManagement->deleteFromTeamspeak();
                         break;
                 }
             } catch (Exception $ex) {
                 switch ($ex->getCode()) {
                     case 11:
-                        if ($_POST[typeReg] == 'UID') {
+                        if ($_POST[action] == 'UID') {
                             $toTemplate["errorMsgTS"] = "Please enter your uniqueID!";
-                        } elseif($_POST[typeReg] == 'TS') {
+                        } elseif($_POST[action] == 'TS') {
                             $toTemplate["errorMsgTS"] = "Please hit /'Open Teamspeak/' button firstly!";
+                        } elseif($_POST[action] == 'delete') {
+                            //error
                         }
                         break;
                     case 30:
