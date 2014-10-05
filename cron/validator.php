@@ -44,7 +44,6 @@ for($t=0; $t<$thread_count; $t++){
 	if(!$pid){
 		$smta = round(microtime(1));
 		$log = new logging();
-		$log->put("select keys", $tolog);
 
 		$users_first = $t*$users_in_thread;
 		$users_last = ($t==($thread_count-1)) ? ($users_count) : (($t+1)*$users_in_thread);
@@ -75,8 +74,11 @@ for($t=0; $t<$thread_count; $t++){
 		}
 
 		$emta = round(microtime(1)) - $smta;
-		$log->put("total spent", $emta . " seconds");
-		$log->record("log.validator");
+		if($log->get() != NULL){
+			$log->put("select keys", $tolog);
+			$log->put("total spent", $emta . " seconds");
+			$log->record("log.validator");
+		}
 		posix_kill(posix_getpid(), SIGTERM);
 	}
 }
