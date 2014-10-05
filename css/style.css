@@ -595,3 +595,11 @@ input[type=button]:hover {
             margin-right: 80px;
             margin-bottom: 80px;
 }
+
+ table {
+    width: 100%;
+   }
+   td {
+    padding: 5px;
+    vertical-align: top;
+   }
