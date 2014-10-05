@@ -22,9 +22,13 @@ class notif_send {
         if(($this->send_email || $this->send_jabber) && ($this->permission > 0)){
             $txt = $this->getNotifications();
             if($txt != NULL){
-                if($send_email) new email->sendmail($this->email, "New EvE Online notification update", date(DATE_RFC822) . " New notifications arrived.\n" . $txt);
-                // if($send_jabber) метод отправки в жабер
                 //echo $txt . "\n\n\n";
+                if($this->send_email){
+                    $c_email = new email;
+                    if(!$c_email->sendmail($this->email, "New EvE Online notification update", date(DATE_RFC822) . " New notifications arrived.\n" . $txt)) 
+                        throw new Exception("Mail sending failed", -1);;
+                }
+                // if($send_jabber) метод отправки в жабер
                 $query = "UPDATE `users` SET `lastNotifID` = '$this->lastNotifID' WHERE `id`='$this->id'";
                 $result = $this->db->query($query);
             }
