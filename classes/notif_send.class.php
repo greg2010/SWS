@@ -11,6 +11,7 @@ class notif_send {
     private $send_email = false;
     private $send_jabber = false;
     private $permission = 0;
+    private $posop;
 
 	public function __construct($id, $corporationID, $allianceID){
         $this->db = db::getInstance();
@@ -21,9 +22,9 @@ class notif_send {
         if(($this->send_email || $this->send_jabber) && ($this->permission > 0)){
             $txt = $this->getNotifications();
             if($txt != NULL){
-                // if($send_email) new email->sendmail($this->email, "New EvE Online notification update", date(DATE_RFC822) . " New notifications arrived.\n" . $txt);
+                if($send_email) new email->sendmail($this->email, "New EvE Online notification update", date(DATE_RFC822) . " New notifications arrived.\n" . $txt);
                 // if($send_jabber) метод отправки в жабер
-                echo $txt . "\n\n\n";
+                //echo $txt . "\n\n\n";
                 $query = "UPDATE `users` SET `lastNotifID` = '$this->lastNotifID' WHERE `id`='$this->id'";
                 $result = $this->db->query($query);
             }
@@ -43,14 +44,18 @@ class notif_send {
 
     private function genPermission($mask){
         $permissions = new permissions($this->id);
-        return ($permissions->hasPermission("XMPP_Valid")) ? (($permissions->hasPermission("XMPP_RoamingFC") || $permissions->hasPermission("XMPP_FleetCom")) ? (($permissions->hasPermission("XMPP_Overmind")) ? 3 : 2) : 1) : 0;
+        $this->posop = ($permissions->hasPermission("posMon_Valid")) ? (" OR (`typeID` = 76 AND `allianceID` = '" . $this->allianceID . "')") : (" OR (`typeID` = 76 AND `corporationID` = '" . $this->corporationID . "')");
+        return ($permissions->hasPermission("XMPP_Valid")) ? (($permissions->hasPermission("XMPP_RoamingFC")) ? (($permissions->hasPermission("XMPP_Overmind") || $permissions->hasPermission("XMPP_FleetCom")) ? 3 : 2) : 1) : 0;
     }
 
     private function getNotifications(){
         $mailtext = NULL;
-        if($this->permission == 1) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` WHERE `notificationID` > '$this->lastNotifID' AND `corporationID` = '$this->corporationID'";
-        if($this->permission == 2) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` WHERE `notificationID` > '$this->lastNotifID' AND `allianceID` = '$this->allianceID'";
-        if($this->permission == 3) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` WHERE `notificationID` > '$this->lastNotifID'";
+        if($this->permission == 1) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications`
+         WHERE `notificationID` > '$this->lastNotifID' AND ((`typeID` <> 76 AND `corporationID` = '$this->corporationID')" . $this->posop . ")";
+        elseif($this->permission == 2) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications`
+         WHERE `notificationID` > '$this->lastNotifID' AND ((`typeID` <> 76 AND `allianceID` = '$this->allianceID')" . $this->posop . ")";
+        elseif($this->permission == 3) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications`
+         WHERE `notificationID` > '$this->lastNotifID' AND (`typeID` <> 76" . $this->posop . ")";
         $result = $this->db->query($query);
         $notifArr = $this->db->fetchArray($result);
         for ($j = 0; $j < $this->db->countRows($result); $j++){
