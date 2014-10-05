@@ -7,9 +7,10 @@ class notif_send {
     private $corporationID;
     private $allianceID;
     private $email;
-    private $lastNotifID;
+    private $lastNotifID = 0;
     private $send_email = false;
     private $send_jabber = false;
+    private $permission = 0;
 
 	public function __construct($id, $corporationID, $allianceID){
         $this->db = db::getInstance();
@@ -17,11 +18,12 @@ class notif_send {
         $this->corporationID = $corporationID;
         $this->allianceID = $allianceID;
         $this->getMoreInfoFromDB();
-        if($send_email || $send_jabber){
+        if(($this->send_email || $this->send_jabber) && ($this->permission > 0)){
             $txt = $this->getNotifications();
             if($txt != NULL){
-//                if($send_email) new email->sendmail($this->email, "New EvE Online notification update", date(DATE_RFC822) . " New notifications arrived.\n" . $txt);
-                // if($send_jabber) метод отправки в жабер 
+                // if($send_email) new email->sendmail($this->email, "New EvE Online notification update", date(DATE_RFC822) . " New notifications arrived.\n" . $txt);
+                // if($send_jabber) метод отправки в жабер
+                echo $txt . "\n\n\n";
                 $query = "UPDATE `users` SET `lastNotifID` = '$this->lastNotifID' WHERE `id`='$this->id'";
                 $result = $this->db->query($query);
             }
@@ -29,26 +31,35 @@ class notif_send {
     }
 
     private function getMoreInfoFromDB(){
-        $query = "SELECT `accessMask`, `email`, `lastNotifID` FROM `users` WHERE `id` = '$this->id'";
+        $query = "SELECT `accessMask`, `settngsMask`, `email`, `lastNotifID` FROM `users` WHERE `id` = '$this->id'";
         $result = $this->db->query($query);
         $arr = $this->db->fetchAssoc($result);
         $this->email = $arr[email];
         $this->lastNotifID = $arr[lastNotifID];
-        // send_email and send_jabber
+        $this->permission = $this->genPermission($arr[accessMask]);
+        $this->send_email = (($arr[settngsMask] & 1) > 0) ? true : false;
+        $this->send_jabber = (($arr[settngsMask] & 2) > 0) ? true : false;
+    }
+
+    private function genPermission($mask){
+        $permissions = new permissions($this->id);
+        return ($permissions->hasPermission("XMPP_Valid")) ? (($permissions->hasPermission("XMPP_RoamingFC") || $permissions->hasPermission("XMPP_FleetCom")) ? (($permissions->hasPermission("XMPP_Overmind")) ? 3 : 2) : 1) : 0;
     }
 
     private function getNotifications(){
         $mailtext = NULL;
-        // условия для выборки скул запроса
-        $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` WHERE `notificationID` > '$this->lastNotifID'"; // corporationID allianceID
+        if($this->permission == 1) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` WHERE `notificationID` > '$this->lastNotifID' AND `corporationID` = '$this->corporationID'";
+        if($this->permission == 2) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` WHERE `notificationID` > '$this->lastNotifID' AND `allianceID` = '$this->allianceID'";
+        if($this->permission == 3) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` WHERE `notificationID` > '$this->lastNotifID'";
         $result = $this->db->query($query);
         $notifArr = $this->db->fetchArray($result);
         for ($j = 0; $j < $this->db->countRows($result); $j++){
+            if($notifArr[$j][notificationID] > $this->lastNotifID) $this->lastNotifID = $notifArr[$j][notificationID];
             if($notifArr[$j][typeID]==76){
                 $tmparr = yaml_parse($notifArr[$j][NotificationText]);
                 for($h=0; $h < count($tmparr[wants]); $h++){
                     if($tmparr[wants][$h][typeID] = 4246 || $tmparr[wants][$h][typeID] = 4247 || $tmparr[wants][$h][typeID] = 4051 || $tmparr[wants][$h][typeID] = 4312){ // Fuel Block ids
-                        $fuelph = $yhis->getFuelPH($tmparr[typeID]);
+                        $fuelph = $this->getFuelPH($tmparr[typeID]);
                         if($tmparr[wants][$h][quantity] >= $fuelph*23 && $tmparr[wants][$h][quantity] < $fuelph*24)
                             $mailtext .= $this->GenerateMailText($notifArr[$j][typeID], $notifArr[$j][sentDate], $notifArr[$j][NotificationText]);
                         if($tmparr[wants][$h][quantity] >= $fuelph*3 && $tmparr[wants][$h][quantity] < $fuelph*4)
@@ -61,7 +72,7 @@ class notif_send {
     }
 
     private function getFuelPH($typeID){
-        $query = "SELECT `fuelph` FROM `poslist` WHERE `typeID` = '$typeID' LIMIT 1";
+        $query = "SELECT `fuelph` FROM `posList` WHERE `typeID` = '$typeID' LIMIT 1";
         $result = $this->db->query($query);
         return $this->db->getMysqlResult($result, 0);
     }
