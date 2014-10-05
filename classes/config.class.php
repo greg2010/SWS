@@ -9,7 +9,7 @@ class config {
     const num_of_threads = 4; // max threads (4)
     const ops_in_thread = 100;  // max operations in thread (100)
 
-    const correctKeyMask = 49152;
+    const correctKeyMask = 8437768;
 
     const notif_types = "37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 75, 76, 77, 78, 79, 80, 86, 87, 88, 93"; // http://wiki.eve-id.net/APIv2_Char_Notifications_XML
 

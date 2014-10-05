@@ -17,7 +17,7 @@
     {% else %}
         {% set isErrorHidden = "hidden" %}
     {% endif %}
-  <form id="formSettings" action="settings.php?a=api" method="post">  
+  <div id="formSettings" action="settings.php?a=api" method="post">  
         <h1>PROFILE SETTINGS - API</h1>
         <div class="inset" id="SetIns" style="margin-bottom:0px;">
             <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
@@ -71,7 +71,7 @@
                     </td>
                 </tr>
             </table>
-        </div>
+    </div>
  <hr />
     
     {% if errorSecMsg is defined %}
@@ -114,7 +114,7 @@
             </p>
             </div>  
             <!--<div class="alert alert-danger" role="alert" id="success">Your api successfully added!</div>-->
-        </form>
+        </div>
     </div>
         <div class="inset" id="SetIns">
             {% if apiList is defined %}
