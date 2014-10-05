@@ -59,11 +59,21 @@ class validation {
         try {
             $permissions = new permissions($id);
             $permissions->unsetPermissions(array('webReg_Valid', 'TS_Valid', 'XMPP_Valid'));
-            // TS ban method
-            // XMPP ban method
+            $this->ts3Ban($id);
+            $this->xmppBan($id);
         } catch (Exception $ex) {
             $this->log->put("ban", "err " . $ex->getMessage());
         }
+    }
+    
+    private function ts3Ban($id){
+        $ts3 = new ts3;
+        $wow = $ts3->validate($id);
+        if(!$wow) $this->log->put("ts3", "err " . $wow);
+    }
+    
+    private function xmppBan($id){
+        // XMPP ban method
     }
 
     private function showBans($id){
@@ -75,11 +85,11 @@ class validation {
             }
             if($permissions->hasPermission("TS_Valid") == false){
                 $ban_list .= "TS3 ";
-                // TS ban method
+                $this->ts3Ban($id);
             }
             if($permissions->hasPermission("XMPP_Valid") == false){
                 $ban_list .= "Jabber ";
-                // XMPP ban method
+                $this->xmppBan($id);
             }
             if($ban_list != "") return "ok update ban in " . $ban_list;
         } catch (Exception $ex) {

@@ -52,7 +52,7 @@ for($t=0; $t<$thread_count; $t++){
 				$log->merge($drake, $userList[$i][characterID]);
 				$log->put("name", $userList[$i][characterName], $userList[$i][characterID]);
 				$emt = round(microtime(1)*1000) - $smt;
-				$log->put("spent", $emt . " microseconds", $userList[$i][characterID]);
+				$log->put("spent", $emt . " milliseconds", $userList[$i][characterID]);
 			}
 		}
 		$emta = round(microtime(1)) - $smta;
