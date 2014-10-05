@@ -142,7 +142,6 @@ switch ($page) {
             $toTemplate['saveForm']['uniqueID'] = $_POST[uniqueID];
             try {
                 switch (($_POST[action])) {
-                    case 'UID':
                     case 'TS':
                         $_SESSION[userObject]->userManagement->registerInTeamspeak($_POST[UniqueID]);
                         break;
@@ -150,9 +149,7 @@ switch ($page) {
             } catch (Exception $ex) {
                 switch ($ex->getCode()) {
                     case 11:
-                        if ($_POST[action] == 'UID') {
-                            $toTemplate["errorMsgTS"] = "Please enter your uniqueID!";
-                        } elseif($_POST[action] == 'TS') {
+                        if($_POST[action] == 'TS') {
                             $toTemplate["errorMsgTS"] = "Please hit /'Open Teamspeak/' button firstly!";
                         }
                         break;

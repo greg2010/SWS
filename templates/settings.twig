@@ -153,7 +153,7 @@
 <!--Форма регистрации в ТС-->
 {% if hasReg == 0 %}
 <div id="formSettings"> 
-    <h1>TEAM SPEAK SETTINGS</h1>
+    <h1>PROFILE SETTINGS - TEAMSPEAK</h1>
         <div class="alert alert-danger" role="alert" {{isErrorTSHidden}}>
         {{errorMsgTS}}
         </div> 
@@ -245,6 +245,7 @@
                 <label for="email">E-MAIL</label>
                 <input type="text" name="email" value="{{saveForm.email}}" id="email2">
             </p>
+          <div class="alert alert-danger" role="alert-email" hidden></div>
         <!--<div class="amPmCheckbox">
         <input type="checkbox" name="allow" class="checkboxLabel main_street_input" id="ch2" value="1" />
         <label for="ch2">I allow users to send e-mail to me</label>
@@ -269,6 +270,7 @@
                 <label for="password">REPEAT NEW PASSWORD</label>
                 <input type="password" name="passwordRepeat" id="password2">
             </p>
+            <div class="alert alert-danger" role="alert-password-repeat" hidden></div>
             <!--<div class="alert alert-danger" role="alert" id="password2">Sorry, but the password doesn't match!</div>-->
             <p>
             <hr />

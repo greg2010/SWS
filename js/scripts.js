@@ -54,7 +54,7 @@ function parseApiResult(json, toPut, alertPlace, prefix) {
 
 $(document).ready(function() {
 
-    $('#email').blur(function() {
+    $('input[name="email"]').blur(function() {
         if($(this).val() !== '') {
             var pattern = /^([a-z0-9_\.-])+@[a-z0-9-]+\.([a-z]{2,4}\.)?[a-z]{2,4}$/i;
             if(pattern.test($(this).val())){
@@ -75,7 +75,7 @@ $(document).ready(function() {
     var validBorder = "1px solid #458B00";
     var invalidColor = "#FF4500";
     var invalidBorder = "1px solid #FF4500";
-        $('#password').on("input", (function() {
+        $('input[name="password"]').on("input", (function() {
         if($(this).val() !== '') {
 
             var pwd = $(this).val();
@@ -124,7 +124,7 @@ $(document).ready(function() {
             }
         }
     }));
-    $('#password-repeat').blur(function() {
+    $('input[name="passwordRepeat"]').blur(function() {
         if (passValid === 1) {
             if($(this).val() !== $('#password').val()) {
                 $(this).css({'border' : invalidBorder});  
