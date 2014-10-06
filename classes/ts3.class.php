@@ -113,6 +113,42 @@ return $tsAdmin;
     return $kickusers;
     }
 
+
+
+    public function syncDbTs(){
+    $tsAdmin=$this->tsAdmin;
+    $this->db=db::getInstance();
+    $info=$tsAdmin->clientDbList('0');
+	    foreach ($info['data'] as $key=>$val){
+	    	    $uniID = $info['data'][$key]['client_unique_identifier'];
+	        
+	            $query = "SELECT `id` FROM `teamspeak` WHERE `uniqueID`= '$uniID'";
+		    $result = $this->db->query($query);
+		    $id_raw=$this->db->fetchRow($result);
+		    $id=$id_raw[0];
+		    if($id==NULL){
+		    
+		    $chOnline=$tsAdmin->clientGetIds($uniID);
+		    $cl_id=$info['data'][$key]['cldbid'];
+		    
+		    	if($chOnline['success']=false){
+			$delete=$tsAdmin->clientDbDelete("$cl_id");
+			}elseif($info['success']=true){
+					    $cid=$chOnline['data'][0]['clid'];
+					    $kick=$tsAdmin->clientKick($cid,'server','Need register now');
+					    $delete=$tsAdmin->clientDbDelete("$cl_id");
+					    }
+				}else{
+				
+#				$delete="allOk";
+				
+				}
+	        
+	        }
+#    return $delete;
+    }
+
+
     public function validate($id){
     
     $ar1a=$this->grAdditDbTs($id);
@@ -264,7 +300,7 @@ return $tsAdmin;
     public function deleteTsUser($id){
      $tsAdmin=$this->tsAdmin;
     $Uid=$this->getTsUid($id);
-    file_put_contents ("deleteTS.txt", "detele Unique ID TS for $id \n", FILE_APPEND);
+#    file_put_contents ("deleteTS.txt", "detele Unique ID TS for $id \n", FILE_APPEND);
     $info=$tsAdmin->clientGetIds($Uid);
     $info2=$tsAdmin->clientDbFind("$Uid",'-uid');
     $cl_id=$info2['data'][0]['cldbid'];
