@@ -26,6 +26,7 @@ switch ($page) {
                             $_SESSION[userObject]->userManagement->changeMainAPI($_POST[keyID], $_POST[vCode], $_POST[login]);
                             $toTemplate['saveForm']['currKeyID'] = $_POST[keyID];
                             $toTemplate['saveForm']['currVCode'] = $_POST[vCode];
+                            $toTemplate['success'] = "All changes are applied.";
                         } catch (Exception $ex) {
                             switch ($ex->getCode()) {
                                 case 11:
@@ -53,6 +54,7 @@ switch ($page) {
                         try {
                         $_SESSION[userObject]->userManagement->ban();
                         $_SESSION[userObject]->updateUserInfo();
+                        $toTemplate['success'] = "All changes are applied.";
                         } catch (Exception $ex) {
                              $toTemplate["errorMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
                         }
@@ -64,6 +66,7 @@ switch ($page) {
                             $toTemplate['saveForm']['currVCode'] = $_POST[vCode];
                             $_SESSION[userObject]->updateUserInfo();
                             $API = $_SESSION[userObject]->getApiPilotInfo();
+                            $toTemplate['secSuccess'] = "All changes are applied.";
                         } catch (Exception $ex) {
                             switch ($ex->getCode()) {
                                 case 11:
@@ -91,6 +94,7 @@ switch ($page) {
                         $_SESSION[userObject]->userManagement->deleteSecAPI($_POST[characterID]);
                         $_SESSION[userObject]->updateUserInfo();
                         $API = $_SESSION[userObject]->getApiPilotInfo();
+                        $toTemplate['secSuccess'] = "All changes are applied.";
                         break;
                 }
         }
@@ -118,6 +122,12 @@ switch ($page) {
         $toTemplate['curForm'] = 'teamspeak';
         $toTemplate['active']['teamspeak'] = $pageActive;
         $toTemplate['hasReg'] = $_SESSION[userObject]->hasTSRegistration();
+        
+        if ($_SESSION[regSuccess] == 1) {
+            $toTemplate['regSuccess'] = 1;
+            unset($_SESSION[regSuccess]);
+        }
+        
         if ($toTemplate[hasReg]) {
             $TSInfo = $_SESSION[userObject]->getTSInfo();
             $toTemplate['hasTSReg'] = $TSInfo;
@@ -185,7 +195,9 @@ switch ($page) {
                         }
                         $toTemplate['saveForm']['email'] = $email;
                         $_SESSION[userObject]->userManagement->setNewEmail($email);
+                        $emailSuccess = 1;
                     } catch (Exception $ex) {
+                        $emailSuccess = 0;
                         switch ($ex->getCode()) {
                             case 11:
                                 $toTemplate["errorMsgEmail"] = "There is a problem: " . $ex->getMessage();
@@ -201,7 +213,9 @@ switch ($page) {
                         $password = $_POST[password];
                         $passwordRepeat = $_POST[passwordRepeat];
                         $_SESSION[userObject]->userManagement->setNewPassword($password, $passwordRepeat);
+                        $passwordSuccess = 1;
                     } catch (Exception $ex) {
+                        $passwordSuccess = 0;
                         switch ($ex->getCode()) {
                             case 11:
                                 $toTemplate["errorMsgPassword"] = "There is a problem: " . $ex->getMessage();
@@ -211,6 +225,9 @@ switch ($page) {
                                 break;
                         }
                     }
+                }
+                if (isset($emailSuccess) && $emailSuccess == 1 || isset($passwordSuccess) && $passwordSuccess == 1) {
+                    $toTemplate['success'] = "All changes are applied.";
                 }
             } catch (Exception $ex) {
                 switch ($ex->getCode()) {

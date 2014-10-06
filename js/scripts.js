@@ -126,7 +126,7 @@ $(document).ready(function() {
     }));
     $('input[name="passwordRepeat"]').blur(function() {
         if (passValid === 1) {
-            if($(this).val() !== $('#password').val()) {
+            if($(this).val() !== $('input[name="password"]').val()) {
                 $(this).css({'border' : invalidBorder});  
                 $('div[role="alert-password-repeat"]').removeAttr('hidden').text('Passwords don\'t match!');
                 window.repPassReady = 0;
