@@ -54,6 +54,8 @@ switch ($page) {
                         try {
                         $_SESSION[userObject]->userManagement->ban();
                         $_SESSION[userObject]->updateUserInfo();
+                        $toTemplate['saveForm']['currKeyID'] = '';
+                        $toTemplate['saveForm']['currVCode'] ='';
                         $toTemplate['success'] = "All changes are applied.";
                         } catch (Exception $ex) {
                              $toTemplate["errorMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
@@ -136,6 +138,7 @@ switch ($page) {
                     if ($_POST[action] == 'delete') {
                         $_SESSION[userObject]->userManagement->deleteFromTeamspeak();
                     }
+                    header("Location: /settings.php?a=teamspeak");
                 } catch (Exception $ex) {
                     $toTemplate["errorMsgTS"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
                 }
@@ -156,6 +159,7 @@ switch ($page) {
                         $_SESSION[userObject]->userManagement->registerInTeamspeak($_POST[UniqueID]);
                         break;
                 }
+                    header("Location: /settings.php?a=teamspeak");
             } catch (Exception $ex) {
                 switch ($ex->getCode()) {
                     case 11:
