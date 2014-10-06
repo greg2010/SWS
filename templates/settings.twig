@@ -219,9 +219,9 @@
 </div>
 <!--Форма регистрации в ТС -->
 {% elseif hasReg == 1 %}
-<div id="formSettings" action="settings.php?a=teamspeak" method="post">
+<div id="formSettings">
     <h2>You are already registered in Teamspeak as:<span style="margin: 20px;">{{hasTSReg.nickName}}</span></h2>
-    <form id="formSettings2">
+    <form id="formSettings2" action="settings.php?a=teamspeak" method="post">
     <br>
         <p>
             <label for="UniqueID">UNIQUE ID</label>
