@@ -39,7 +39,7 @@ class logging {
     	try{
     		$db = db::getInstance();
     		$date = date("Y-m-d H:i:s");
-    		$text = addslashes(yaml_emit($this->log));
+    		$text = ($this->log[ok]) ? ("ok: " . $this->log[ok]) : addslashes(yaml_emit($this->log));
     		$query = "INSERT INTO `$table` (`date`, `text`) VALUES ('$date','$text')";
 			$result = $db->query($query);
 		} catch (Exception $ex){

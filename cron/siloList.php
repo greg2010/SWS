@@ -29,7 +29,7 @@ if($pid == -2){
         	$users_in_thread = $users_count;
         }
 
-		$tolog = "ok " . $users_count . " API keys run " . $thread_count . " threads " . $users_in_thread . " keys each";
+		$tolog = $users_count . " api keys, " . $thread_count . " threads, " . $users_in_thread . " keys each";
 	} catch (Exception $ex){
     	$tolog = "err " . $ex->getMessage();
 	}
@@ -57,8 +57,10 @@ for($t=0; $t<$thread_count; $t++){
 		if($log->get() != NULL){
 			$log->put("select keys", $tolog);
 			$log->put("total spent", $emta . " seconds");
-			$log->record("log.siloList");
+		} else{
+			$log->put("ok", $emta . " seconds, " . $tolog);
 		}
+		$log->record("log.siloList");
 		posix_kill(posix_getpid(), SIGTERM);
 	}
 }

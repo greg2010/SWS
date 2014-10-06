@@ -54,12 +54,12 @@ class notif_send {
 
     private function getNotifications(){
         $mailtext = NULL;
-        if($this->permission == 1) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications`
-         WHERE `notificationID` > '$this->lastNotifID' AND ((`typeID` <> 76 AND `corporationID` = '$this->corporationID')" . $this->posop . ")";
-        elseif($this->permission == 2) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications`
-         WHERE `notificationID` > '$this->lastNotifID' AND ((`typeID` <> 76 AND `allianceID` = '$this->allianceID')" . $this->posop . ")";
-        elseif($this->permission == 3) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications`
-         WHERE `notificationID` > '$this->lastNotifID' AND (`typeID` <> 76" . $this->posop . ")";
+        if($this->permission == 1) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` "
+         . "WHERE `notificationID` > '$this->lastNotifID' AND ((`typeID` <> 76 AND `corporationID` = '$this->corporationID')" . $this->posop . ")";
+        elseif($this->permission == 2) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` "
+         . "WHERE `notificationID` > '$this->lastNotifID' AND ((`typeID` <> 76 AND `allianceID` = '$this->allianceID')" . $this->posop . ")";
+        elseif($this->permission == 3) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` "
+         . "WHERE `notificationID` > '$this->lastNotifID' AND (`typeID` <> 76" . $this->posop . ")";
         $result = $this->db->query($query);
         $notifArr = $this->db->fetchArray($result);
         for ($j = 0; $j < $this->db->countRows($result); $j++){
@@ -87,6 +87,7 @@ class notif_send {
     }
 
     private function GenerateMailText($type, $sentDate, $str){
+        // https://neweden-dev.com/Char/Notifications
         $mailtext = "\n" . $sentDate . " ";
         $strarr = yaml_parse($str);
         if($type == 76){
@@ -97,6 +98,9 @@ class notif_send {
             }
         } elseif($type == 75 || $type == 80 || $type == 86 || $type == 87 || $type == 88){
             $locname = ($type == 75) ? $strarr[moonName] : $strarr[solarSystemName];
+            if($type == 86) $strarr[typeName] = "Territorial Claim Unit";
+            if($type == 87) $strarr[typeName] = "Sovereignty Blockade Unit";
+            if($type == 88) $strarr[typeName] = "Infrastructure Hub";
             $mailtext .= $strarr[typeName] . " on " . $locname . " is under attack\n";
             $mailtext .= "Owner: " . $strarr[OwnerCorpName] . " [" . $strarr[OwnerCorpTicker] . "] (" . $strarr[OwnerAllyName] . " [" . $strarr[OwnerAllyTicker] . "])" . "\n";
             $mailtext .=  "Aggressor: " . $strarr[aggressorName] . " from " . $strarr[corpName] . " [" . $strarr[corpTicker] . "] (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])" . "\n";
