@@ -116,6 +116,9 @@ return $tsAdmin;
     public function validate($id){
     
     $ar1a=$this->grAdditDbTs($id);
+    if ($ar1a==NULL){
+    $ar1a=array();
+    }
     $ar1m=array($this->grMaDbTs($id));
     $ar1=array_merge($ar1a,$ar1m);
     $ar2t=$this->perm_user($this->getTsUid($id));
@@ -130,7 +133,8 @@ return $tsAdmin;
     }
     $validDb_Ts=array_diff($ar1, $ar2);
     $validTs_Db=array_diff($ar2, $ar1);
-
+#var_dump($ar1);
+#var_dump($ar2);
     if (!in_array('not_validate', $ar1)){
 
     if (count($validDb_Ts)!='0'){
@@ -198,6 +202,7 @@ return $tsAdmin;
     $permissions = new permissions($id);
     $this->db=db::getInstance();
     $lable_ar=$permissions->getTSPermissions();
+#    var_dump($lable_ar);
     if(in_array('TS_Valid', $lable_ar)){
     foreach ($lable_ar as $lable_str){
     $i++;
@@ -209,7 +214,7 @@ return $tsAdmin;
 		$row[$i]=$r_tmp[0];
 		}
 	    }
-
+#var_dump($r_tmp);
     return $row=array_values($row);
 	}else{
     
@@ -259,7 +264,7 @@ return $tsAdmin;
     public function deleteTsUser($id){
      $tsAdmin=$this->tsAdmin;
     $Uid=$this->getTsUid($id);
-#    file_put_contents ("deleteTS.txt", "detele Unique ID TS for $id \n", FILE_APPEND);
+    file_put_contents ("deleteTS.txt", "detele Unique ID TS for $id \n", FILE_APPEND);
     $info=$tsAdmin->clientGetIds($Uid);
     $info2=$tsAdmin->clientDbFind("$Uid",'-uid');
     $cl_id=$info2['data'][0]['cldbid'];
