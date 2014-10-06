@@ -218,9 +218,9 @@ class userManagement implements IuserManagement {
         if (!$id) {
             $id = $this->id;
         }
-        $this->db->deleteFromTeamspeak($id);
         $ts3 = new ts3();
         $ts3->deleteTsUser($id);
+        $this->db->deleteFromTeamspeak($id);
     }
     
     public function getCorporationTicker($id){
