@@ -259,9 +259,14 @@ return $tsAdmin;
     public function deleteTsUser($id){
      $tsAdmin=$this->tsAdmin;
     $Uid=$this->getTsUid($id);
+#    file_put_contents ("deleteTS.txt", "detele Unique ID TS for $id \n", FILE_APPEND);
     $info=$tsAdmin->clientGetIds($Uid);
     $info2=$tsAdmin->clientDbFind("$Uid",'-uid');
     $cl_id=$info2['data'][0]['cldbid'];
+    if ($cl_id==NULL){
+    return "user not found in TS";
+    exit;
+    }
 	if($info['success']=false){
 	    $delete=$tsAdmin->clientDbDelete("$cl_id");
 	    }elseif($info['success']=true){
