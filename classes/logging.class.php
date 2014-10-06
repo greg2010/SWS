@@ -35,11 +35,11 @@ class logging {
         if (isset($key)) unset($this->log[$key]); else unset($this->log);
     }
 
-    public function record($table){
+    public function record($table, $ok = false){
     	try{
     		$db = db::getInstance();
     		$date = date("Y-m-d H:i:s");
-    		$text = addslashes(yaml_emit($this->log));
+    		$text = ($ok) ? ("ok: " . $this->log[ok]) : addslashes(yaml_emit($this->log));
     		$query = "INSERT INTO `$table` (`date`, `text`) VALUES ('$date','$text')";
 			$result = $db->query($query);
 		} catch (Exception $ex){

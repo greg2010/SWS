@@ -33,7 +33,7 @@ if($pid == -2){
         $corp_count = count($apiCorpList);
         $corp_in_thread = round($corp_count / $thread_count);
 
-		$tolog = "ok " . $users_count . " users and " . $corp_count . " corps run " . $thread_count . " threads " . ($users_in_thread + $corp_in_thread) . " api keys each";
+		$tolog = $users_count . " users, " . $corp_count . " corps, " . $thread_count . " threads, " . ($users_in_thread + $corp_in_thread) . " keys each";
 	} catch (Exception $ex){
     	$tolog = "err " . $ex->getMessage();
 	}
@@ -78,6 +78,9 @@ for($t=0; $t<$thread_count; $t++){
 			$log->put("select keys", $tolog);
 			$log->put("total spent", $emta . " seconds");
 			$log->record("log.validator");
+		} else{
+			$log->put("ok", $emta . " seconds, " . $tolog);
+			$log->record("log.validator", true);
 		}
 		posix_kill(posix_getpid(), SIGTERM);
 	}
