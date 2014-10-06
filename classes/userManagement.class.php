@@ -28,9 +28,12 @@ class userManagement implements IuserManagement {
     }
 
     private function banQuery($id) {
-        $query = "UPDATE `apiPilotList` SET `keyStatus` = '0' WHERE `id` = '$id'";
-        $this->db->query($query);
-        
+        try {
+            $query = "UPDATE `apiPilotList` SET `keyStatus` = '0' WHERE `id` = '$id'";
+            $this->db->query($query);
+        } catch (Exception $ex) {
+            throw new Exception("MySQL error: " . $ex->getMessage(), 30);
+        }
         $permissions = new permissions($id);
         $permissions->unsetPermissions(array('webReg_Valid', 'TS_Valid', 'XMPP_Valid'));
     }
@@ -142,8 +145,12 @@ class userManagement implements IuserManagement {
                 throw new Exception("Can't ban. Not enough permissions.", 12);
             }
             $this->banQuery($id);
-            $query = "UPDATE `users` SET `banID` = '-1', `banMessage` = '$message' WHERE `id` = '$id'";
-            $this->db->query($query);
+            try {
+                $query = "UPDATE `users` SET `banID` = '-1', `banMessage` = '$message' WHERE `id` = '$id'";
+                $this->db->query($query);
+            } catch (Exception $ex) {
+                throw new Exception("MySQL error: " . $ex->getMessage(), 30);
+            }
             $this->deleteFromTeamspeak($id);
         } else {
             $this->banQuery($this->id);
@@ -158,8 +165,12 @@ class userManagement implements IuserManagement {
         $verify = new registerNewUser();
         $verify->testEmail($email);
         
-        $query = "SELECT `email` FROM `users` WHERE `id` = '$this->id'";
-        $oldEmail = $this->db->getMySQLResult($this->db->query($query));
+        try {
+            $query = "SELECT `email` FROM `users` WHERE `id` = '$this->id'";
+            $oldEmail = $this->db->getMySQLResult($this->db->query($query));
+        } catch (Exception $ex) {
+            throw new Exception("MySQL error: " . $ex->getMessage(), 30);
+        }
         if ($email == $oldEmail) {
             throw new Exception("Email hasn't changed. Skipping...", -1);
         }
@@ -183,15 +194,11 @@ class userManagement implements IuserManagement {
             $query = "SELECT `salt` FROM `users` WHERE `id` = '$this->id'";
             $salt = $this->db->getMySQLResult($this->db->query($query));
             $passwordHash = hash(config::password_hash_type, $password . $salt);
-        } catch (Exception $ex) {
-            throw new Exception("MySQL error: " . $ex->getMessage(), 30);
-        }
-        $query = "SELECT `passwordHash` FROM `users` WHERE `id` = '$this->id'";
-        $oldPasswordHash = $this->db->getMySQLResult($this->db->query($query));
-        if ($oldPasswordHash == $passwordHash) {
-            throw new Exception("New password is the same as old password!", 11);
-        }
-        try {
+            $query = "SELECT `passwordHash` FROM `users` WHERE `id` = '$this->id'";
+            $oldPasswordHash = $this->db->getMySQLResult($this->db->query($query));
+            if ($oldPasswordHash == $passwordHash) {
+                throw new Exception("New password is the same as old password!", 11);
+            }
             $query = "UPDATE `users` SET `passwordHash` = '$passwordHash' WHERE `id` = '$this->id'";
             $this->db->query($query);
         } catch (Exception $ex) {
