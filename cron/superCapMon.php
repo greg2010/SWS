@@ -57,11 +57,10 @@ for($t=0; $t<$thread_count; $t++){
 		if($log->get() != NULL){
 			$log->put("select keys", $tolog);
 			$log->put("total spent", $emta . " seconds");
-			$log->record("log.superCapMon");
 		} else{
 			$log->put("ok", $emta . " seconds, " . $tolog);
-			$log->record("log.superCapMon", true);
 		}
+		$log->record("log.superCapMon");
 		posix_kill(posix_getpid(), SIGTERM);
 	}
 }

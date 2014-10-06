@@ -58,11 +58,10 @@ for($t=0; $t<$thread_count; $t++){
 		if($log->get() != NULL){
 			$log->put("select keys", $tolog);
 			$log->put("total spent", $emta . " seconds");
-			$log->record("log.notifications");
 		} else{
 			$log->put("ok", $emta . " seconds, " . $tolog);
-			$log->record("log.notifications", true);
 		}
+		$log->record("log.notifications");
 		posix_kill(posix_getpid(), SIGTERM);
 	}
 }

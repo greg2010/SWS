@@ -57,11 +57,10 @@ for($t=0; $t<$thread_count; $t++){
 		if($log->get() != NULL){
 			$log->put("select keys", $tolog);
 			$log->put("total spent", $emta . " seconds");
-			$log->record("log.siloList");
 		} else{
 			$log->put("ok", $emta . " seconds, " . $tolog);
-			$log->record("log.siloList", true);
 		}
+		$log->record("log.siloList");
 		posix_kill(posix_getpid(), SIGTERM);
 	}
 }
