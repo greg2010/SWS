@@ -548,6 +548,6 @@ class db {
     
     public function DeleteFromTeamspeak($id) {
         $this->openConnection();
-        $this->predefinedAddUniqueID($id);
+        $this->predefinedRemoveUniqueID($id);
     }
 }

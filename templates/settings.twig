@@ -23,8 +23,17 @@
         <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
         {{errorMsg}}
         </div> 
+    {% if success is defined %}
+        {% set isSuccessHidden = "" %}
+    {% else %}
+        {% set isSuccessHidden = "hidden" %}
+    {% endif %}
+    <div class="alert alert-danger" role="alert" id="success2" {{isSuccessHidden}}>
+        {{success}}
+    </div>
         <div class="alert alert-danger" role="alert-api-main" hidden></div>
-            <h2>CURRENT API</h2
+        <h2>CURRENT API</h2>
+        <form id="formSettings2" action="settings.php?a=api" method="post">
         <br>
         <div class="container" style="margin: 20px;">
             <span>If you want change your API put new key ID and vCode in the fields.</span><br>
@@ -54,6 +63,7 @@
             <input type="submit" name="go" id="submit" value="SUBMIT" disabled />
         </p>
         </div>
+        </form>
         <hr id="danger"/>
     <table>
         <tr>
@@ -83,6 +93,14 @@
         <div class="alert alert-danger" role="alert" {{isErrorSecHidden}}>
         {{errorSecMsg}}
         </div> 
+    {% if secSuccess is defined %}
+        {% set isSecSuccessHidden = "" %}
+    {% else %}
+        {% set isSecSuccessHidden = "hidden" %}
+    {% endif %}
+    <div class="alert alert-danger" role="alert" id="success2" {{isSecSuccessHidden}}>
+        {{secSuccess}}
+    </div>
         <div class="alert alert-danger" role="alert-api-sec" hidden></div>
         <h2>ADD SECONDARY API</h2>
         <br>
@@ -156,18 +174,26 @@
     <h1>PROFILE SETTINGS - TEAMSPEAK</h1>
         <div class="alert alert-danger" role="alert" {{isErrorTSHidden}}>
         {{errorMsgTS}}
-        </div> 
+        </div>
+    {% if regSuccess is defined %}
+        {% set isSuccessHidden = "" %}
+    {% else %}
+        {% set isSuccessHidden = "hidden" %}
+    {% endif %}
+    <div class="alert alert-danger" role="alert" id="success2" {{isSuccessHidden}}>
+        Registration is successful. Congratulations! There is only one step left to become full stainwagon member.
+    </div>
         <!--<div class="alert alert-danger" role="alert" id="success2">SUCCESS</div>-->
     <div class="inset" id="SetIns">
         <!--<span>Вот сюда надо будет вставить текст на тему того, что есть 2  варианта регистрации в ТС: с использованием Unique ID (для продвинутых пользователей) и пошагово (для неопытных)</span>-->
         <h2>REGISTRATION IN TEAMSPEAK</h2>
             <br>
-            <span id="danger">Don't click "REGISTER" has not yet run TeamSpeak! Do not leave the page until you have completed all the following steps!</span>
+            <span id="danger">Don't click "REGISTER" if you're NOT on TeamSpeak!</span>
             <hr id="danger" />
         <table>
             <tr>
                 <td>
-                    <span>Open TeamSpeak using the button "Open TeamSpeak". Then add the sequence of actions...bla-bla-bla-bla-bla-bla</span>
+                    <span>Open TeamSpeak using the button "Open TeamSpeak".<br>Once you're connected to the TeamSpeak server, press "register" button.<br>If "Open teamspeak" button doesn't work for you, please connect to the server manually.<br>Server address: <b>ts.stainwagon.com</b><br>Nickname: <b>{{TSNickname}}</b></span>
                 </td>
                 <td>
                     <p class="p-container">
@@ -177,7 +203,6 @@
             </tr>
             <tr>
                 <td>
-                    <span>After log in TS push this register button</span>  
                 </td>
                 <td>
                     <form id="formSettings2" action="settings.php?a=teamspeak" method="post">            
@@ -194,7 +219,7 @@
 </div>
 <!--Форма регистрации в ТС -->
 {% elseif hasReg == 1 %}
-<div id="formSettings">
+<div id="formSettings" action="settings.php?a=teamspeak" method="post">
     <h2>You are already registered in Teamspeak as:<span style="margin: 20px;">{{hasTSReg.nickName}}</span></h2>
     <form id="formSettings2">
     <br>
@@ -237,6 +262,14 @@
         <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
         {{errorMsg}}
         </div>
+        {% if success is defined %}
+        {% set isSuccessHidden = "" %}
+    {% else %}
+        {% set isSuccessHidden = "hidden" %}
+    {% endif %}
+    <div class="alert alert-danger" role="alert" id="success2" {{isSuccessHidden}}>
+        {{success}}
+    </div>
             <h2>ADD / CHANGE E-MAIL</h2>
             <div class="alert alert-danger" role="alert" id="email2" {{isErrorEmailHidden}}>
             {{errorMsgEmail}}
@@ -274,7 +307,7 @@
             <!--<div class="alert alert-danger" role="alert" id="password2">Sorry, but the password doesn't match!</div>-->
             <p>
             <hr />
-                <label for="password">CURRENT PASSWORD FOR SAVE CHANGES</label>
+                <label for="password">CURRENT PASSWORD</label>
                 <input type="password" name="currentPassword" id="password2">
             </p>
         <!--<div class="alert alert-danger" role="alert" id="password2">Sorry, but login or password incorrect!</div>-->

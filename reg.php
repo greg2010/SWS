@@ -31,7 +31,9 @@ if ($_POST[form] == 'sent') {
                 $_SESSION[logObject]->setRegistrationInfo('exceptionText', NULL);
                 $_SESSION[logObject]->pushToDb('reg');
                 $_SESSION[userObject]->setCookieForUser();
-                header("Location: /index.php");
+                
+                header("Location: /settings.php?a=teamspeak");
+                $_SESSION['regSuccess'] = 1;
             }
         }
     } catch (Exception $ex) {
