@@ -230,14 +230,50 @@ class userManagement implements IuserManagement {
         $this->db->deleteFromTeamspeak($id);
     }
     
-    public function getCorporationTicker($id){
+    public function getCorporationInfo($id){
         $query = "SELECT `ticker` FROM `corporationList` WHERE `id` = '$id'";
+        $result = $this->db->query($query);
+        return $this->db->getMysqlResult($result);
+    }
+
+    public function getCorporationName($id){
+        $query = "SELECT `name` FROM `corporationList` WHERE `id` = '$id'";
+        $result = $this->db->query($query);
+        return $this->db->getMysqlResult($result);
+    }
+
+    public function getCorporationID($name){
+        $query = "SELECT `id` FROM `corporationList` WHERE `name` = '$name'";
         $result = $this->db->query($query);
         return $this->db->getMysqlResult($result);
     }
     
     public function getAllianceTicker($id){
         $query = "SELECT `ticker` FROM `allianceList` WHERE `id` = '$id'";
+        $result = $this->db->query($query);
+        return $this->db->getMysqlResult($result);
+    }
+
+    public function getAllianceName($id){
+        $query = "SELECT `name` FROM `allianceList` WHERE `id` = '$id'";
+        $result = $this->db->query($query);
+        return $this->db->getMysqlResult($result);
+    }
+
+    public function getAllianceID($name){
+        $query = "SELECT `id` FROM `allianceList` WHERE `name` = '$name'";
+        $result = $this->db->query($query);
+        return $this->db->getMysqlResult($result);
+    }
+
+    public function getCharacterName($id){
+        $query = "SELECT `characterName` FROM `apiPilotList` WHERE `characterID` = '$id'";
+        $result = $this->db->query($query);
+        return $this->db->getMysqlResult($result);
+    }
+
+    public function getCharacterID($name){
+        $query = "SELECT `apiPilotList` FROM `apiPilotList` WHERE `characterName` = '$name'";
         $result = $this->db->query($query);
         return $this->db->getMysqlResult($result);
     }

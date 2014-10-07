@@ -1,20 +1,22 @@
 <?php
 
-use Pheal\Pheal;
-use Pheal\Core\Config as PhealConfig;
+//use Pheal\Pheal;
+//use Pheal\Core\Config as PhealConfig;
 
 class notif_text {
 
     public $log;
     private $db;
+    private $apiUserManagement;
     private $txtarr = array();
 
 	public function __construct($text, $cid, $aid, $isf){
         $this->txtarr = yaml_parse($text);
         $this->db = db::getInstance();
         $this->log = new logging();
+        $this->apiUserManagement = new APIUserManagement();
         //PhealConfig::getInstance()->cache = new \Pheal\Cache\PdoStorage("mysql:host=" . config::hostname . ";dbname=" . config::database, config::username, config::password, "phealng-cache");
-        PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage(dirname(__FILE__) . '/../phealcache/');
+        //PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage(dirname(__FILE__) . '/../phealcache/');
 
         $this->Owner($cid, $aid);
         if($this->txtarr[aggressorID]) $this->aggressor();
@@ -51,37 +53,28 @@ class notif_text {
     }
 
     private function aggressor(){
-        $pheal = new Pheal(NULL, NULL, "eve");
         try{
-            $response = $pheal->CharacterName(array("IDs" => $this->txtarr[aggressorID]));
-            $this->txtarr[aggressorName] = $response->characters[0]->name;
+            $this->txtarr[aggressorName] = $this->apiUserManagement->getCharacterName($this->txtarr[aggressorID]);
         } catch (\Pheal\Exceptions\PhealException $e){
             $this->log->put("aggressor", "err " . $e->getMessage());
         }
     }
 
     private function CorpID(){
-        $pheal = new Pheal(NULL, NULL, "corp");
         try{
-            $response = ($this->txtarr[corpID]) ? ($pheal->CorporationSheet(array("corporationID" => $this->txtarr[corpID]))) : ($pheal->CorporationSheet(array("corporationID" => $this->txtarr[aggressorCorpID])));
-            $this->txtarr[corpName] = $response->corporationName;
-            $this->txtarr[corpTicker] = $response->ticker;
+            $id = ($this->txtarr[corpID]) ? ($this->txtarr[corpID]) : ($this->txtarr[aggressorCorpID]);
+            $this->txtarr[corpName] = $this->apiUserManagement->getCorporationName($id);
+            $this->txtarr[corpTicker] = $this->apiUserManagement->getCorporationTicker($id);
         } catch (\Pheal\Exceptions\PhealException $e){
              $this->log->put("CorpID", "err " . $e->getMessage());
         }
     }
 
     private function AllianceID(){
-        $pheal = new Pheal(NULL, NULL, "eve");
         try{
-            $response = $pheal->AllianceList();
-            foreach($response->alliances as $row){
-                if($row->allianceID == $this->txtarr[allianceID] || $row->allianceID == $this->txtarr[aggressorAllianceID]){
-                    $this->txtarr[allyName] = $row->name;
-                    $this->txtarr[allyTicker] = $row->shortName;
-                    break;
-                }
-            }
+            $id = ($this->txtarr[allianceID]) ? ($this->txtarr[allianceID]) : ($this->txtarr[aggressorAllianceID]);
+            $this->txtarr[allyName] = $this->apiUserManagement->getAllianceName($id);
+            $this->txtarr[allyTicker] = $this->apiUserManagement->getAllianceTicker($id);
         } catch (\Pheal\Exceptions\PhealException $e){
             $this->log->put("AllianceID", "err " . $e->getMessage());
         }

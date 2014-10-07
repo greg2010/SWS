@@ -61,8 +61,40 @@ class APIUserManagement{
         }
         return $charArray;
     }
+
+    public function getCharacterName($id){
+        $Name = NULL;
+        try{
+            $Name = $this->userManagement->getCharacterName($id);
+        } catch(Exception $ex){
+            throw new \Pheal\Exceptions\PhealException("getCharacterName " . $ex->getMessage(), ($ex->getCode())*-1000);
+        }
+        if($Name != NULL){
+            return $Name;
+        } else{
+            $pheal = new Pheal(NULL, NULL, "eve");
+            $response = $pheal->CharacterName(array("IDs" => $id));
+            return $response->characters[0]->name;
+        }
+    }
+
+    public function getCharacterID($name){
+        $ID = NULL;
+        try{
+            $ID = $this->userManagement->getCharacterID($name);
+        } catch(Exception $ex){
+            throw new \Pheal\Exceptions\PhealException("getCharacterID " . $ex->getMessage(), ($ex->getCode())*-1000);
+        }
+        if($ID != NULL){
+            return $ID;
+        } else{
+            $pheal = new Pheal(NULL, NULL, "eve");
+            $response = $pheal->CharacterID(array("names" => $name));
+            return $response->characters[0]->characterID;
+        }
+    }
     
-    private function getCorporationTicker($id){
+    public function getCorporationTicker($id){
         $Ticker = NULL;
         try{
             $Ticker = $this->userManagement->getCorporationTicker($id);
@@ -83,7 +115,52 @@ class APIUserManagement{
         }
     }
 
-    private function getAllianceTicker($id){
+    public function getCorporationName($id){
+        $Name = NULL;
+        try{
+            $Name = $this->userManagement->getCorporationName($id);
+        } catch(Exception $ex){
+            throw new \Pheal\Exceptions\PhealException("getCorporationName " . $ex->getMessage(), ($ex->getCode())*-1000);
+        }
+        if($Name != NULL){
+            return $Name;
+        } else{
+            $pheal = new Pheal(NULL, NULL, "corp");
+            $response = $pheal->CorporationSheet(array("corporationID" => $id));
+            try{
+                $this->userManagement->recordCorporationInfo($id, $response->corporationName, $response->ticker);
+            } catch(Exception $ex){
+                throw new \Pheal\Exceptions\PhealException("recordCorporationInfo " . $ex->getMessage(), ($ex->getCode())*-1000);
+            }
+            return $response->corporationName;
+        }
+    }
+
+    public function getCorporationID($name){
+        $ID = NULL;
+        try{
+            $ID = $this->userManagement->getCorporationID($name);
+        } catch(Exception $ex){
+            throw new \Pheal\Exceptions\PhealException("getCorporationID " . $ex->getMessage(), ($ex->getCode())*-1000);
+        }
+        if($ID != NULL){
+            return $ID;
+        } else{
+            $pheal = new Pheal(NULL, NULL, "eve");
+            $response = $pheal->CharacterID(array("names" => $name));
+            $ID = $response->characters[0]->characterID;
+            $pheal = new Pheal(NULL, NULL, "corp");
+            $response = $pheal->CorporationSheet(array("corporationID" => $ID));
+            try{
+                $this->userManagement->recordCorporationInfo($ID, $name, $response->ticker);
+            } catch(Exception $ex){
+                throw new \Pheal\Exceptions\PhealException("recordCorporationInfo " . $ex->getMessage(), ($ex->getCode())*-1000);
+            }
+            return $ID;
+        }
+    }
+
+    public function getAllianceTicker($id){
         $Ticker = NULL;
         try{
             $Ticker = $this->userManagement->getAllianceTicker($id);
@@ -103,6 +180,56 @@ class APIUserManagement{
                         throw new \Pheal\Exceptions\PhealException("recordAllianceInfo " . $ex->getMessage(), ($ex->getCode())*-1000);
                     }
                     return $row->shortName;
+                }
+            }
+        }
+    }
+
+    public function getAllianceName($id){
+        $Name = NULL;
+        try{
+            $Name = $this->userManagement->getAllianceName($id);
+        } catch(Exception $ex){
+            throw new \Pheal\Exceptions\PhealException("getAllianceName " . $ex->getMessage(), ($ex->getCode())*-1000);
+        }
+        if($Name != NULL){
+            return $Name;
+        } else{
+            $pheal = new Pheal(NULL, NULL, "eve");
+            $response = $pheal->AllianceList();
+            foreach($response->alliances as $row){
+                if($row->allianceID == $id){
+                    try{
+                        $this->userManagement->recordAllianceInfo($id, $row->name, $row->shortName);
+                    } catch(Exception $ex){
+                        throw new \Pheal\Exceptions\PhealException("recordAllianceInfo " . $ex->getMessage(), ($ex->getCode())*-1000);
+                    }
+                    return $row->name;
+                }
+            }
+        }
+    }
+
+    public function getAllianceID($name){
+        $ID = NULL;
+        try{
+            $ID = $this->userManagement->getAllianceID($name);
+        } catch(Exception $ex){
+            throw new \Pheal\Exceptions\PhealException("getAllianceID " . $ex->getMessage(), ($ex->getCode())*-1000);
+        }
+        if($ID != NULL){
+            return $ID;
+        } else{
+            $pheal = new Pheal(NULL, NULL, "eve");
+            $response = $pheal->AllianceList();
+            foreach($response->alliances as $row){
+                if($row->name == $name){
+                    try{
+                        $this->userManagement->recordAllianceInfo($row->allianceID, $name, $row->shortName);
+                    } catch(Exception $ex){
+                        throw new \Pheal\Exceptions\PhealException("recordAllianceInfo " . $ex->getMessage(), ($ex->getCode())*-1000);
+                    }
+                    return $row->allianceID;
                 }
             }
         }
