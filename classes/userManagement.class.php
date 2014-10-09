@@ -4,8 +4,6 @@ interface IuserManagement {
     function getApiKey($keyStatus);
     function getAllowedListMask($maskOwner);
     function setNewPassword($password, $passwordRepeat);
-    function getCorporationTicker($id);
-    function getAllianceTicker($id);
     function recordCorporationInfo($id, $name, $ticker);
     function recordAllianceInfo($id, $name, $ticker);
 }
@@ -230,7 +228,7 @@ class userManagement implements IuserManagement {
         $this->db->deleteFromTeamspeak($id);
     }
     
-    public function getCorporationInfo($id){
+    public function getCorporationTicker($id){
         $query = "SELECT `ticker` FROM `corporationList` WHERE `id` = '$id'";
         $result = $this->db->query($query);
         return $this->db->getMysqlResult($result);
