@@ -7,6 +7,7 @@ class notif_send {
     private $corporationID;
     private $allianceID;
     private $email;
+    private $login;
     private $lastNotifID = 0;
     private $send_email = false;
     private $send_jabber = false;
@@ -22,13 +23,16 @@ class notif_send {
         if(($this->send_email || $this->send_jabber) && ($this->permission > 0)){
             $txt = $this->getNotifications();
             if($txt != NULL){
-                //echo $txt . "\n\n\n";
                 if($this->send_email){
                     $c_email = new email;
                     if(!$c_email->sendmail($this->email, "New EvE Online notification update", date(DATE_RFC822) . " New notifications arrived.\n" . $txt)) 
                         throw new Exception("Mail sending failed", -1);;
                 }
-                // if($send_jabber) метод отправки в жабер
+                if($this->send_jabber){
+                    $xmpp_options = array( "http" => array( "method" => "POST", "content" => http_build_query(array( "body" => $txt )) ) );
+                    $xmpp_result = json_decode(file_get_contents("http://". config::xmpp_address . "/send/" . rawurlencode($this->login) . "/" . rawurlencode(config::xmpp_send_from), false, stream_context_create($xmpp_options)), true);
+                    if(!$xmpp_result[sent]) throw new Exception("Jabber sending failed", -1);
+                }
                 $query = "UPDATE `users` SET `lastNotifID` = '$this->lastNotifID' WHERE `id`='$this->id'";
                 $result = $this->db->query($query);
             }
@@ -36,10 +40,11 @@ class notif_send {
     }
 
     private function getMoreInfoFromDB(){
-        $query = "SELECT `accessMask`, `settngsMask`, `email`, `lastNotifID` FROM `users` WHERE `id` = '$this->id'";
+        $query = "SELECT `accessMask`, `settngsMask`, `email`, `login`, `lastNotifID` FROM `users` WHERE `id` = '$this->id'";
         $result = $this->db->query($query);
         $arr = $this->db->fetchAssoc($result);
         $this->email = $arr[email];
+        $this->login = $arr[login];
         $this->lastNotifID = $arr[lastNotifID];
         $this->permission = $this->genPermission($arr[accessMask]);
         $this->send_email = (($arr[settngsMask] & 1) > 0) ? true : false;

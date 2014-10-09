@@ -67,13 +67,24 @@ class validation {
     }
     
     private function ts3Ban($id){
-        $ts3 = new ts3;
-        $wow = $ts3->validate($id);
-        if(!$wow) $this->log->put("ts3", "err " . $wow);
+        try {
+            $ts3 = new ts3;
+            $wow = $ts3->validate($id);
+            if(!$wow) throw new Exception($wow);
+        } catch (Exception $ex) {
+            $this->log->put("ts3", "err " . $ex->getMessage());
+        }
     }
     
     private function xmppBan($id){
-        // XMPP ban method
+        try {
+            $query = "SELECT `login` FROM `users` WHERE `id` = '$id'";
+            $result = $this->db->query($query);
+            $xmpp_result = json_decode(file_get_contents("http://". config::xmpp_address . "/delete/" . rawurlencode($this->db->getMysqlResult($result))), true);
+            if(!$xmpp_result[removed]) throw new Exception("Deleting user failed");
+        } catch (Exception $ex) {
+            $this->log->put("xmpp", "err " . $ex->getMessage());
+        }
     }
 
     private function showBans($id){

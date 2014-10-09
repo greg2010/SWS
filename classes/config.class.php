@@ -22,4 +22,7 @@ class config {
     const ts3_queryport = '10011';
     const ts3_user = 'serveradmin';
     const ts3_pass = 'cYg9HoIr';
+
+    const xmpp_address = 'localhost:7092';
+    const xmpp_send_from = 'Sansha Kuvakei';
 }
