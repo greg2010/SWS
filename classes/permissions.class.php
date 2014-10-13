@@ -143,14 +143,31 @@ class permissions {
         $this->updateUserMask();
         $this->getUserPermissions();
     }
+
+    public function convertPermissions($Permissions = array()) {
+        if (count($Permissions) < 1) {
+            return 0;
+        }
+        $Bits = array();
+        foreach ($Permissions as $permission) {
+            $result = array_search($permission, $this->bitMap);
+            if($result == false) throw new Exception("Incorrect permission!", -108);
+            $Bits[] = $result;
+        }
+        foreach ($Bits as $Bit) {
+            $Mask = $Mask | (1 << $Bit);
+        }
+        return $Mask;
+    }
+
     public function unsetPermissions($remPermissions = array()) {
         $userMaskBeforeChanges = $this->userMask;
         if (count($remPermissions) < 1) {
             throw new Exception("No permissions to set!", -105);
         }
-        $remBits = array();
+        $Bits = array();
         foreach ($remPermissions as $permission) {
-            $remBits[] = array_search($permission, $this->bitMap);
+            $Bits[] = array_search($permission, $this->bitMap);
         }
         foreach ($remBits as $unsetBit) {
             $this->userMask = ($this->userMask & ~(pow(2, $unsetBit)));
