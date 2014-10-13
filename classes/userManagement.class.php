@@ -271,7 +271,7 @@ class userManagement implements IuserManagement {
     }
 
     public function getCharacterID($name){
-        $query = "SELECT `apiPilotList` FROM `apiPilotList` WHERE `characterName` = '$name'";
+        $query = "SELECT `characterID` FROM `apiPilotList` WHERE `characterName` = '$name'";
         $result = $this->db->query($query);
         return $this->db->getMysqlResult($result);
     }

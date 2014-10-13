@@ -16,14 +16,14 @@ class admin {
     }
 
     public function getAllAlliAllowedList(){
-        $query = "SELECT `allianceID`, `accessMask` FROM `allowedList` WHERE `allianceID` <> 'NULL'";
+        $query = "SELECT `allianceID`, `accessMask`, `comment` FROM `allowedList` WHERE `allianceID` IS NOT NULL AND (`corporationID` IS NULL AND `characterID` IS NULL)";
         $result = $this->db->query($query);
         $arr = ($this->db->hasRows($result)) ? (($this->db->countRows($result) == 1) ? array($this->db->fetchAssoc($result)) : $this->db->fetchAssoc($result)) : NULL;
         for($i=0; $i<count($arr); $i++){
             try{
                 $name = $this->apiUserManagement->getAllianceName($arr[$i][allianceID]);
             } catch(\Pheal\Exceptions\PhealException $ex){
-                throw new Exception("getAllianceName " . $ex->getMessage(), ($ex->getCode())/-1000);
+                throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
             }
             $arr[$i][name] = $name;
             $perm = new permissions();
@@ -37,113 +37,152 @@ class admin {
     }
 
     public function getAllCorpAllowedList(){
-        $query = "SELECT `corporationID`, `allianceID`, `accessMask` FROM `allowedList` WHERE `corporationID` <> 'NULL'";
+        $query = "SELECT `corporationID`, `allianceID`, `accessMask`, `comment` FROM `allowedList` WHERE `corporationID` IS NOT NULL AND `characterID` IS NULL";
         $result = $this->db->query($query);
         $arr = ($this->db->hasRows($result)) ? (($this->db->countRows($result) == 1) ? array($this->db->fetchAssoc($result)) : $this->db->fetchAssoc($result)) : NULL;
         for($i=0; $i<count($arr); $i++){
             try{
                 $arr[$i][name] = $this->apiUserManagement->getCorporationName($arr[$i][corporationID]);
             } catch(\Pheal\Exceptions\PhealException $ex){
-                throw new Exception("getCorporationName " . $ex->getMessage(), ($ex->getCode())/-1000);
+                throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
             }
             $perm = new permissions();
             $perm->setUserMask($arr[$i][accessMask]);
             $arr[$i][hasWebAccess] = $perm->hasPermission("webReg_Valid");
             $arr[$i][hasTSAccess] = $perm->hasPermission("TS_Valid");
             $arr[$i][hasXMPPAccess] = $perm->hasPermission("XMPP_Valid");
-            /*if($arr[$i][allianceID] != NULL){
-                $arr[$i][alliance] = array();
-            }*/
+            if($arr[$i][allianceID] != NULL){
+                $query = "SELECT `accessMask` FROM `allowedList` WHERE `allianceID` = '{$arr[$i][allianceID]}' AND (`corporationID` IS NULL AND `characterID` IS NULL)";
+                $result = $this->db->query($query);
+                if($this->db->hasRows($result)){
+                    $perm->setUserMask($this->db->getMysqlResult($result));
+                    $arr[$i][alliance] = array(
+                        "hasWebAccess" => $perm->hasPermission("webReg_Valid"),
+                        "hasTSAccess" => $perm->hasPermission("TS_Valid"),
+                        "hasXMPPAccess" => $perm->hasPermission("XMPP_Valid")
+                    );
+                }
+            }
             unset($perm);
         }
         return $arr;
     }
 
     public function getAllCharAllowedList(){
-        $query = "SELECT `characterID`, `corporationID`, `allianceID`, `accessMask` FROM `allowedList` WHERE `characterID` <> 'NULL'";
+        $query = "SELECT `characterID`, `corporationID`, `allianceID`, `accessMask`, `comment` FROM `allowedList` WHERE `characterID` <> 'NULL'";
         $result = $this->db->query($query);
         $arr = ($this->db->hasRows($result)) ? (($this->db->countRows($result) == 1) ? array($this->db->fetchAssoc($result)) : $this->db->fetchAssoc($result)) : NULL;
         for($i=0; $i<count($arr); $i++){ 
             try{
                 $arr[$i][name] = $this->apiUserManagement->getCharacterName($arr[$i][characterID]);
             } catch(\Pheal\Exceptions\PhealException $ex){
-                throw new Exception("getCharacterName " . $ex->getMessage(), ($ex->getCode())/-1000);
+                throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
             }
             $perm = new permissions();
             $perm->setUserMask($arr[$i][accessMask]);
             $arr[$i][permissions] = $perm->getAllPermissions();
+            if($arr[$i][allianceID] != NULL){
+                $query = "SELECT `accessMask` FROM `allowedList` WHERE `allianceID` = '{$arr[$i][allianceID]}' AND (`corporationID` IS NULL AND `characterID` IS NULL)";
+                $result = $this->db->query($query);
+                if($this->db->hasRows($result)){
+                    $perm->setUserMask($this->db->getMysqlResult($result));
+                    $arr[$i][alliance] = array(
+                        "hasWebAccess" => $perm->hasPermission("webReg_Valid"),
+                        "hasTSAccess" => $perm->hasPermission("TS_Valid"),
+                        "hasXMPPAccess" => $perm->hasPermission("XMPP_Valid")
+                    );
+                }
+            }
+            if($arr[$i][corporationID] != NULL){
+                $query = "SELECT `accessMask` FROM `allowedList` WHERE `corporationID` = '{$arr[$i][corporationID]}' AND `characterID` IS NULL";
+                $result = $this->db->query($query);
+                if($this->db->hasRows($result)){
+                    $perm->setUserMask($this->db->getMysqlResult($result));
+                    $arr[$i][corporation] = array(
+                        "hasWebAccess" => $perm->hasPermission("webReg_Valid"),
+                        "hasTSAccess" => $perm->hasPermission("TS_Valid"),
+                        "hasXMPPAccess" => $perm->hasPermission("XMPP_Valid")
+                    );
+                }
+            }
             unset($perm);
         }
         return $arr;
     }
 
-    public function addAlliToAllowedList($name, $rawmask){
+    public function addAlliToAllowedList($name, $rawmask, $comment=""){
         $perm = new permissions();
         $mask = $perm->convertPermissions($rawmask);
         try{
             $id = $this->apiUserManagement->getAllianceID($name);
         } catch(\Pheal\Exceptions\PhealException $ex){
-            throw new Exception("getAllianceID " . $ex->getMessage(), ($ex->getCode())/-1000);
+            throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
         }
         if($id < 1) throw new Exception("Incorrect alliance name ", -501);
         $query = "SELECT `allianceID` FROM `allowedList` WHERE `allianceID` = '$id'";
         if($this->db->hasRows($this->db->query($query))) throw new Exception("Alliance already in allowed list ", -501);
-        $query = "INSERT INTO `allowedList` SET `allianceID` = '$id', `accessMask` = '$mask'";
+        $query = "INSERT INTO `allowedList` SET `allianceID` = '$id', `accessMask` = '$mask', `comment` = '$comment'";
+        $result = $this->db->query($query);
     }
 
-    public function addCorpToAllowedList($name, $rawmask, $alliname = NULL){
+    public function addCorpToAllowedList($name, $rawmask, $comment="", $alliname = NULL){
         $perm = new permissions();
         $mask = $perm->convertPermissions($rawmask);
-        $alliid = NULL;
         try{
             $id = $this->apiUserManagement->getCorporationID($name);
         } catch(\Pheal\Exceptions\PhealException $ex){
-            throw new Exception("getCorporationID " . $ex->getMessage(), ($ex->getCode())/-1000);
+            throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
         }
-        if($id < 1) throw new Exception("Incorrect corporation name ", -501);
+        if($id < 1) throw new Exception("Incorrect corporation name ", -502);
         $query = "SELECT `corporationID` FROM `allowedList` WHERE `corporationID` = '$id'";
         if($this->db->hasRows($this->db->query($query))) throw new Exception("Corporation already in allowed list ", -501);
         if($alliname){
             try{
                 $alliid = $this->apiUserManagement->getAllianceID($alliname);
             } catch(\Pheal\Exceptions\PhealException $ex){
-                throw new Exception("getAllianceID " . $ex->getMessage(), ($ex->getCode())/-1000);
+                throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
             }
             if($alliid < 1) throw new Exception("Incorrect alliance name ", -501);
         }
-        $query = "INSERT INTO `allowedList` SET `corporationID` = '$id', `allianceID` = '$alliid', `accessMask` = '$mask'";
+        if($alliid > 0) $supquery = ", `allianceID` = '$alliid'";
+        $query = "INSERT INTO `allowedList` SET `corporationID` = '$id', `accessMask` = '$mask', `comment` = '$comment'" . $supquery;
+        $result = $this->db->query($query);
     }
 
-    public function addCharToAllowedList($name, $rawmask, $corpname = NULL, $alliname = NULL){
+    public function addCharToAllowedList($name, $rawmask, $comment="", $corpname = NULL, $alliname = NULL){
         $perm = new permissions();
         $mask = $perm->convertPermissions($rawmask);
         $alliid = NULL;
         $corpid = NULL;
+        $supquery = "";
         try{
             $id = $this->apiUserManagement->getCharacterID($name);
         } catch(\Pheal\Exceptions\PhealException $ex){
-            throw new Exception("getCharacterID " . $ex->getMessage(), ($ex->getCode())/-1000);
+            throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
         }
-        if($id < 1) throw new Exception("Incorrect character name ", -501);
+        if($id < 1) throw new Exception("Incorrect character name ", -503);
         $query = "SELECT `characterID` FROM `allowedList` WHERE `characterID` = '$id'";
         if($this->db->hasRows($this->db->query($query))) throw new Exception("Character already in allowed list ", -501);
         if($corpname){
             try{
                 $corpid = $this->apiUserManagement->getCorporationID($corpname);
             } catch(\Pheal\Exceptions\PhealException $ex){
-                throw new Exception("getCorporationID " . $ex->getMessage(), ($ex->getCode())/-1000);
+                throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
             }
-            if($corpid < 1) throw new Exception("Incorrect corporation name ", -501);
+            if($corpid < 1) throw new Exception("Incorrect corporation name ", -502);
         }
         if($alliname){
             try{
                 $alliid = $this->apiUserManagement->getAllianceID($alliname);
             } catch(\Pheal\Exceptions\PhealException $ex){
-                throw new Exception("getAllianceID " . $ex->getMessage(), ($ex->getCode())/-1000);
+                throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
             }
             if($alliid < 1) throw new Exception("Incorrect alliance name ", -501);
         }
-        $query = "INSERT INTO `allowedList` SET `characterID` = '$id', `corporationID` = '$corpid', `allianceID` = '$alliid', `accessMask` = '$mask'";
+        if($alliid > 0) $supquery .= ", `allianceID` = '$alliid'";
+        if($corpid > 0) $supquery .= ", `corporationID` = '$corpid'";
+        $query = "INSERT INTO `allowedList` SET `characterID` = '$id', `accessMask` = '$mask', `comment` = '$comment'" . $supquery;
+        $result = $this->db->query($query);
     }
 
 
