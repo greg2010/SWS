@@ -26,12 +26,12 @@ class notif_send {
                 if($this->send_email){
                     $c_email = new email;
                     if(!$c_email->sendmail($this->email, "New EvE Online notification update", date(DATE_RFC822) . " New notifications arrived.\n" . $txt)) 
-                        throw new Exception("Mail sending failed", -1);;
+                        throw new Exception("Mail sending failed", -1);
                 }
                 if($this->send_jabber){
-                    $xmpp_options = array( "http" => array( "method" => "POST", "content" => http_build_query(array( "body" => $txt )) ) );
-                    $xmpp_result = json_decode(file_get_contents("http://". config::xmpp_address . "/send/" . rawurlencode($this->login) . "/" . rawurlencode(config::xmpp_send_from), false, stream_context_create($xmpp_options)), true);
-                    if(!$xmpp_result[sent]) throw new Exception("Jabber sending failed", -1);
+                    $c_xmpp = new xmpp;
+                    if(!$c_xmpp->sendjabber($this->login, $txt))
+                        throw new Exception("Mail sending failed", -1);
                 }
                 $query = "UPDATE `users` SET `lastNotifID` = '$this->lastNotifID' WHERE `id`='$this->id'";
                 $result = $this->db->query($query);
