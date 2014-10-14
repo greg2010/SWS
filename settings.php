@@ -186,11 +186,20 @@ switch ($page) {
         $toTemplate['curForm'] = '';
         $toTemplate['active']['profile'] = $pageActive;
         
+        $settings = $_SESSION[userObject]->getUserSettings();
+        if ($settings[emailNotif]) {
+            $toTemplate['saveForm']['emailChecked'] = 'checked';
+        }
+        if ($settings[jabberNotif]) {
+            $toTemplate['saveForm']['jabberChecked'] = 'checked';
+        }
+        
         $toTemplate['saveForm']['email'] = $_SESSION[userObject]->userInfo[email];
         if ($_POST[form] == 'sent') {
             try {
                 $currPassword = $_POST[currentPassword];
                 $_SESSION[userObject]->verifyCurrentPassword($currPassword);
+                
                 if ($_POST[email]) {
                     try {
                         $email = $_POST[email];

@@ -151,10 +151,4 @@ function formCheck() {
 }
 
 formCheck();
-
-
-$('#charList').change(function() {
-    console.log("CharAction");
-    $('div:contains(Please choose eligible charater.)').attr('hidden', 1);
-});
 });
