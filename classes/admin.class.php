@@ -16,7 +16,7 @@ class admin {
     }
 
     public function getAllAlliAllowedList(){
-        $query = "SELECT `allianceID`, `accessMask`, `comment` FROM `allowedList` WHERE `allianceID` IS NOT NULL AND (`corporationID` IS NULL AND `characterID` IS NULL)";
+        $query = "SELECT `id`, `allianceID`, `accessMask`, `comment` FROM `allowedList` WHERE `allianceID` IS NOT NULL AND (`corporationID` IS NULL AND `characterID` IS NULL)";
         $result = $this->db->query($query);
         $arr = ($this->db->hasRows($result)) ? (($this->db->countRows($result) == 1) ? array($this->db->fetchAssoc($result)) : $this->db->fetchAssoc($result)) : NULL;
         for($i=0; $i<count($arr); $i++){
@@ -37,7 +37,7 @@ class admin {
     }
 
     public function getAllCorpAllowedList(){
-        $query = "SELECT `corporationID`, `allianceID`, `accessMask`, `comment` FROM `allowedList` WHERE `corporationID` IS NOT NULL AND `characterID` IS NULL";
+        $query = "SELECT `id`, `corporationID`, `allianceID`, `accessMask`, `comment` FROM `allowedList` WHERE `corporationID` IS NOT NULL AND `characterID` IS NULL";
         $result = $this->db->query($query);
         $arr = ($this->db->hasRows($result)) ? (($this->db->countRows($result) == 1) ? array($this->db->fetchAssoc($result)) : $this->db->fetchAssoc($result)) : NULL;
         for($i=0; $i<count($arr); $i++){
@@ -69,7 +69,7 @@ class admin {
     }
 
     public function getAllCharAllowedList(){
-        $query = "SELECT `characterID`, `corporationID`, `allianceID`, `accessMask`, `comment` FROM `allowedList` WHERE `characterID` <> 'NULL'";
+        $query = "SELECT `id`, `characterID`, `corporationID`, `allianceID`, `accessMask`, `comment` FROM `allowedList` WHERE `characterID` <> 'NULL'";
         $result = $this->db->query($query);
         $arr = ($this->db->hasRows($result)) ? (($this->db->countRows($result) == 1) ? array($this->db->fetchAssoc($result)) : $this->db->fetchAssoc($result)) : NULL;
         for($i=0; $i<count($arr); $i++){ 
@@ -182,6 +182,46 @@ class admin {
         if($alliid > 0) $supquery .= ", `allianceID` = '$alliid'";
         if($corpid > 0) $supquery .= ", `corporationID` = '$corpid'";
         $query = "INSERT INTO `allowedList` SET `characterID` = '$id', `accessMask` = '$mask', `comment` = '$comment'" . $supquery;
+        $result = $this->db->query($query);
+    }
+
+    public function deleteFromAllowedList($id){
+        $query = "DELETE FROM `allowedList` WHERE `id` = '$id'";
+        $result = $this->db->query($query);
+    }
+
+    public function modifyAllowedList($id, $rawmask, $charname=NULL, $corpname=NULL, $alliname=NULL, $comment=""){
+        $perm = new permissions();
+        $mask = $perm->convertPermissions($rawmask);
+        $query = "UPDATE `allowedList` SET `accessMask` = '$mask', `comment` = '$comment'";
+        if($charname){
+            try{
+                $charid = $this->apiUserManagement->getCharacterID($charname);
+            } catch(\Pheal\Exceptions\PhealException $ex){
+                throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
+            }
+            if($charid < 1) throw new Exception("Incorrect character name ", -503);
+            $query .= ", `characterID` = '$charid'";
+        }
+        if($corpname){
+            try{
+                $corpid = $this->apiUserManagement->getCorporationID($corpname);
+            } catch(\Pheal\Exceptions\PhealException $ex){
+                throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
+            }
+            if($corpid < 1) throw new Exception("Incorrect corporation name ", -502);
+            $query .= ", `corporationID` = '$corpid'";
+        }
+        if($alliname){
+            try{
+                $alliid = $this->apiUserManagement->getAllianceID($alliname);
+            } catch(\Pheal\Exceptions\PhealException $ex){
+                throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
+            }
+            if($alliid < 1) throw new Exception("Incorrect alliance name ", -501);
+            $query .= ", `allianceID` = '$alliid'";
+        }
+        $query .= " WHERE `id` = '$id'";
         $result = $this->db->query($query);
     }
 
