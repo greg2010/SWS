@@ -165,9 +165,9 @@ class permissions {
         if (count($remPermissions) < 1) {
             throw new Exception("No permissions to set!", -105);
         }
-        $Bits = array();
+        $remBits = array();
         foreach ($remPermissions as $permission) {
-            $Bits[] = array_search($permission, $this->bitMap);
+            $remBits[] = array_search($permission, $this->bitMap);
         }
         foreach ($remBits as $unsetBit) {
             $this->userMask = ($this->userMask & ~(pow(2, $unsetBit)));
