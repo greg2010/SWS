@@ -33,22 +33,12 @@ class notif_text {
 
     private function Owner($cid, $aid){
         try {
-            $query = "SELECT `name`, `ticker` FROM `corporationList` WHERE `id`='$cid'";
-            $result = $this->db->query($query);
-            $resarr = $this->db->fetchAssoc($result);
-            $this->txtarr[OwnerCorpName] = $resarr[name];
-            $this->txtarr[OwnerCorpTicker] = $resarr[ticker];
-        } catch (Exception $ex) {
-            $this->log->put("Owner Corp", "err " . $ex->getMessage());
-        }
-        try {
-            $query = "SELECT `name`, `ticker` FROM `allianceList` WHERE `id`='$aid'";
-            $result = $this->db->query($query);
-            $resarr = $this->db->fetchAssoc($result);
-            $this->txtarr[OwnerAllyName] = $resarr[name];
-            $this->txtarr[OwnerAllyTicker] = $resarr[ticker];
-        } catch (Exception $ex) {
-            $this->log->put("Owner Alli", "err " . $ex->getMessage());
+            $this->txtarr[OwnerCorpName] = $this->apiUserManagement->getCorporationName($id);;
+            $this->txtarr[OwnerCorpTicker] = $this->apiUserManagement->getCorporationTicker($id);;
+            $this->txtarr[OwnerAllyName] = $this->apiUserManagement->getAllianceName($id);;
+            $this->txtarr[OwnerAllyTicker] = $this->apiUserManagement->getAllianceTicker($id);;
+        } catch (\Pheal\Exceptions\PhealException $e) {
+            $this->log->put("Owner", "err " . $ex->getMessage());
         }
     }
 
