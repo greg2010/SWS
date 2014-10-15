@@ -268,12 +268,16 @@ class APIUserManagement{
             throw new Exception($e->getMessage(), $e->getCode());
         }
     }
-
-    public function changeUserApiKey($keyID, $vCode, $characterID) {
-        
-    }
     
-    public function getUserKeyMask() {
-        
+    public function getServerStatus() {
+        $pheal = new Pheal();
+        $response = $pheal->serverScope->ServerStatus();
+        if ($response->serverOpen) {
+            $arr['status'] = 'Online';
+        } else {
+            $arr['status'] = 'Offline';
+        }
+        $arr['online'] = $response->onlinePlayers;
+        return $arr;
     }
 }

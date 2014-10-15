@@ -12,6 +12,7 @@ class userSession {
     private $id;
     private $salt;
     private $db;
+    private $settings;
     
     private $isLoggedIn;
     private $pagePermissions;
@@ -170,9 +171,10 @@ class userSession {
     
     public function updateUserInfo() {
         try {
-            $query = "SELECT `email`, `lastNotifID`, `salt`, `accessMask` FROM `users` WHERE `id` = '$this->id'";
+            $query = "SELECT `email`, `lastNotifID`, `salt`, `accessMask`, `settingsMask` FROM `users` WHERE `id` = '$this->id'";
             $result = $this->db->query($query);
             $this->userInfo = $this->db->fetchAssoc($result);
+            $this->updateSettingsInfo();
             
             $query = "SELECT * FROM `apiPilotList` WHERE `id` = '$this->id' AND `keyStatus` = '1'";
             $result = $this->db->query($query);
@@ -261,7 +263,7 @@ class userSession {
             throw new Exception("Not logged in.", 30);
         }
         $passwordHash = hash(config::password_hash_type, $password . $this->salt);
-         if (!($this->id === $this->db->getUserByLogin($this->pilotInfo[characterName], $passwordHash))) {
+         if (!($this->id === $this->db->getUserByLogin($this->apiPilotList[mainAPI][characterName], $passwordHash))) {
              throw new Exception("Wrong password!", 13);
          }
     }
@@ -333,5 +335,26 @@ class userSession {
         $ts3 = new ts3();
         $TSInfo['nickName'] = $ts3->nickname($this->id);
         return $TSInfo;
+    }
+    
+    private function updateSettingsInfo() {
+        unset($this->settings);
+        $mask = $this->userInfo[settingsMask];
+        $maskLength = floor(log($mask)/log(2)) + 1;
+        for ($i = 0; $i <= $maskLength; $i++) {
+            $isSet = (($mask >> $i)&1);
+            if ($isSet) {
+                if ($i == 0) {
+                    $this->settings[emailNotif] = 1;
+                }
+                if ($i == 1) {
+                    $this->settings[jabberNotif] = 1;
+                }
+            }
+        }
+    }
+    
+    public function getUserSettings() {
+        return $this->settings;
     }
 }

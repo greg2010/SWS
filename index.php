@@ -15,4 +15,9 @@ if ($_SESSION[successLogin]) {
 $toTemplate['ts']['status'] = $tsStats[status];
 $toTemplate['ts']['online'] = $tsStats[online];
 
+$api = new APIUserManagement();
+$serverStatus = $api->getServerStatus();
+$toTemplate['eve']['status'] = $serverStatus[status];
+$toTemplate['eve']['online'] = $serverStatus[online];
+
 require 'twigRender.php';
