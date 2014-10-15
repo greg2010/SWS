@@ -233,6 +233,13 @@ class APIUserManagement{
                 }
             }
         }
+        return 0;
+    }
+
+    public function getAllianceByCorporation($id){
+        $pheal = new Pheal(NULL, NULL, "corp");
+        $response = $pheal->CorporationSheet(array("corporationID" => $id));
+        return $response->allianceID;
     }
 
     public function getCorpInfo($keyID, $vCode) {
