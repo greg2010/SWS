@@ -44,7 +44,10 @@ class timerboard{ //} implements Itimerboard {
         $result = $this->db->query($query);
         $assocArray = ($this->db->countRows($result) == 1) ? array($this->db->fetchAssoc($result)) : $this->db->fetchAssoc($result);
         foreach ($assocArray as $timer){
-            $owner = ($timer[ownerAlliance] != 0) ? $this->getOwner($timer[ownerCorporation], $timer[ownerAlliance]) : $this->getOwner($timer[ownerCorporation]);
+            $owner = $this->getOwner($timer[ownerCorporation], $timer[ownerAlliance]);
+            if($timer[status] == 0) $status = "Active";
+            elseif($timer[status] == 1) $status = "Killed";
+            elseif($timer[status] == 1) $status = "Saved";
             $timers[] = array(
                 "id" => $timer[id],
                 "Who" => ($timer[friendly]) ? true : false,
@@ -56,20 +59,24 @@ class timerboard{ //} implements Itimerboard {
                 "Timer" => $timer[timer] . " ET",
                 "Time left" => $this->getTimeLeft($timer[timer]),
                 "RF" => ($timer[rfType] == 1) ? "Armor" : "Shield",
-                "Status" => ($active) ? "Active" : "Past",
+                "Status" => $status,
                 "Comments" => $timer[comment]
             );
         }
         return $timers;
     }
 
-    public function getOwner($corporation, $alliance = NULL){
+    private function getOwner($corporation, $alliance){
         try {
-            $owner = $this->apiUserManagement->getCorporationName($corporation);
-            $owner .= " [" . $this->apiUserManagement->getCorporationTicker($corporation) . "]";
-            if($alliance){
-                $owner .= " (" . $this->apiUserManagement->getAllianceName($alliance);
-                $owner .= " [" . $this->apiUserManagement->getAllianceTicker($alliance) . "])";
+            if($corporation > 0){
+                $owner .= $this->apiUserManagement->getCorporationName($corporation);
+                $owner .= " [" . $this->apiUserManagement->getCorporationTicker($corporation) . "]";
+            }
+            if($alliance > 0){
+                if($corporation > 0) $owner .= " (";
+                $owner .= $this->apiUserManagement->getAllianceName($alliance);
+                $owner .= " [" . $this->apiUserManagement->getAllianceTicker($alliance) . "]";
+                if($corporation > 0) $owner .= ")";
             }
             return $owner;
         } catch (\Pheal\Exceptions\PhealException $e) {
@@ -77,9 +84,8 @@ class timerboard{ //} implements Itimerboard {
         }
     }
 
-    public function getTimeLeft($time){
+    private function getTimeLeft($time){
         $left = strtotime($time) - strtotime(date("Y-m-d H:i:s"));
-        // доделать
         return date('d\d h\h i\m s\s', $left);
     }
 
@@ -88,11 +94,33 @@ class timerboard{ //} implements Itimerboard {
         $result = $this->db->query($query);
         return $this->db->getMysqlResult($result, 0);
     }
+
+    private function convertTimerArr($timer = array()){
+        try {
+            if(isset($timer[Corporation])){
+                $ctimer[ownerCorporation] = $this->apiUserManagement->getCorporationID($timer[Corporation]);
+                $ctimer[ownerAlliance] = $this->apiUserManagement->getAllianceByCorporation($ctimer[ownerCorporation]);
+            } elseif(isset($timer[Alliance])){
+                $ctimer[ownerCorporation] = 0;
+                $ctimer[ownerAlliance] = $this->apiUserManagement->getAllianceID($timer[Alliance]);
+            }
+        } catch (\Pheal\Exceptions\PhealException $e) {
+            throw new Exception($e->getMessage(), ($e->getCode())/-1000);
+        }
+        $ctimer[region] = $this->getRegion($timer[System]);
+        $ctimer[rfType] = ($timer[RF] == "Armor") ? 1 : 0;
+        $ctimer[friendly] = ($timer[Who]) ? 1 : 0;
+        if($timer[Status] == "Active") $ctimer[status] = 0;
+        elseif($timer[Status] == "Killed") $ctimer[status] = 1;
+        elseif($timer[Status] == "Saved") $ctimer[status] = 2;
+        return $ctimer;
+    }
     
     public function setNewTimer($timer = array()){
         /**
          * Type = string structure type name
          * Corporation = string corp name
+         * Alliance = string alliance name
          * System = string system name
          * Planet = int
          * Moon = int
@@ -100,26 +128,29 @@ class timerboard{ //} implements Itimerboard {
          * RF = Armor or Shield
          * Who = true if friendly
          * Comments = string
+         * Status = string Active = 0, Killed = 1, Saved = 2
          */
         //$this->checkRights('add');
-        try {
-            $ownerCorporation = $this->apiUserManagement->getCorporationID($timer[Corporation]);
-            $ownerAlliance = $this->apiUserManagement->getAllianceByCorporation($ownerCorporation);
-        } catch (\Pheal\Exceptions\PhealException $e) {
-            throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
-        }
-        $region = $this->getRegion($timer[System]);
-        $rfType = ($timer[RF] == "Armor") ? 1 : 0;
-        $friendly = ($timer[Who]) ? 1 : 0;
-        $query = "INSERT INTO `timerboard` SET `type` = '{$timer[Type]}', `ownerCorporation` = '$ownerCorporation', `ownerAlliance` = '$ownerAlliance', `region` = '$region', `system` = '{$timer[System]}'";
-        $query .= ", `planet` = '{$timer[Planet]}', `moon` = '{$timer[Moon]}', `timer` = '{$timer[Timer]}', `rfType` = '$rfType', `friendly` = '$friendly', `status` = '1', `comment` = '{$timer[Comments]}'";
+        $ctimer = $this->convertTimerArr($timer);
+        $query = "INSERT INTO `timerboard` SET `type` = '{$timer[Type]}', `ownerCorporation` = '{$ctimer[ownerCorporation]}', `ownerAlliance` = '{$ctimer[ownerAlliance]}', `region` = '{$ctimer[region]}', `system` = '{$timer[System]}'";
+        $query .= ", `planet` = '{$timer[Planet]}', `moon` = '{$timer[Moon]}', `timer` = '{$timer[Timer]}', `rfType` = '{$ctimer[rfType]}', `friendly` = '{$ctimer[friendly]}', `status` = '{$ctimer[status]}', `comment` = '{$timer[Comments]}'";
         $result = $this->db->query($query);
     }
-    /*
+
     public function deleteTimer($tID) {
-        $this->checkRights('delete');
-        $this->db->deleteTimer($tID);
-    }*/
+        //$this->checkRights('delete');
+        $query = "DELETE FROM `timerboard` WHERE `id` = '$tID'";
+        $result = $this->db->query($query);
+    }
+
+    public function editTimer($tID, $timer = array()) {
+        //$this->checkRights('edit');
+        $ctimer = $this->convertTimerArr($timer);
+        $query = "UPDATE `timerboard` SET `type` = '{$timer[Type]}', `ownerCorporation` = '{$ctimer[ownerCorporation]}', `ownerAlliance` = '{$ctimer[ownerAlliance]}', `region` = '{$ctimer[region]}', `system` = '{$timer[System]}'";
+        $query .= ", `planet` = '{$timer[Planet]}', `moon` = '{$timer[Moon]}', `timer` = '{$timer[Timer]}', `rfType` = '{$ctimer[rfType]}', `friendly` = '{$ctimer[friendly]}', `status` = '{$ctimer[status]}'";
+        $query .= ", `comment` = '{$timer[Comments]}' WHERE `id` = '$tID'";
+        $result = $this->db->query($query);
+    }
 }
 
 ?>
