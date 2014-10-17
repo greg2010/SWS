@@ -550,4 +550,8 @@ class db {
         $this->openConnection();
         $this->predefinedRemoveUniqueID($id);
     }
+
+    public function real_escape_string($txt) {
+        return mysqli_real_escape_string($this->connection, $txt);
+    }
 }

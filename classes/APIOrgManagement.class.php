@@ -160,6 +160,71 @@ class APIOrgManagement {
         $response = $pheal->CorporationSheet(array("corporationID" => $id));
         return $response->allianceID;
     }
+
+    public function getAllianceList(){
+        $pheal = new Pheal(NULL, NULL, "eve");
+        $response = $pheal->AllianceList();
+        foreach($response->alliances as $alliance){
+            unset($corplist);
+            foreach($alliance->memberCorporations as $corporation){
+                $corplist[] = $corporation->corporationID;
+            }
+            $list[] = array(
+                "id" => $alliance->allianceID,
+                "name" => $alliance->name,
+                "ticker" => $alliance->shortName,
+                "corporations" => $corplist
+            );
+        }
+        return $list;
+    }
+
+    public function updateAllianceList($alliance = array()){
+        $log = new logging();
+        try{
+            $Name = $this->orgManagement->getAllianceName($alliance[id]);
+        } catch(Exception $ex){
+            $log->put("getAllianceName", "err " . $ex->getMessage());
+        }
+        if($Name == NULL){
+            try{
+                $this->orgManagement->recordAllianceInfo($alliance[id], $alliance[name], $alliance[ticker]);
+                $log->put("recordAllianceInfo", "ok " . $alliance[name] . " [" . $alliance[ticker] . "]");
+            } catch(Exception $ex){
+                $log->put("recordAllianceInfo", "err " . $ex->getMessage());
+            }
+        }
+        foreach($alliance[corporations] as $corporation){
+            try{
+                $corp = $this->UpdateCorporationList($corporation);
+                if($corp != NULL){
+                    $log->put($corporation, "ok " . $corp[name] . " [" . $corp[ticker] . "]");
+                }
+            } catch (\Pheal\Exceptions\PhealException $e){
+                $log->put("UpdateCorporationList", "err " . $e->getMessage(), $corporation);
+            }
+        }
+        return $log->get();
+    }
+
+    public function UpdateCorporationList($id){
+        $Name = NULL;
+        try{
+            $Name = $this->orgManagement->getCorporationName($id);
+        } catch(Exception $ex){
+            throw new \Pheal\Exceptions\PhealException("getCorporationName " . $ex->getMessage(), ($ex->getCode())*-1000);
+        }
+        if($Name == NULL){
+            $pheal = new Pheal(NULL, NULL, "corp");
+            $response = $pheal->CorporationSheet(array("corporationID" => $id));
+            try{
+                $this->orgManagement->recordCorporationInfo($id, $response->corporationName, $response->ticker);
+            } catch(Exception $ex){
+                throw new \Pheal\Exceptions\PhealException("recordCorporationInfo " . $ex->getMessage(), ($ex->getCode())*-1000);
+            }
+            return $corporation = array("name" => $response->corporationName, "ticker" => $response->ticker);
+        } else return NULL;
+    }
 }
 
 ?>

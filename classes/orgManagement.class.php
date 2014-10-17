@@ -2,7 +2,7 @@
 
 class orgManagement {
     
-    public function __construct($id) {
+    public function __construct() {
         $this->db = db::getInstance();
     }
 
@@ -43,12 +43,12 @@ class orgManagement {
     }
 
     public function recordCorporationInfo($id, $name, $ticker){
-        $query = "INSERT INTO `corporationList` SET `id` = '$id', `name` = '$name', `ticker` = '$ticker'";
+        $query = "INSERT INTO `corporationList` SET `id` = '$id', `name` = '". $this->db->real_escape_string($name) . "', `ticker` = '$ticker'";
         $result = $this->db->query($query);
     }
     
     public function recordAllianceInfo($id, $name, $ticker){
-        $query = "INSERT INTO `allianceList` SET `id` = '$id', `name` = '$name', `ticker` = '$ticker'";
+        $query = "INSERT INTO `allianceList` SET `id` = '$id', `name` = '". $this->db->real_escape_string($name) . "', `ticker` = '$ticker'";
         $result = $this->db->query($query);
     }
 }

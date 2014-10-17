@@ -6,10 +6,10 @@ class logging {
     public function put($key, $value, $sub=NULL){
     	if(isset($key)){
             if($sub){
-    		  if($this->log[$sub] == NULL) $this->log[$sub] = array();
-    		  $this->log[$sub][$key] = $value;
+                if($this->log[$sub] == NULL) $this->log[$sub] = array();
+                $this->log[$sub][$key] = $value;
     	   } else{
-    		  $this->log[$key] = $value;
+    	       $this->log[$key] = $value;
     	   }
         }
 	}
@@ -37,7 +37,7 @@ class logging {
 
     public function record($table){
     	try{
-    		$db = db::getInstance();
+            $db = db::getInstance();
     		$date = date("Y-m-d H:i:s");
     		$text = ($this->log[ok]) ? ("ok: " . $this->log[ok]) : addslashes(yaml_emit($this->log));
     		$query = "INSERT INTO `$table` (`date`, `text`) VALUES ('$date','$text')";
