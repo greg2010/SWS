@@ -46,18 +46,19 @@ class APIUserManagement{
     }
 
     private function makeCharArray($mask, $char){
+        $orgManagement = new orgManagement();
         $charArray = array(
             'accessMask' => $mask,
             'characterID' => $char->characterID,
             'characterName' => $char->characterName,
             'corporationID' => $char->corporationID,
             'corporationName' => $char->corporationName,
-            'corporationTicker' => $this->getCorporationTicker($char->corporationID)
+            'corporationTicker' => $orgManagement->getCorporationTicker($char->corporationID)
         );
         if($char->allianceID <> 0){
             $charArray[allianceID] = $char->allianceID;
             $charArray[allianceName] = $char->allianceName;
-            $charArray[allianceTicker] = $this->getAllianceTicker($char->allianceID);
+            $charArray[allianceTicker] = $orgManagement->getAllianceTicker($char->allianceID);
         }
         return $charArray;
     }
@@ -92,154 +93,6 @@ class APIUserManagement{
             $response = $pheal->CharacterID(array("names" => $name));
             return $response->characters[0]->characterID;
         }
-    }
-    
-    public function getCorporationTicker($id){
-        $Ticker = NULL;
-        try{
-            $Ticker = $this->userManagement->getCorporationTicker($id);
-        } catch(Exception $ex){
-            throw new \Pheal\Exceptions\PhealException("getCorporationTicker " . $ex->getMessage(), ($ex->getCode())*-1000);
-        }
-        if($Ticker != NULL){
-            return $Ticker;
-        } else{
-            $pheal = new Pheal(NULL, NULL, "corp");
-            $response = $pheal->CorporationSheet(array("corporationID" => $id));
-            try{
-                $this->userManagement->recordCorporationInfo($id, $response->corporationName, $response->ticker);
-            } catch(Exception $ex){
-                throw new \Pheal\Exceptions\PhealException("recordCorporationInfo " . $ex->getMessage(), ($ex->getCode())*-1000);
-            }
-            return $response->ticker;
-        }
-    }
-
-    public function getCorporationName($id){
-        $Name = NULL;
-        try{
-            $Name = $this->userManagement->getCorporationName($id);
-        } catch(Exception $ex){
-            throw new \Pheal\Exceptions\PhealException("getCorporationName " . $ex->getMessage(), ($ex->getCode())*-1000);
-        }
-        if($Name != NULL){
-            return $Name;
-        } else{
-            $pheal = new Pheal(NULL, NULL, "corp");
-            $response = $pheal->CorporationSheet(array("corporationID" => $id));
-            try{
-                $this->userManagement->recordCorporationInfo($id, $response->corporationName, $response->ticker);
-            } catch(Exception $ex){
-                throw new \Pheal\Exceptions\PhealException("recordCorporationInfo " . $ex->getMessage(), ($ex->getCode())*-1000);
-            }
-            return $response->corporationName;
-        }
-    }
-
-    public function getCorporationID($name){
-        $ID = NULL;
-        try{
-            $ID = $this->userManagement->getCorporationID($name);
-        } catch(Exception $ex){
-            throw new \Pheal\Exceptions\PhealException("getCorporationID " . $ex->getMessage(), ($ex->getCode())*-1000);
-        }
-        if($ID != NULL){
-            return $ID;
-        } else{
-            $pheal = new Pheal(NULL, NULL, "eve");
-            $response = $pheal->CharacterID(array("names" => $name));
-            $ID = $response->characters[0]->characterID;
-            $pheal = new Pheal(NULL, NULL, "corp");
-            $response = $pheal->CorporationSheet(array("corporationID" => $ID));
-            try{
-                $this->userManagement->recordCorporationInfo($ID, $name, $response->ticker);
-            } catch(Exception $ex){
-                throw new \Pheal\Exceptions\PhealException("recordCorporationInfo " . $ex->getMessage(), ($ex->getCode())*-1000);
-            }
-            return $ID;
-        }
-    }
-
-    public function getAllianceTicker($id){
-        $Ticker = NULL;
-        try{
-            $Ticker = $this->userManagement->getAllianceTicker($id);
-        } catch(Exception $ex){
-            throw new \Pheal\Exceptions\PhealException("getAllianceTicker " . $ex->getMessage(), ($ex->getCode())*-1000);
-        }
-        if($Ticker != NULL){
-            return $Ticker;
-        } else{
-            $pheal = new Pheal(NULL, NULL, "eve");
-            $response = $pheal->AllianceList();
-            foreach($response->alliances as $row){
-                if($row->allianceID == $id){
-                    try{
-                        $this->userManagement->recordAllianceInfo($id, $row->name, $row->shortName);
-                    } catch(Exception $ex){
-                        throw new \Pheal\Exceptions\PhealException("recordAllianceInfo " . $ex->getMessage(), ($ex->getCode())*-1000);
-                    }
-                    return $row->shortName;
-                }
-            }
-        }
-    }
-
-    public function getAllianceName($id){
-        $Name = NULL;
-        try{
-            $Name = $this->userManagement->getAllianceName($id);
-        } catch(Exception $ex){
-            throw new \Pheal\Exceptions\PhealException("getAllianceName " . $ex->getMessage(), ($ex->getCode())*-1000);
-        }
-        if($Name != NULL){
-            return $Name;
-        } else{
-            $pheal = new Pheal(NULL, NULL, "eve");
-            $response = $pheal->AllianceList();
-            foreach($response->alliances as $row){
-                if($row->allianceID == $id){
-                    try{
-                        $this->userManagement->recordAllianceInfo($id, $row->name, $row->shortName);
-                    } catch(Exception $ex){
-                        throw new \Pheal\Exceptions\PhealException("recordAllianceInfo " . $ex->getMessage(), ($ex->getCode())*-1000);
-                    }
-                    return $row->name;
-                }
-            }
-        }
-    }
-
-    public function getAllianceID($name){
-        $ID = NULL;
-        try{
-            $ID = $this->userManagement->getAllianceID($name);
-        } catch(Exception $ex){
-            throw new \Pheal\Exceptions\PhealException("getAllianceID " . $ex->getMessage(), ($ex->getCode())*-1000);
-        }
-        if($ID != NULL){
-            return $ID;
-        } else{
-            $pheal = new Pheal(NULL, NULL, "eve");
-            $response = $pheal->AllianceList();
-            foreach($response->alliances as $row){
-                if($row->name == $name){
-                    try{
-                        $this->userManagement->recordAllianceInfo($row->allianceID, $name, $row->shortName);
-                    } catch(Exception $ex){
-                        throw new \Pheal\Exceptions\PhealException("recordAllianceInfo " . $ex->getMessage(), ($ex->getCode())*-1000);
-                    }
-                    return $row->allianceID;
-                }
-            }
-        }
-        return 0;
-    }
-
-    public function getAllianceByCorporation($id){
-        $pheal = new Pheal(NULL, NULL, "corp");
-        $response = $pheal->CorporationSheet(array("corporationID" => $id));
-        return $response->allianceID;
     }
 
     public function getCorpInfo($keyID, $vCode) {

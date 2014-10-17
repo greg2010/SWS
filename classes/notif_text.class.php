@@ -8,6 +8,7 @@ class notif_text {
     public $log;
     private $db;
     private $apiUserManagement;
+    private $apiOrgManagement;
     private $txtarr = array();
 
 	public function __construct($text, $cid, $aid, $isf){
@@ -15,6 +16,7 @@ class notif_text {
         $this->db = db::getInstance();
         $this->log = new logging();
         $this->apiUserManagement = new APIUserManagement();
+        $this->apiOrgManagement = new APIOrgManagement();
         //PhealConfig::getInstance()->cache = new \Pheal\Cache\PdoStorage("mysql:host=" . config::hostname . ";dbname=" . config::database, config::username, config::password, "phealng-cache");
         //PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage(dirname(__FILE__) . '/../phealcache/');
 
@@ -33,10 +35,10 @@ class notif_text {
 
     private function Owner($cid, $aid){
         try {
-            $this->txtarr[OwnerCorpName] = $this->apiUserManagement->getCorporationName($id);;
-            $this->txtarr[OwnerCorpTicker] = $this->apiUserManagement->getCorporationTicker($id);;
-            $this->txtarr[OwnerAllyName] = $this->apiUserManagement->getAllianceName($id);;
-            $this->txtarr[OwnerAllyTicker] = $this->apiUserManagement->getAllianceTicker($id);;
+            $this->txtarr[OwnerCorpName] = $this->apiOrgManagement->getCorporationName($id);;
+            $this->txtarr[OwnerCorpTicker] = $this->apiOrgManagement->getCorporationTicker($id);;
+            $this->txtarr[OwnerAllyName] = $this->apiOrgManagement->getAllianceName($id);;
+            $this->txtarr[OwnerAllyTicker] = $this->apiOrgManagement->getAllianceTicker($id);;
         } catch (\Pheal\Exceptions\PhealException $e) {
             $this->log->put("Owner", "err " . $ex->getMessage());
         }
@@ -53,8 +55,8 @@ class notif_text {
     private function CorpID(){
         try{
             $id = ($this->txtarr[corpID]) ? ($this->txtarr[corpID]) : ($this->txtarr[aggressorCorpID]);
-            $this->txtarr[corpName] = $this->apiUserManagement->getCorporationName($id);
-            $this->txtarr[corpTicker] = $this->apiUserManagement->getCorporationTicker($id);
+            $this->txtarr[corpName] = $this->apiOrgManagement->getCorporationName($id);
+            $this->txtarr[corpTicker] = $this->apiOrgManagement->getCorporationTicker($id);
         } catch (\Pheal\Exceptions\PhealException $e){
              $this->log->put("CorpID", "err " . $e->getMessage());
         }
@@ -63,8 +65,8 @@ class notif_text {
     private function AllianceID(){
         try{
             $id = ($this->txtarr[allianceID]) ? ($this->txtarr[allianceID]) : ($this->txtarr[aggressorAllianceID]);
-            $this->txtarr[allyName] = $this->apiUserManagement->getAllianceName($id);
-            $this->txtarr[allyTicker] = $this->apiUserManagement->getAllianceTicker($id);
+            $this->txtarr[allyName] = $this->apiOrgManagement->getAllianceName($id);
+            $this->txtarr[allyTicker] = $this->apiOrgManagement->getAllianceTicker($id);
         } catch (\Pheal\Exceptions\PhealException $e){
             $this->log->put("AllianceID", "err " . $e->getMessage());
         }

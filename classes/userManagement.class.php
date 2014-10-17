@@ -4,8 +4,6 @@ interface IuserManagement {
     function getApiKey($keyStatus);
     function getAllowedListMask($maskOwner);
     function setNewPassword($password, $passwordRepeat);
-    function recordCorporationInfo($id, $name, $ticker);
-    function recordAllianceInfo($id, $name, $ticker);
 }
 
 class userManagement implements IuserManagement {
@@ -227,42 +225,6 @@ class userManagement implements IuserManagement {
         $ts3->deleteTsUser($id);
         $this->db->deleteFromTeamspeak($id);
     }
-    
-    public function getCorporationTicker($id){
-        $query = "SELECT `ticker` FROM `corporationList` WHERE `id` = '$id'";
-        $result = $this->db->query($query);
-        return $this->db->getMysqlResult($result);
-    }
-
-    public function getCorporationName($id){
-        $query = "SELECT `name` FROM `corporationList` WHERE `id` = '$id'";
-        $result = $this->db->query($query);
-        return $this->db->getMysqlResult($result);
-    }
-
-    public function getCorporationID($name){
-        $query = "SELECT `id` FROM `corporationList` WHERE `name` = '$name'";
-        $result = $this->db->query($query);
-        return $this->db->getMysqlResult($result);
-    }
-    
-    public function getAllianceTicker($id){
-        $query = "SELECT `ticker` FROM `allianceList` WHERE `id` = '$id'";
-        $result = $this->db->query($query);
-        return $this->db->getMysqlResult($result);
-    }
-
-    public function getAllianceName($id){
-        $query = "SELECT `name` FROM `allianceList` WHERE `id` = '$id'";
-        $result = $this->db->query($query);
-        return $this->db->getMysqlResult($result);
-    }
-
-    public function getAllianceID($name){
-        $query = "SELECT `id` FROM `allianceList` WHERE `name` = '$name'";
-        $result = $this->db->query($query);
-        return $this->db->getMysqlResult($result);
-    }
 
     public function getCharacterName($id){
         $query = "SELECT `characterName` FROM `apiPilotList` WHERE `characterID` = '$id'";
@@ -274,15 +236,5 @@ class userManagement implements IuserManagement {
         $query = "SELECT `characterID` FROM `apiPilotList` WHERE `characterName` = '$name'";
         $result = $this->db->query($query);
         return $this->db->getMysqlResult($result);
-    }
-
-    public function recordCorporationInfo($id, $name, $ticker){
-        $query = "INSERT INTO `corporationList` SET `id` = '$id', `name` = '$name', `ticker` = '$ticker'";
-        $result = $this->db->query($query);
-    }
-    
-    public function recordAllianceInfo($id, $name, $ticker){
-        $query = "INSERT INTO `allianceList` SET `id` = '$id', `name` = '$name', `ticker` = '$ticker'";
-        $result = $this->db->query($query);
     }
 }

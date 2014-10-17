@@ -6,13 +6,14 @@ class admin {
     private $db;
     //private $permissions;
     private $apiUserManagement;
-
+    private $apiOrgManagement;
 
     public function __construct($id) {
         $this->id = $id;
         $this->db = db::getInstance();
         //$this->permissions = new permissions($this->id);
         $this->apiUserManagement = new APIUserManagement();
+        $this->apiOrgManagement = new APIOrgManagement();
     }
 
     public function getAllAlliAllowedList(){
@@ -21,7 +22,7 @@ class admin {
         $arr = ($this->db->hasRows($result)) ? (($this->db->countRows($result) == 1) ? array($this->db->fetchAssoc($result)) : $this->db->fetchAssoc($result)) : NULL;
         for($i=0; $i<count($arr); $i++){
             try{
-                $name = $this->apiUserManagement->getAllianceName($arr[$i][allianceID]);
+                $name = $this->apiOrgManagement->getAllianceName($arr[$i][allianceID]);
             } catch(\Pheal\Exceptions\PhealException $ex){
                 throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
             }
@@ -42,7 +43,7 @@ class admin {
         $arr = ($this->db->hasRows($result)) ? (($this->db->countRows($result) == 1) ? array($this->db->fetchAssoc($result)) : $this->db->fetchAssoc($result)) : NULL;
         for($i=0; $i<count($arr); $i++){
             try{
-                $arr[$i][name] = $this->apiUserManagement->getCorporationName($arr[$i][corporationID]);
+                $arr[$i][name] = $this->apiOrgManagement->getCorporationName($arr[$i][corporationID]);
             } catch(\Pheal\Exceptions\PhealException $ex){
                 throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
             }
@@ -114,7 +115,7 @@ class admin {
         $perm = new permissions();
         $mask = $perm->convertPermissions($rawmask);
         try{
-            $id = $this->apiUserManagement->getAllianceID($name);
+            $id = $this->apiOrgManagement->getAllianceID($name);
         } catch(\Pheal\Exceptions\PhealException $ex){
             throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
         }
@@ -129,7 +130,7 @@ class admin {
         $perm = new permissions();
         $mask = $perm->convertPermissions($rawmask);
         try{
-            $id = $this->apiUserManagement->getCorporationID($name);
+            $id = $this->apiOrgManagement->getCorporationID($name);
         } catch(\Pheal\Exceptions\PhealException $ex){
             throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
         }
@@ -138,7 +139,7 @@ class admin {
         if($this->db->hasRows($this->db->query($query))) throw new Exception("Corporation already in allowed list ", -501);
         if($alliname){
             try{
-                $alliid = $this->apiUserManagement->getAllianceID($alliname);
+                $alliid = $this->apiOrgManagement->getAllianceID($alliname);
             } catch(\Pheal\Exceptions\PhealException $ex){
                 throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
             }
@@ -165,7 +166,7 @@ class admin {
         if($this->db->hasRows($this->db->query($query))) throw new Exception("Character already in allowed list ", -501);
         if($corpname){
             try{
-                $corpid = $this->apiUserManagement->getCorporationID($corpname);
+                $corpid = $this->apiOrgManagement->getCorporationID($corpname);
             } catch(\Pheal\Exceptions\PhealException $ex){
                 throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
             }
@@ -173,7 +174,7 @@ class admin {
         }
         if($alliname){
             try{
-                $alliid = $this->apiUserManagement->getAllianceID($alliname);
+                $alliid = $this->apiOrgManagement->getAllianceID($alliname);
             } catch(\Pheal\Exceptions\PhealException $ex){
                 throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
             }
@@ -205,7 +206,7 @@ class admin {
         }
         if($corpname){
             try{
-                $corpid = $this->apiUserManagement->getCorporationID($corpname);
+                $corpid = $this->apiOrgManagement->getCorporationID($corpname);
             } catch(\Pheal\Exceptions\PhealException $ex){
                 throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
             }
@@ -214,7 +215,7 @@ class admin {
         }
         if($alliname){
             try{
-                $alliid = $this->apiUserManagement->getAllianceID($alliname);
+                $alliid = $this->apiOrgManagement->getAllianceID($alliname);
             } catch(\Pheal\Exceptions\PhealException $ex){
                 throw new Exception($ex->getMessage(), ($ex->getCode())/-1000);
             }

@@ -10,7 +10,7 @@ class timerboard{ //} implements Itimerboard {
     
     private $db;
     private $permissions;
-    private $apiUserManagement;
+    private $apiOrgManagement;
 
     public function __construct() {
         $this->db = db::getInstance();
@@ -19,7 +19,7 @@ class timerboard{ //} implements Itimerboard {
             throw new Exception("User isn't logged in!");
         }
         $this->permissions = new permissions($id);*/
-        $this->apiUserManagement = new APIUserManagement();
+        $this->apiOrgManagement = new APIOrgManagement();
     }
     /*
     private function checkRights($action) {
@@ -69,13 +69,13 @@ class timerboard{ //} implements Itimerboard {
     private function getOwner($corporation, $alliance){
         try {
             if($corporation > 0){
-                $owner .= $this->apiUserManagement->getCorporationName($corporation);
-                $owner .= " [" . $this->apiUserManagement->getCorporationTicker($corporation) . "]";
+                $owner .= $this->apiOrgManagement->getCorporationName($corporation);
+                $owner .= " [" . $this->apiOrgManagement->getCorporationTicker($corporation) . "]";
             }
             if($alliance > 0){
                 if($corporation > 0) $owner .= " (";
-                $owner .= $this->apiUserManagement->getAllianceName($alliance);
-                $owner .= " [" . $this->apiUserManagement->getAllianceTicker($alliance) . "]";
+                $owner .= $this->apiOrgManagement->getAllianceName($alliance);
+                $owner .= " [" . $this->apiOrgManagement->getAllianceTicker($alliance) . "]";
                 if($corporation > 0) $owner .= ")";
             }
             return $owner;
@@ -98,11 +98,11 @@ class timerboard{ //} implements Itimerboard {
     private function convertTimerArr($timer = array()){
         try {
             if(isset($timer[Corporation])){
-                $ctimer[ownerCorporation] = $this->apiUserManagement->getCorporationID($timer[Corporation]);
-                $ctimer[ownerAlliance] = $this->apiUserManagement->getAllianceByCorporation($ctimer[ownerCorporation]);
+                $ctimer[ownerCorporation] = $this->apiOrgManagement->getCorporationID($timer[Corporation]);
+                $ctimer[ownerAlliance] = $this->apiOrgManagement->getAllianceByCorporation($ctimer[ownerCorporation]);
             } elseif(isset($timer[Alliance])){
                 $ctimer[ownerCorporation] = 0;
-                $ctimer[ownerAlliance] = $this->apiUserManagement->getAllianceID($timer[Alliance]);
+                $ctimer[ownerAlliance] = $this->apiOrgManagement->getAllianceID($timer[Alliance]);
             }
         } catch (\Pheal\Exceptions\PhealException $e) {
             throw new Exception($e->getMessage(), ($e->getCode())/-1000);
