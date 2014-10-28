@@ -133,7 +133,8 @@ return $tsAdmin;
 		    
 		    	if($chOnline['success']=false){
 			$delete=$tsAdmin->clientDbDelete("$cl_id");
-			}elseif($info['success']=true){
+#			}elseif($info['success']=true){
+			}elseif($chOnline['success']=true){
 					    $cid=$chOnline['data'][0]['clid'];
 					    $kick=$tsAdmin->clientKick($cid,'server','Need register now');
 					    $delete=$tsAdmin->clientDbDelete("$cl_id");
