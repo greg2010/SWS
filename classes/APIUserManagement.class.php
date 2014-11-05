@@ -46,19 +46,19 @@ class APIUserManagement{
     }
 
     private function makeCharArray($mask, $char){
-        $orgManagement = new orgManagement();
+        $APIrgManagement = new APIOrgManagement();
         $charArray = array(
             'accessMask' => $mask,
             'characterID' => $char->characterID,
             'characterName' => $char->characterName,
             'corporationID' => $char->corporationID,
             'corporationName' => $char->corporationName,
-            'corporationTicker' => $orgManagement->getCorporationTicker($char->corporationID)
+            'corporationTicker' => $APIrgManagement->getCorporationTicker($char->corporationID)
         );
         if($char->allianceID <> 0){
             $charArray[allianceID] = $char->allianceID;
             $charArray[allianceName] = $char->allianceName;
-            $charArray[allianceTicker] = $orgManagement->getAllianceTicker($char->allianceID);
+            $charArray[allianceTicker] = $APIrgManagement->getAllianceTicker($char->allianceID);
         }
         return $charArray;
     }
