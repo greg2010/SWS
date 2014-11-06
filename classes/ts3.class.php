@@ -113,6 +113,27 @@ return $tsAdmin;
     return $kickusers;
     }
 
+    public function fullvalidate(){
+    
+    $tsAdmin=$this->tsAdmin;
+    $this->db=db::getInstance();
+    
+    $query = "SELECT `id` FROM `teamspeak`";
+    $result = $this->db->query($query);
+    $id_raw=$this->db->fetchRow($result);
+	foreach ($id_raw as $id){
+	$iv++;
+	$this->validate($id);
+	
+	}
+    
+    
+    
+    $this->syncDbTs();
+    return $iv++;
+    }
+
+
 
 
     public function syncDbTs(){
