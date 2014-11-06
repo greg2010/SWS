@@ -123,8 +123,7 @@ return $tsAdmin;
     $id_raw=$this->db->fetchRow($result);
 	foreach ($id_raw as $id){
 	$iv++;
-	$this->validate($id);
-	
+	$this->validate($id[0]);
 	}
     
     
