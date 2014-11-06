@@ -41,7 +41,7 @@ class logging {
     		$date = date("Y-m-d H:i:s");
     		$text = ($this->log[ok]) ? ("ok: " . $this->log[ok]) : addslashes(yaml_emit($this->log));
     		$query = "INSERT INTO `$table` (`date`, `text`) VALUES ('$date','$text')";
-			if(config::ok_message_in_log) $result = $db->query($query);
+			if(($this->log[ok] && config::ok_message_in_log) || (!$this->log[ok])) $result = $db->query($query);
 		} catch (Exception $ex){
     		echo $ex->getMessage();
 		}
