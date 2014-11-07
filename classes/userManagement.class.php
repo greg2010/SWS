@@ -57,7 +57,7 @@ class userManagement implements IuserManagement {
         $result = $this->db->query($query);
         $userMasks = $this->db->fetchRow($result);
         foreach ($userMasks as $userMask) {
-            $accessMask = $accessMask | $userMask;
+            $accessMask = (count($userMasks) == 1) ? ($accessMask | $userMask) : ($accessMask | $userMask[0]);
         }
         if ($accessMask == '') {
             $accessMask = 0;
