@@ -147,6 +147,7 @@ class validation {
             if($dbPilot[keyStatus] == 1){
                 $UserAccessMask = $this->getUserAccessMask($dbPilot[id]);
                 if($cMask != $UserAccessMask){
+                    $this->ts3Ban($dbCorp[keyID]);
                     try {
                         $query = "UPDATE `users` SET `accessMask` = '$cMask' WHERE `id` = '{$dbPilot[id]}'";
                         $result = $this->db->query($query);
@@ -172,7 +173,6 @@ class validation {
         }
         if($dbCorp[accessMask] != $apiCorp[accessMask] || $dbCorp[corporationID] != $apiCorp[corporationID] || $dbCorp[allianceID] != $apiCorp[allianceID]){
             try {
-                $this->ts3Ban($dbCorp[keyID]);
                 $query = "UPDATE `apiCorpList` SET `accessMask` = '{$apiCorp[accessMask]}', `corporationID` = '{$apiCorp[corporationID]}', `allianceID` = '{$apiCorp[allianceID]}' WHERE `keyID` = '{$dbCorp[keyID]}'";
                 $result = $this->db->query($query);
                 $this->log->put("verifyCorpApiInfo", "ok update");
