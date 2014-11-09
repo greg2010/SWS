@@ -171,7 +171,10 @@ return $tsAdmin;
 
 
     public function validate($id){
-    
+    $id = (int) $id;
+    $date_now = date("Y-m-d H:i:s");
+#    file_put_contents ("/var/www/coalition.redalliance.pw/validateTS.txt", "call metod TS3 validate $id $date_now \n", FILE_APPEND);
+
     $ar1a=$this->grAdditDbTs($id);
     if ($ar1a==NULL){
     $ar1a=array();
@@ -180,6 +183,7 @@ return $tsAdmin;
     $ar1=array_merge($ar1a,$ar1m);
     $ar2t=$this->perm_user($this->getTsUid($id));
     if($ar2t==false){
+#    file_put_contents ("/var/www/coalition.redalliance.pw/validateTS.txt", "user not found  $id $date_now \n", FILE_APPEND);
     return "user not find";
     exit;
     }
@@ -192,6 +196,7 @@ return $tsAdmin;
     $validTs_Db=array_diff($ar2, $ar1);
 #var_dump($ar1);
 #var_dump($ar2);
+
     if (!in_array('not_validate', $ar1)){
 
     if (count($validDb_Ts)!='0'){
@@ -272,7 +277,15 @@ return $tsAdmin;
 		}
 	    }
 #var_dump($r_tmp);
+    
+    if (is_array($row)){
     return $row=array_values($row);
+    }else{
+    
+    return $row=array();
+    
+    }
+    
 	}else{
     
     return $row=array('not_validate');
