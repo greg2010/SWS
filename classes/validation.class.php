@@ -147,7 +147,7 @@ class validation {
             if($dbPilot[keyStatus] == 1){
                 $UserAccessMask = $this->getUserAccessMask($dbPilot[id]);
                 if($cMask != $UserAccessMask){
-                    $this->ts3Ban($dbCorp[keyID]);
+                    $this->ts3Ban($dbPilot[id]);
                     try {
                         $query = "UPDATE `users` SET `accessMask` = '$cMask' WHERE `id` = '{$dbPilot[id]}'";
                         $result = $this->db->query($query);
