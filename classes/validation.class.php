@@ -50,9 +50,20 @@ class validation {
         }
     }
 
-    private function setBanMessage($id, $code, $text){
+    private function setBanMessage($id, $code = NULL, $text = NULL){
+        if($code == NULL) $query = "UPDATE `users` SET `banID` IS NULL, `banMessage` IS NULL WHERE `id` = '$id'";
         $query = "UPDATE `users` SET `banID` = '$code', `banMessage` = '$text' WHERE `id` = '$id'";
         $result = $this->db->query($query);
+    }
+
+    private function getBanID($id){
+        try {
+            $query = "SELECT `banID` FROM `users` WHERE `id` = '$id'";
+            $result = $this->db->query($query);
+            return $this->db->getMysqlResult($result);
+        } catch (Exception $ex) {
+            $this->log->put("getBanID", "err " . $ex->getMessage());
+        }
     }
 
     private function ban($id){
@@ -108,6 +119,17 @@ class validation {
         }
     }
 
+    private function checkBan($id){
+        try {
+            $permissions = new permissions($id);
+            if($permissions->hasPermission("webReg_Valid") || $permissions->hasPermission("TS_Valid") || $permissions->hasPermission("XMPP_Valid")){
+                $this->setBanMessage($id);
+            }
+        } catch (Exception $ex) {
+            $this->log->put("checkBan", "err " . $ex->getMessage());
+        }
+    }
+
     public function updatePilotInfo($characterID = NULL, $keyID = NULL, $vCode = NULL){
         if($characterID != NULL){
             $apiUserManagement = new APIUserManagement();
@@ -135,7 +157,7 @@ class validation {
             $c = $ex->getCode();
             if($c == 105 || $c == 106 || $c == 108 || $c == 112 || $c == 201 || $c == 202 || $c == 203 || $c == 204 || $c == 205 || $c == 210 || $c == 211 || $c == 212 ||
              $c == 221 || $c == 222 || $c == 223 || $c == 516 || $c == 522 || $c == -201 || $c == -202 || $c == -203 || $c == -204 || $c == -205){
-                if($dbPilot[keyStatus] == 1){
+                if(($dbPilot[keyStatus] == 1) && ($this->getBanID($dbPilot[id]) != $c)){
                     $this->ban($dbPilot[id]);
                     $this->setBanMessage($dbPilot[id], $c, $ex->getMessage());
                 }
@@ -147,7 +169,6 @@ class validation {
             if($dbPilot[keyStatus] == 1){
                 $UserAccessMask = $this->getUserAccessMask($dbPilot[id]);
                 if($cMask != $UserAccessMask){
-                    $this->ts3Ban($dbPilot[id]);
                     try {
                         $query = "UPDATE `users` SET `accessMask` = '$cMask' WHERE `id` = '{$dbPilot[id]}'";
                         $result = $this->db->query($query);
@@ -155,11 +176,13 @@ class validation {
                     } catch (Exception $ex) {
                         $this->log->put("verifyPilotApiInfo", "err " . $ex->getMessage());
                     }
+                    $this->ts3Ban($dbPilot[id]);
                 }
                 $ban_list = $this->showBans($dbPilot[id]);
                 if($ban_list != NULL) $this->log->put("verifyPilotApiInfo", $ban_list);
             }
         }
+        $this->checkBan($dbPilot[id]);
         return $this->log->get();
     }
 
