@@ -337,6 +337,7 @@ return $tsAdmin;
     }
 
     public function deleteTsUser($id){
+    $ts3_debug = config::ts3_debug;
      $tsAdmin=$this->tsAdmin;
     $Uid=$this->getTsUid($id);
     if ($ts3_debug==1){    
