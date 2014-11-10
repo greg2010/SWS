@@ -40,7 +40,7 @@ class notif_send {
     }
 
     private function getMoreInfoFromDB(){
-        $query = "SELECT `accessMask`, `settngsMask`, `email`, `login`, `lastNotifID` FROM `users` WHERE `id` = '$this->id'";
+        $query = "SELECT `accessMask`, `settingsMask`, `email`, `login`, `lastNotifID` FROM `users` WHERE `id` = '$this->id'";
         $result = $this->db->query($query);
         $arr = $this->db->fetchAssoc($result);
         $this->email = $arr[email];
