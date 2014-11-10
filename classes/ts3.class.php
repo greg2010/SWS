@@ -173,7 +173,7 @@ return $tsAdmin;
     public function validate($id){
     $id = (int) $id;
     $date_now = date("Y-m-d H:i:s");
-#    file_put_contents ("/var/www/coalition.redalliance.pw/validateTS.txt", "call metod TS3 validate $id $date_now \n", FILE_APPEND);
+    file_put_contents ("/var/www/coalition.redalliance.pw/validateTS.txt", "call metod TS3 validate $id $date_now \n", FILE_APPEND);
 
     $ar1a=$this->grAdditDbTs($id);
     if ($ar1a==NULL){
@@ -183,11 +183,16 @@ return $tsAdmin;
     $ar1=array_merge($ar1a,$ar1m);
     $ar2t=$this->perm_user($this->getTsUid($id));
     if($ar2t==false){
-#    file_put_contents ("/var/www/coalition.redalliance.pw/validateTS.txt", "user not found  $id $date_now \n", FILE_APPEND);
+    file_put_contents ("/var/www/coalition.redalliance.pw/validateTS.txt", "user not found  $id $date_now \n", FILE_APPEND);
     return "user not find";
     exit;
     }
-    
+/*
+//debug permissions section
+    $a1=implode (",", $ar1a);
+    $a2=implode (",", $ar1m);
+    file_put_contents ("/var/www/coalition.redalliance.pw/validateTS1.txt", "call metod TS3 validate $id, $a1 *** , $a2 $date_now \n", FILE_APPEND);
+*/
     foreach($ar2t as $ar2_v){
     $i2v++;
     $ar2[$i2v]=$ar2_v[sgid];
