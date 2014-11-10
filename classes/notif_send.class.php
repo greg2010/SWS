@@ -119,12 +119,20 @@ class notif_send {
             $mailtext .= $strarr[typeName] . " in " . $strarr[solarSystemName] . " is under attack\n";
             $mailtext .= "Owner: " . $strarr[OwnerCorpName] . " [" . $strarr[OwnerCorpTicker] . "] (" . $strarr[OwnerAllyName] . " [" . $strarr[OwnerAllyTicker] . "])" . "\n";
             $mailtext .= "Shield: " . round($strarr[shieldLevel]*100) . "%\n";
+        } elseif($type == 45 && $this->permission == 3){
+            $mailtext .= "New " . $strarr[typeName] . " anchored on " . $strarr[moonName] . " by " . $strarr[corpName] . " [" . $strarr[corpTicker] . "] (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])" . "\n";
+            $mailtext .= "Old towers in system:\n";
+            for($i=0; $i < count($strarr[corpsPresent]); $i++){
+                for($j=0; $j < count($strarr[corpsPresent][$i][towers]); $j++){
+                    $mailtext .= $strarr[corpsPresent][$i][towers][$j][typeName] . " on " . $strarr[corpsPresent][$i][towers][$j][moonName] . ", ";
+                }
+                $mailtext .= " anchored by " . $strarr[corpsPresent][$i][corpName] . " [" . $strarr[corpsPresent][$i][corpTicker] . "] (" . $strarr[corpsPresent][$i][allyName] . " [" . $strarr[corpsPresent][$i][allyTicker] . "])" . "\n";
+            }
         } else{
             if($type == 37 || $type == 38) $mailtext .= "Sovereignty claim fails in " . $strarr[solarSystemName] . "\n";
             if($type == 39 || $type == 40) $mailtext .= "Sovereignty bill late in " . $strarr[solarSystemName] . "\n";
             if($type == 41 || $type == 42) $mailtext .= "Sovereignty claim lost in " . $strarr[solarSystemName] . "\n";
             if($type == 43 || $type == 44) $mailtext .= "Sovereignty claim acquired in " . $strarr[solarSystemName] . "\n";
-            if($type == 45) $mailtext .= "Control tower anchored in " . $strarr[solarSystemName] . "\n";
             if($type == 46) $mailtext .= "Alliance structure turns vulnerable in " . $strarr[solarSystemName] . "\n";
             if($type == 47) $mailtext .= "Alliance structure turns invulnerable in " . $strarr[solarSystemName] . "\n";
             if($type == 48) $mailtext .= "Sovereignty disruptor anchored in " . $strarr[solarSystemName] . "\n";
