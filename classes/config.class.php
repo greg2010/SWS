@@ -27,5 +27,5 @@ class config {
     const ts3_debug = 1;
 
     const xmpp_address = 'localhost:7092';
-    const xmpp_send_from = 'Sansha Kuvakei';
+    const xmpp_send_from = 'Angel Cartel';
 }
