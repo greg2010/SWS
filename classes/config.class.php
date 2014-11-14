@@ -9,7 +9,7 @@ class config {
     const num_of_threads = 4; // max threads (4)
     const ops_in_thread = 100;  // max operations in thread (100)
 
-    const ok_message_in_log = true;
+    const ok_message_in_log = false;
 
     const correctKeyMask = 49160;
 
