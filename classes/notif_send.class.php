@@ -116,17 +116,24 @@ class notif_send {
             if($type == 88) $strarr[typeName] = "Infrastructure Hub";
             $mailtext .= $strarr[typeName] . " on " . $locname . " is under attack\n";
             $mailtext .= "Owner: " . $strarr[OwnerCorpName] . " [" . $strarr[OwnerCorpTicker] . "] (" . $strarr[OwnerAllyName] . " [" . $strarr[OwnerAllyTicker] . "])" . "\n";
-            $mailtext .=  "Aggressor: " . $strarr[aggressorName] . " from " . $strarr[corpName] . " [" . $strarr[corpTicker] . "] (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])" . "\n";
-            $mailtext .= "Shield: " . round($strarr[shieldValue]*100) . "% Armor: " . round($strarr[armorValue]*100) . "% Hull: " . round($strarr[hullValue]*100) . "%\n";
+            $mailtext .= ($strarr[aggressorID] != NULL) ? ("Aggressor: " . $strarr[aggressorName]) : ("Aggressor: Unknown");
+            $mailtext .= ($strarr[aggressorCorpID] != NULL) ? (" from " . $strarr[corpName] . " [" . $strarr[corpTicker] . "]") : (" from Unknown Corporation");
+            if($strarr[aggressorAllianceID] != NULL) $mailtext .= " (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])";
+            $mailtext .= "\nShield: " . round($strarr[shieldValue]*100) . "% Armor: " . round($strarr[armorValue]*100) . "% Hull: " . round($strarr[hullValue]*100) . "%\n";
         } elseif($type == 93 && $this->permission > 1){ // Customs office has been attacked
             $mailtext .= $strarr[typeName] . " on " . $strarr[planetName] . " is under attack\n";
             $mailtext .= "Owner: " . $strarr[OwnerCorpName] . " [" . $strarr[OwnerCorpTicker] . "] (" . $strarr[OwnerAllyName] . " [" . $strarr[OwnerAllyTicker] . "])" . "\n";
-            $mailtext .=  "Aggressor: " . $strarr[aggressorName] . " from " . $strarr[corpName] . " [" . $strarr[corpTicker] . "] (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])" . "\n";
-            $mailtext .= "Shield: " . round($strarr[shieldLevel]*100) . "%\n";
+            $mailtext .= ($strarr[aggressorID] != NULL) ? ("Aggressor: " . $strarr[aggressorName]) : ("Aggressor: Unknown");
+            $mailtext .= ($strarr[aggressorCorpID] != NULL) ? (" from " . $strarr[corpName] . " [" . $strarr[corpTicker] . "]") : (" from Unknown Corporation");
+            if($strarr[aggressorAllianceID] != NULL) $mailtext .= " (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])";
+            $mailtext .= "\nShield: " . round($strarr[shieldLevel]*100) . "%\n";
         } elseif($type == 77 && $this->permission > 1){ // Station service aggression message
             $mailtext .= $strarr[typeName] . " in " . $strarr[solarSystemName] . " is under attack\n";
             $mailtext .= "Owner: " . $strarr[OwnerCorpName] . " [" . $strarr[OwnerCorpTicker] . "] (" . $strarr[OwnerAllyName] . " [" . $strarr[OwnerAllyTicker] . "])" . "\n";
-            $mailtext .= "Shield: " . round($strarr[shieldLevel]*100) . "%\n";
+            $mailtext .= ($strarr[aggressorID] != NULL) ? ("Aggressor: " . $strarr[aggressorName]) : ("Aggressor: Unknown");
+            $mailtext .= ($strarr[aggressorCorpID] != NULL) ? (" from " . $strarr[corpName] . " [" . $strarr[corpTicker] . "]") : (" from Unknown Corporation");
+            if($strarr[aggressorAllianceID] != NULL) $mailtext .= " (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])";
+            $mailtext .= "\nShield: " . round($strarr[shieldValue]*100) . "%\n";
         } elseif($type == 45 && $this->permission == 3){
             $mailtext .= "New " . $strarr[typeName] . " anchored on " . $strarr[moonName] . " by " . $strarr[corpName] . " [" . $strarr[corpTicker] . "] (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])" . "\n";
             $mailtext .= "Old towers in system:\n";
