@@ -182,6 +182,11 @@ switch ($page) {
         //$ts3->validate($id);
         }
         break;
+    case 'jabber':
+        $toTemplate['curForm'] = 'jabber';
+        $toTemplate['active']['jabber'] = $pageActive;
+        $toTemplate['jabberName'] = $_SESSION[userObject]->getJabberLogin();
+        break;
     default:
         $toTemplate['curForm'] = '';
         $toTemplate['active']['profile'] = $pageActive;

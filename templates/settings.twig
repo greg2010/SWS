@@ -9,7 +9,7 @@
         <li {{active.profile}}><a href="settings.php">PROFILE</a></li>
         <li {{active.api}}><a href="settings.php?a=api">EVE API</a></li>
         <li {{active.teamspeak}}><a href="settings.php?a=teamspeak">TeamSpeak</a></li>
-        <li><a href="#">Jabber</a></li>
+        <li {{active.jabber}}><a href="settings.php?a=jabber">Jabber</a></li>
     </ul>
  {% if curForm == 'api' %}
 <!--Форма смены API-->
@@ -238,6 +238,15 @@
     </form>
 </div>
 {% endif %}
+ {% elseif curForm == 'jabber' %}
+ <!--Форма Jabber-->
+ <div id="formSettings"> 
+    <h1>PROFILE SETTINGS - JABBER</h1>
+    <br>
+    <h2>You are already registered in Jabber as:<span style="margin: 20px;">{{jabberName}}</span></h2>
+    <h2>Server address:<span style="margin: 20px;">coalition.redalliance.pw</span></h2>
+    <h2>Port:<span style="margin: 20px;">52232</span></h2>
+</div>
 {% else %}
     {% if errorMsg is defined %}
         {% set isErrorHidden = "" %}
@@ -333,13 +342,4 @@
     </form>
 </div>
  {% endif %} 
- <!--Форма Jabber-->
- <div id="formSettings"> 
-    <h1>PROFILE SETTINGS - JABBER</h1>
-    <br>
-    <h2>You are already registered in Jabber as:<span style="margin: 20px;"></span></h2>
-    <h2>Server address:<span style="margin: 20px;">coalition.redalliance.pw</span></h2>
-    <h2>Port:<span style="margin: 20px;">52232</span></h2>
-</div>
- 
 {% endblock %}
