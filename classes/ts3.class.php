@@ -171,6 +171,13 @@ return $tsAdmin;
 
 
     public function validate($id){
+    $ts3_debug = config::ts3_debug;
+    $id = (int) $id;
+    $date_now = date("Y-m-d H:i:s");
+    
+    if ($ts3_debug==1){
+    file_put_contents ("/var/www/coalition.redalliance.pw/validateTS.txt", "call metod TS3 validate $id $date_now \n", FILE_APPEND);
+    }
     
     $ar1a=$this->grAdditDbTs($id);
     if ($ar1a==NULL){
@@ -180,8 +187,19 @@ return $tsAdmin;
     $ar1=array_merge($ar1a,$ar1m);
     $ar2t=$this->perm_user($this->getTsUid($id));
     if($ar2t==false){
+
+    if ($ts3_debug==1){
+    file_put_contents ("/var/www/coalition.redalliance.pw/validateTS.txt", "user not found  $id $date_now \n", FILE_APPEND);
+    }
     return "user not find";
     exit;
+    }
+    
+    if ($ts3_debug==1){
+//debug permissions section
+    $a1=implode (",", $ar1a);
+    $a2=implode (",", $ar1m);
+    file_put_contents ("/var/www/coalition.redalliance.pw/validateTS1.txt", "call metod TS3 validate $id, $a1 *** , $a2 $date_now \n", FILE_APPEND);
     }
     
     foreach($ar2t as $ar2_v){
@@ -190,15 +208,12 @@ return $tsAdmin;
     }
     $validDb_Ts=array_diff($ar1, $ar2);
     $validTs_Db=array_diff($ar2, $ar1);
-#var_dump($ar1);
-#var_dump($ar2);
+
     if (!in_array('not_validate', $ar1)){
 
     if (count($validDb_Ts)!='0'){
 
 	foreach($validDb_Ts as $sgids){
-#	echo ("set:$sgids\n");
-	
         $set=$this->setGruser($sgids,$this->getTsUid($id));
 	}
     }
@@ -206,7 +221,6 @@ return $tsAdmin;
     if (count($validTs_Db)!='0'){
     
     	foreach($validTs_Db as $sgidd){
-#	echo ("del:$sgidd\n");
         $del=$this->delGruser($sgidd,$this->getTsUid($id));
 	}
     }
@@ -214,7 +228,6 @@ return $tsAdmin;
     }else{
 
     foreach($ar2 as $sgiddnv){
-#	echo ("del:$sgiddnv\n");
         $del=$this->delGruser($sgiddnv,$this->getTsUid($id));
 				}
 
@@ -236,7 +249,7 @@ return $tsAdmin;
 
     private function alliUser($id){
 	    $this->db=db::getInstance();
-            $query = "SELECT `allianceID` FROM `apiPilotList` WHERE `id`=$id AND `keyStatus` = '1'";
+            $query = "SELECT `allianceID` FROM `apiPilotList` WHERE `id`=$id AND `keyStatus` = 1";
             $result = $this->db->query($query);
             return $this->db->getMysqlResult($result);
     }
@@ -259,20 +272,25 @@ return $tsAdmin;
     $permissions = new permissions($id);
     $this->db=db::getInstance();
     $lable_ar=$permissions->getTSPermissions();
-#    var_dump($lable_ar);
     if(in_array('TS_Valid', $lable_ar)){
     foreach ($lable_ar as $lable_str){
     $i++;
 	    $query = "SELECT `TSGroupID` FROM `additionalTSGroupID` WHERE `bitName` = '$lable_str'";
-#	    echo ("\n $query \n");
 	    $result = $this->db->query($query);
 	    $r_tmp=$this->db->fetchRow($result);
 		if($r_tmp[0]!=''){
 		$row[$i]=$r_tmp[0];
 		}
 	    }
-#var_dump($r_tmp);
+    
+    if (is_array($row)){
     return $row=array_values($row);
+    }else{
+    
+    return $row=array();
+    
+    }
+    
 	}else{
     
     return $row=array('not_validate');
@@ -319,9 +337,12 @@ return $tsAdmin;
     }
 
     public function deleteTsUser($id){
+    $ts3_debug = config::ts3_debug;
      $tsAdmin=$this->tsAdmin;
     $Uid=$this->getTsUid($id);
-#    file_put_contents ("deleteTS.txt", "detele Unique ID TS for $id \n", FILE_APPEND);
+    if ($ts3_debug==1){    
+    file_put_contents ("deleteTS.txt", "detele Unique ID TS for $id \n", FILE_APPEND);
+    }
     $info=$tsAdmin->clientGetIds($Uid);
     $info2=$tsAdmin->clientDbFind("$Uid",'-uid');
     $cl_id=$info2['data'][0]['cldbid'];
@@ -409,8 +430,6 @@ return $tsAdmin;
 
 }
 
-
-
 /*
 ######example validate user
 $ts3 = new ts3;
@@ -419,9 +438,6 @@ $ts3 = new ts3;
 $wow=$ts3->validate('1');
 #$wow=$ts3->perm_user('ttc6PcBp8ufxl6zo3JGU/P5jejE=');
 var_dump($wow);
-
 */
-
-
 
 ?>

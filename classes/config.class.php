@@ -9,7 +9,7 @@ class config {
     const num_of_threads = 4; // max threads (4)
     const ops_in_thread = 100;  // max operations in thread (100)
 
-    const ok_message_in_log = true;
+    const ok_message_in_log = false;
 
     const correctKeyMask = 49160;
 
@@ -24,7 +24,8 @@ class config {
     const ts3_queryport = '10011';
     const ts3_user = 'serveradmin';
     const ts3_pass = 'cYg9HoIr';
+    const ts3_debug = 1;
 
     const xmpp_address = 'localhost:7092';
-    const xmpp_send_from = 'Sansha Kuvakei';
+    const xmpp_send_from = 'Angel Cartel';
 }

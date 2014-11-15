@@ -31,7 +31,7 @@ class notif_send {
                 if($this->send_jabber){
                     $c_xmpp = new xmpp;
                     if(!$c_xmpp->sendjabber($this->login, $txt))
-                        throw new Exception("Mail sending failed", -1);
+                        throw new Exception("Jabber sending failed", -2);
                 }
                 $query = "UPDATE `users` SET `lastNotifID` = '$this->lastNotifID' WHERE `id`='$this->id'";
                 $result = $this->db->query($query);
@@ -40,21 +40,29 @@ class notif_send {
     }
 
     private function getMoreInfoFromDB(){
-        $query = "SELECT `accessMask`, `settngsMask`, `email`, `login`, `lastNotifID` FROM `users` WHERE `id` = '$this->id'";
+        $query = "SELECT `accessMask`, `settingsMask`, `email`, `login`, `lastNotifID` FROM `users` WHERE `id` = '$this->id'";
         $result = $this->db->query($query);
         $arr = $this->db->fetchAssoc($result);
         $this->email = $arr[email];
         $this->login = $arr[login];
         $this->lastNotifID = $arr[lastNotifID];
         $this->permission = $this->genPermission($arr[accessMask]);
-        $this->send_email = (($arr[settngsMask] & 1) > 0) ? true : false;
-        $this->send_jabber = (($arr[settngsMask] & 2) > 0) ? true : false;
+        $this->send_email = (($arr[settingsMask] & 1) > 0) ? true : false;
+        $this->send_jabber = (($arr[settingsMask] & 2) > 0) ? true : false;
     }
 
     private function genPermission($mask){
         $permissions = new permissions($this->id);
         $this->posop = ($permissions->hasPermission("posMon_Valid")) ? (" OR (`typeID` = 76 AND `allianceID` = '" . $this->allianceID . "')") : (" OR (`typeID` = 76 AND `corporationID` = '" . $this->corporationID . "')");
-        return ($permissions->hasPermission("XMPP_Valid")) ? (($permissions->hasPermission("XMPP_RoamingFC")) ? (($permissions->hasPermission("XMPP_Overmind") || $permissions->hasPermission("XMPP_FleetCom")) ? 3 : 2) : 1) : 0;
+        if($permissions->hasPermission("XMPP_Valid")){
+            if($permissions->hasPermission("XMPP_Overmind") || $permissions->hasPermission("XMPP_FleetCom")){
+                return 3;
+            } else{
+                if($permissions->hasPermission("XMPP_RoamingFC")){
+                    return 2;
+                } else return 1;
+            }
+        } else return 0;
     }
 
     private function getNotifications(){
@@ -101,34 +109,49 @@ class notif_send {
             for($i=0; $i < count($strarr[wants]); $i++){
                 $mailtext .= "Remaining " . $strarr[wants][$i][quantity] . " " . $strarr[wants][$i][typeName] . "\n";
             }
-        } elseif($type == 75 || $type == 80 || $type == 86 || $type == 87 || $type == 88){
+        } elseif(($type == 75 || $type == 80 || $type == 86 || $type == 87 || $type == 88)  && $this->permission > 1){
             $locname = ($type == 75) ? $strarr[moonName] : $strarr[solarSystemName];
             if($type == 86) $strarr[typeName] = "Territorial Claim Unit";
             if($type == 87) $strarr[typeName] = "Sovereignty Blockade Unit";
             if($type == 88) $strarr[typeName] = "Infrastructure Hub";
             $mailtext .= $strarr[typeName] . " on " . $locname . " is under attack\n";
             $mailtext .= "Owner: " . $strarr[OwnerCorpName] . " [" . $strarr[OwnerCorpTicker] . "] (" . $strarr[OwnerAllyName] . " [" . $strarr[OwnerAllyTicker] . "])" . "\n";
-            $mailtext .=  "Aggressor: " . $strarr[aggressorName] . " from " . $strarr[corpName] . " [" . $strarr[corpTicker] . "] (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])" . "\n";
-            $mailtext .= "Shield: " . round($strarr[shieldValue]*100) . "% Armor: " . round($strarr[armorValue]*100) . "% Hull: " . round($strarr[hullValue]*100) . "%\n";
-        } elseif($type == 93){
+            $mailtext .= ($strarr[aggressorID] != NULL) ? ("Aggressor: " . $strarr[aggressorName]) : ("Aggressor: Unknown");
+            $mailtext .= ($strarr[aggressorCorpID] != NULL) ? (" from " . $strarr[corpName] . " [" . $strarr[corpTicker] . "]") : (" from Unknown Corporation");
+            if($strarr[aggressorAllianceID] != NULL) $mailtext .= " (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])";
+            $mailtext .= "\nShield: " . round($strarr[shieldValue]*100) . "% Armor: " . round($strarr[armorValue]*100) . "% Hull: " . round($strarr[hullValue]*100) . "%\n";
+        } elseif($type == 93 && $this->permission > 1){ // Customs office has been attacked
             $mailtext .= $strarr[typeName] . " on " . $strarr[planetName] . " is under attack\n";
             $mailtext .= "Owner: " . $strarr[OwnerCorpName] . " [" . $strarr[OwnerCorpTicker] . "] (" . $strarr[OwnerAllyName] . " [" . $strarr[OwnerAllyTicker] . "])" . "\n";
-            $mailtext .=  "Aggressor: " . $strarr[aggressorName] . " from " . $strarr[corpName] . " [" . $strarr[corpTicker] . "] (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])" . "\n";
-            $mailtext .= "Shield: " . round($strarr[shieldLevel]*100) . "%\n";
-        } elseif($type == 77){
+            $mailtext .= ($strarr[aggressorID] != NULL) ? ("Aggressor: " . $strarr[aggressorName]) : ("Aggressor: Unknown");
+            $mailtext .= ($strarr[aggressorCorpID] != NULL) ? (" from " . $strarr[corpName] . " [" . $strarr[corpTicker] . "]") : (" from Unknown Corporation");
+            if($strarr[aggressorAllianceID] != NULL) $mailtext .= " (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])";
+            $mailtext .= "\nShield: " . round($strarr[shieldLevel]*100) . "%\n";
+        } elseif($type == 77 && $this->permission > 1){ // Station service aggression message
             $mailtext .= $strarr[typeName] . " in " . $strarr[solarSystemName] . " is under attack\n";
             $mailtext .= "Owner: " . $strarr[OwnerCorpName] . " [" . $strarr[OwnerCorpTicker] . "] (" . $strarr[OwnerAllyName] . " [" . $strarr[OwnerAllyTicker] . "])" . "\n";
-            $mailtext .= "Shield: " . round($strarr[shieldLevel]*100) . "%\n";
+            $mailtext .= ($strarr[aggressorID] != NULL) ? ("Aggressor: " . $strarr[aggressorName]) : ("Aggressor: Unknown");
+            $mailtext .= ($strarr[aggressorCorpID] != NULL) ? (" from " . $strarr[corpName] . " [" . $strarr[corpTicker] . "]") : (" from Unknown Corporation");
+            if($strarr[aggressorAllianceID] != NULL) $mailtext .= " (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])";
+            $mailtext .= "\nShield: " . round($strarr[shieldValue]*100) . "%\n";
+        } elseif($type == 45 && $this->permission == 3){
+            $mailtext .= "New " . $strarr[typeName] . " anchored on " . $strarr[moonName] . " by " . $strarr[corpName] . " [" . $strarr[corpTicker] . "] (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])" . "\n";
+            $mailtext .= "Old towers in system:\n";
+            for($i=0; $i < count($strarr[corpsPresent]); $i++){
+                for($j=0; $j < count($strarr[corpsPresent][$i][towers]); $j++){
+                    $mailtext .= $strarr[corpsPresent][$i][towers][$j][typeName] . " on " . $strarr[corpsPresent][$i][towers][$j][moonName] . ", ";
+                }
+                $mailtext .= " anchored by " . $strarr[corpsPresent][$i][corpName] . " [" . $strarr[corpsPresent][$i][corpTicker] . "] (" . $strarr[corpsPresent][$i][allyName] . " [" . $strarr[corpsPresent][$i][allyTicker] . "])" . "\n";
+            }
         } else{
-            if($type == 37 || $type == 38) $mailtext .= "Sovereignty claim fails in " . $strarr[solarSystemName] . "\n";
-            if($type == 39 || $type == 40) $mailtext .= "Sovereignty bill late in " . $strarr[solarSystemName] . "\n";
+            if(($type == 37 || $type == 38) && $this->permission == 3) $mailtext .= "Sovereignty claim fails in " . $strarr[solarSystemName] . "\n";
+            if(($type == 39 || $type == 40) && $this->permission == 3) $mailtext .= "Sovereignty bill late in " . $strarr[solarSystemName] . "\n";
             if($type == 41 || $type == 42) $mailtext .= "Sovereignty claim lost in " . $strarr[solarSystemName] . "\n";
             if($type == 43 || $type == 44) $mailtext .= "Sovereignty claim acquired in " . $strarr[solarSystemName] . "\n";
-            if($type == 45) $mailtext .= "Control tower anchored in " . $strarr[solarSystemName] . "\n";
-            if($type == 46) $mailtext .= "Alliance structure turns vulnerable in " . $strarr[solarSystemName] . "\n";
-            if($type == 47) $mailtext .= "Alliance structure turns invulnerable in " . $strarr[solarSystemName] . "\n";
-            if($type == 48) $mailtext .= "Sovereignty disruptor anchored in " . $strarr[solarSystemName] . "\n";
-            if($type == 78) $mailtext .= "Station state change in " . $strarr[solarSystemName] . "\n";
+            if($type == 46 && $this->permission > 1) $mailtext .= "Alliance structure turns vulnerable in " . $strarr[solarSystemName] . "\n";
+            if($type == 47 && $this->permission > 1) $mailtext .= "Alliance structure turns invulnerable in " . $strarr[solarSystemName] . "\n";
+            if($type == 48 && $this->permission > 1) $mailtext .= "Sovereignty disruptor anchored in " . $strarr[solarSystemName] . "\n";
+            if($type == 78 && $this->permission > 1) $mailtext .= "Station state change in " . $strarr[solarSystemName] . "\n";
             if($type == 79) $mailtext .= "Station conquered in " . $strarr[solarSystemName] . "\n";
         }
         return $mailtext;
