@@ -357,4 +357,9 @@ class userSession {
     public function getUserSettings() {
         return $this->settings;
     }
+    
+    public function getJabberLogin() {
+        $jabbName = str_replace("'", '.', str_replace(' ', '_',$this->apiPilotList['mainAPI']['characterName']));
+        return $jabbName;
+    }
 }
