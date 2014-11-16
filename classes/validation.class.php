@@ -156,7 +156,8 @@ class validation {
             $this->log->put("getPilotInfo", "err " . $ex->getMessage(), "apiUserManagement");
             $c = $ex->getCode();
             if($c == 105 || $c == 106 || $c == 108 || $c == 112 || $c == 201 || $c == 202 || $c == 203 || $c == 204 || $c == 205 || $c == 210 || $c == 211 || $c == 212 ||
-             $c == 221 || $c == 222 || $c == 223 || $c == 516 || $c == 522 || $c == -201 || $c == -202 || $c == -203 || $c == -204 || $c == -205){
+             $c == 222 || $c == 223 || $c == 516 || $c == 522 || $c == -201 || $c == -202 || $c == -203 || $c == -204 || $c == -205){
+             // 221 - Illegal page request! Please verify the access granted by the key you are using!
                 if(($dbPilot[keyStatus] == 1) && ($this->getBanID($dbPilot[id]) != $c)){
                     $this->ban($dbPilot[id]);
                     $this->setBanMessage($dbPilot[id], $c, $ex->getMessage());
