@@ -358,6 +358,18 @@ class userSession {
         return $this->settings;
     }
     
+    public function setUserSettings($settingsArr) {
+        $mask = 0;
+        if ($settingsArr[mail] == 1) {
+            $mask = $mask | 1;
+        }
+        if ($settingsArr[jabber] == 1) {
+            $mask = $mask | 2;
+        }
+        $query = "UPDATE `users` SET `settingsMask` = '$mask'";
+        $this->db->query($query);
+    }
+    
     public function getJabberLogin() {
         $jabbName = str_replace("'", '.', str_replace(' ', '_',$this->apiPilotList['mainAPI']['characterName']));
         return $jabbName;

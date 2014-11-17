@@ -205,6 +205,17 @@ switch ($page) {
                 $currPassword = $_POST[currentPassword];
                 $_SESSION[userObject]->verifyCurrentPassword($currPassword);
                 
+                try {
+                    if($_POST[emailnotif]) {
+                        $settingsArr[email] = 1;
+                    };
+                    if($_POST[jabbernotif]) {
+                        $settingsArr[jabber] = 1;
+                    };
+                } catch (Exception $ex) {
+
+                }
+                
                 if ($_POST[email]) {
                     try {
                         $email = $_POST[email];
