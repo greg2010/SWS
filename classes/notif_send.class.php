@@ -143,11 +143,15 @@ class notif_send {
                 }
                 $mailtext .= " anchored by " . $strarr[corpsPresent][$i][corpName] . " [" . $strarr[corpsPresent][$i][corpTicker] . "] (" . $strarr[corpsPresent][$i][allyName] . " [" . $strarr[corpsPresent][$i][allyTicker] . "])" . "\n";
             }
+        } elseif($type == 43 || $type == 44 || $type == 41 || $type == 42 || $type == 37 || $type == 38){ // Sovereignty claim
+            if($type == 37 || $type == 38) $mailtext .= "Sovereignty claim fails";
+            if($type == 41 || $type == 42) $mailtext .= "Sovereignty claim lost";
+            if($type == 43 || $type == 44) $mailtext .= "Sovereignty claim acquired";
+            $mailtext .= " in " . $strarr[solarSystemName] . "\nOwner: ";
+            $mailtext .= ($strarr[corpID] != NULL) ? ($strarr[corpName] . " [" . $strarr[corpTicker] . "]") : "Unknown";
+            $mailtext .= ($strarr[allianceID] != NULL) ? (" (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])\n") : "\n";
         } else{
-            if(($type == 37 || $type == 38) && $this->permission == 3) $mailtext .= "Sovereignty claim fails in " . $strarr[solarSystemName] . "\n";
             if(($type == 39 || $type == 40) && $this->permission == 3) $mailtext .= "Sovereignty bill late in " . $strarr[solarSystemName] . "\n";
-            if($type == 41 || $type == 42) $mailtext .= "Sovereignty claim lost in " . $strarr[solarSystemName] . "\n";
-            if($type == 43 || $type == 44) $mailtext .= "Sovereignty claim acquired in " . $strarr[solarSystemName] . "\n";
             if($type == 46 && $this->permission > 1) $mailtext .= "Alliance structure turns vulnerable in " . $strarr[solarSystemName] . "\n";
             if($type == 47 && $this->permission > 1) $mailtext .= "Alliance structure turns invulnerable in " . $strarr[solarSystemName] . "\n";
             if($type == 48 && $this->permission > 1) $mailtext .= "Sovereignty disruptor anchored in " . $strarr[solarSystemName] . "\n";
