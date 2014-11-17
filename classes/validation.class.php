@@ -66,6 +66,16 @@ class validation {
         }
     }
 
+    private function getBanVerification($id){
+        try {
+            $query = "SELECT `banMessage` FROM `users` WHERE `id` = '$id'";
+            $result = $this->db->query($query);
+            return ($this->db->getMysqlResult($result) == "Verification") ? true : false;
+        } catch (Exception $ex) {
+            $this->log->put("getBanVerification", "err " . $ex->getMessage());
+        }
+    }
+
     private function ban($id){
         try {
             $permissions = new permissions($id);
@@ -156,13 +166,15 @@ class validation {
             $this->log->put("getPilotInfo", "err " . $ex->getMessage(), "apiUserManagement");
             $c = $ex->getCode();
             if($c == 105 || $c == 106 || $c == 108 || $c == 112 || $c == 201 || $c == 202 || $c == 203 || $c == 204 || $c == 205 || $c == 210 || $c == 211 || $c == 212 ||
-             $c == 222 || $c == 223 || $c == 516 || $c == 522 || $c == -201 || $c == -202 || $c == -203 || $c == -204 || $c == -205){
-             // 221 - Illegal page request! Please verify the access granted by the key you are using!
-                if(($dbPilot[keyStatus] == 1) && ($this->getBanID($dbPilot[id]) != $c)){
-                    $this->ban($dbPilot[id]);
-                    $this->setBanMessage($dbPilot[id], $c, $ex->getMessage());
+             $c == 221 || $c == 222 || $c == 223 || $c == 516 || $c == 522 || $c == -201 || $c == -202 || $c == -203 || $c == -204 || $c == -205){
+                if($dbPilot[keyStatus] == 1){
+                    if($this->getBanVerification($dbPilot[id])){
+                        $this->setBanMessage($dbPilot[id], $c, $ex->getMessage());
+                        $this->ban($dbPilot[id]);
+                    } else{
+                        if($this->getBanID($dbPilot[id]) != $c) $this->setBanMessage($dbPilot[id], $c, "Verification");
+                    } 
                 }
-                // if not 1 ?
             }
             return $this->log->get();
         }
