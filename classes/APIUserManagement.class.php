@@ -11,7 +11,8 @@ class APIUserManagement{
     
     public function __construct() {
         //PhealConfig::getInstance()->cache = new \Pheal\Cache\PdoStorage("mysql:host=" . config::hostname . ";dbname=" . config::database, config::username, config::password, "phealng-cache");
-        PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage(dirname(__FILE__) . '/../phealcache/');
+        //PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage(dirname(__FILE__) . '/../phealcache/');
+        PhealConfig::getInstance()->cache = new \Pheal\Cache\NullStorage();
         $this->userManagement = new userManagement();
     }
 
@@ -27,7 +28,7 @@ class APIUserManagement{
             if($response->key->type != "Corporation") throw new \Pheal\Exceptions\PhealException("Not corporation key", -202);
             $this->apiPilotInfo = $this->makeCharArray($response->key->accessMask, $response->key->characters[0]);
         } else{
-            if($correctKeyMask > 0 && ($response->key->accessMask & $correctKeyMask) == 0) throw new \Pheal\Exceptions\PhealException("Incorrect key mask", -204);
+            if($correctKeyMask > 0 && ($response->key->accessMask & $correctKeyMask) != $correctKeyMask) throw new \Pheal\Exceptions\PhealException("Incorrect key mask", -204);
             if($response->key->type != "Account") throw new \Pheal\Exceptions\PhealException("Not account key", -203);
             if(isset($characterID)){
                 for($i=0; $i<sizeof($response->key->characters); $i++){
