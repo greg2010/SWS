@@ -360,13 +360,13 @@ class userSession {
     
     public function setUserSettings($settingsArr) {
         $mask = 0;
-        if ($settingsArr[mail] == 1) {
+        if ($settingsArr[email] == 1) {
             $mask = $mask | 1;
         }
         if ($settingsArr[jabber] == 1) {
             $mask = $mask | 2;
         }
-        $query = "UPDATE `users` SET `settingsMask` = '$mask'";
+        $query = "UPDATE `users` SET `settingsMask` = '$mask' WHERE `id` = '$this->id'";
         $this->db->query($query);
     }
     

@@ -191,20 +191,11 @@ switch ($page) {
         $toTemplate['curForm'] = '';
         $toTemplate['active']['profile'] = $pageActive;
         
-        $settings = $_SESSION[userObject]->getUserSettings();
-        if ($settings[emailNotif]) {
-            $toTemplate['saveForm']['emailChecked'] = 'checked';
-        }
-        if ($settings[jabberNotif]) {
-            $toTemplate['saveForm']['jabberChecked'] = 'checked';
-        }
-        
         $toTemplate['saveForm']['email'] = $_SESSION[userObject]->userInfo[email];
         if ($_POST[form] == 'sent') {
             try {
                 $currPassword = $_POST[currentPassword];
                 $_SESSION[userObject]->verifyCurrentPassword($currPassword);
-                
                 try {
                     if($_POST[emailnotif]) {
                         $settingsArr[email] = 1;
@@ -212,6 +203,7 @@ switch ($page) {
                     if($_POST[jabbernotif]) {
                         $settingsArr[jabber] = 1;
                     };
+                    $_SESSION[userObject]->setUserSettings($settingsArr);
                 } catch (Exception $ex) {
 
                 }
@@ -268,6 +260,14 @@ switch ($page) {
                         break;
                 }
             }
+        }
+        
+        $settings = $_SESSION[userObject]->getUserSettings();
+        if ($settings[emailNotif]) {
+            $toTemplate['saveForm']['emailChecked'] = 'checked';
+        }
+        if ($settings[jabberNotif]) {
+            $toTemplate['saveForm']['jabberChecked'] = 'checked';
         }
 }
 
