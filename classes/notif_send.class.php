@@ -83,12 +83,13 @@ class notif_send {
                     if($tmparr[wants][$h][typeID] = 4246 || $tmparr[wants][$h][typeID] = 4247 || $tmparr[wants][$h][typeID] = 4051 || $tmparr[wants][$h][typeID] = 4312){ // Fuel Block ids
                         $fuelph = $this->getFuelPH($tmparr[typeID]);
                         if($tmparr[wants][$h][quantity] >= $fuelph*23 && $tmparr[wants][$h][quantity] < $fuelph*24)
-                            $mailtext .= $this->GenerateMailText($notifArr[$j][typeID], $notifArr[$j][sentDate], $notifArr[$j][NotificationText]);
+                            $returntext = $this->GenerateMailText($notifArr[$j][typeID], $notifArr[$j][NotificationText]);
                         if($tmparr[wants][$h][quantity] >= $fuelph*3 && $tmparr[wants][$h][quantity] < $fuelph*4)
-                            $mailtext .= $this->GenerateMailText($notifArr[$j][typeID], $notifArr[$j][sentDate], $notifArr[$j][NotificationText]);
+                            $returntext = $this->GenerateMailText($notifArr[$j][typeID], $notifArr[$j][NotificationText]);
                     }
                 }
-            } else $mailtext .= $this->GenerateMailText($notifArr[$j][typeID], $notifArr[$j][sentDate], $notifArr[$j][NotificationText]);
+            } else $returntext = $this->GenerateMailText($notifArr[$j][typeID], $notifArr[$j][NotificationText]);
+            if($returntext != NULL) $mailtext .= "\n" . $notifArr[$j][sentDate] . " " . $returntext;
         }
         return $mailtext;
     }
@@ -99,9 +100,9 @@ class notif_send {
         return $this->db->getMysqlResult($result, 0);
     }
 
-    private function GenerateMailText($type, $sentDate, $str){
+    private function GenerateMailText($type, $str){
         // https://neweden-dev.com/Char/Notifications
-        $mailtext = "\n" . $sentDate . " ";
+        $mailtext = NULL;
         $strarr = yaml_parse($str);
         if($type == 76){
             $mailtext .= $strarr[typeName] . " low on resources on " . $strarr[moonName] . "\n";
