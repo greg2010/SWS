@@ -37,7 +37,7 @@ private $tsAdmin;
 	file_put_contents ("error_connect.txt", "error date: $date_now $ts3_ip:$ts3_queryport  \n", FILE_APPEND);
 	sleep(1);
 	for ($gt=0;$gt<3;$gt++){
-
+	$date_now = date("Y-m-d H:i:s");
 	$tsAdmin = new ts3admin($ts3_ip, $ts3_queryport);
 
 	if($tsAdmin->getElement('success', $tsAdmin->connect())) {
