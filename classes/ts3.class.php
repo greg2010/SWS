@@ -70,7 +70,15 @@ return $tsAdmin;
     WHERE apiPilotList.id = $id AND apiPilotList.keyStatus = 1";
     $result = $this->db->query($query);
     $nick_raw=$this->db->fetchRow($result);
-    return $nickname="{$nick_raw[1]} | {$nick_raw[2]} | {$nick_raw[0]}";
+    $nickname_tmp="{$nick_raw[1]} | {$nick_raw[2]} | {$nick_raw[0]}";
+
+    if(strlen($nickname_tmp)>30){
+    $nick_ed=substr($nickname_tmp, 0, 30);
+    $nickname=$nick_ed;
+    }else{
+    $nickname=$nickname_tmp;
+    }
+    return $nickname;
     }
 
     public function status(){
