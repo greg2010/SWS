@@ -377,6 +377,19 @@ class db {
         return $success;
     }
     
+    private function predefinedRollbackUser($characterName) {
+        $this->openConnection();
+        $stmt = mysqli_prepare($this->connection, "DELETE FROM `users` WHERE `login` = '$characterName'");
+        mysqli_stmt_bind_param($stmt, "s", $characterID);
+        $success = mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception("predefinedRollbackUser: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+        mysqli_stmt_close($stmt);
+        $this->closeConnection();
+        return $success;
+    }
+    
     private function predefinedGetMainApiKey($id) {
         $stmt = mysqli_prepare($this->connection, "SELECT `characterID` FROM `apiPilotList` WHERE `id`=? AND `keyStatus` = '1'");
         mysqli_stmt_bind_param($stmt, "s", $id);
@@ -526,8 +539,7 @@ class db {
             //Rolling Back...
             try {
                 $this->predefinedDeleteApiKey($characterID);
-                $query = "DELETE FROM `users` WHERE `login` = '$characterName'";
-                $this->query($query);
+                $this->predefinedRollbackUser($characterName);
             } catch (Exception $ex) {
                 throw new Exception("Something went terribly wrong. Message: " . $firstException . " Attempt to roll back failed, exception: " . $ex->getMessage(), 30);
             }
