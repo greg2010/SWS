@@ -483,7 +483,7 @@ class db {
     }
     
     private function predefinedChangeLogin($id, $characterName, $accessMask) {
-        $stmt = mysqli_prepare($this->connection, "UPDATE `users` SET `login` = '$characterName', `accessMask` = '$accessMask' WHERE `id` = '$id");
+        $stmt = mysqli_prepare($this->connection, "UPDATE `users` SET `login`=?, `accessMask`=? WHERE `id`=?");
         mysqli_stmt_bind_param($stmt, "sss", $characterName, $accessMask, $id);
         $success = mysqli_stmt_execute($stmt);
         if (mysqli_error($this->connection)) {
