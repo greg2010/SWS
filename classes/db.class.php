@@ -292,7 +292,7 @@ class db {
     }
     
     private function predefinedMySQLCheckIfApiIsInDB($characterID) {
-        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `apiPilotList` WHERE `characterID`=?");
+        $stmt = mysqli_prepare($this->connection, "SELECT `id` FROM `apiPilotList` WHERE `characterID`=? AND keyStatus <> '0'");
         mysqli_stmt_bind_param($stmt, "s", $characterID);
         mysqli_stmt_execute($stmt);
         if (mysqli_error($this->connection)) {
@@ -363,6 +363,15 @@ class db {
         mysqli_stmt_close($stmt);
     }
 
+    private function predefinedMySQLapiPilotList($characterID, $characterName, $corporationID, $allianceID, $accessMask) {
+        $stmt = mysqli_prepare($this->connection, "UPDATE `apiPilotList` SET `characterName`=?, `corporationID`=?, `allianceID`=?, `accessMask`=? WHERE `characterID`=?");
+        mysqli_stmt_bind_param($stmt, "sssss", $characterName, $corporationID, $allianceID, $accessMask, $characterID);
+        $success = mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception("predefinedMySQLapiPilotList: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+        mysqli_stmt_close($stmt);
+    }
 
     private function predefinedPopulateUsers($login, $passwordHash, $accessMask, $salt, $email = NULL) {
         $this->openConnection();

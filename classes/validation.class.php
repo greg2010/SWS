@@ -145,9 +145,7 @@ class validation {
             $apiUserManagement = new APIUserManagement();
             $this->apiPilotInfo = $apiUserManagement->getPilotInfo($characterID, $keyID, $vCode);
         }
-        $query = "UPDATE `apiPilotList` SET `characterName` = '{$this->apiPilotInfo[characterName]}', `corporationID` = '{$this->apiPilotInfo[corporationID]}',
-         `allianceID` = '{$this->apiPilotInfo[allianceID]}', `accessMask` = '{$this->apiPilotInfo[accessMask]}' WHERE `characterID` = '{$this->apiPilotInfo[characterID]}'";
-        $result = $this->db->query($query);   
+        $this->db->predefinedMySQLapiPilotList($this->apiPilotInfo[characterID], $this->apiPilotInfo[characterName], $this->apiPilotInfo[corporationID], $this->apiPilotInfo[allianceID], $this->apiPilotInfo[accessMask]);  
     }
 
     public function verifyPilotApiInfo($dbPilot = array()){
