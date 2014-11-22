@@ -484,7 +484,7 @@ class db {
     
     private function predefinedChangeLogin($id, $characterName, $accessMask) {
         $stmt = mysqli_prepare($this->connection, "UPDATE `users` SET `login` = '$characterName', `accessMask` = '$accessMask' WHERE `id` = '$id");
-        mysqli_stmt_bind_param($stmt, "sss", $id, $characterName, $accessMask);
+        mysqli_stmt_bind_param($stmt, "sss", $characterName, $accessMask, $id);
         $success = mysqli_stmt_execute($stmt);
         if (mysqli_error($this->connection)) {
             throw new Exception("predefinedChangeLogin: " . mysqli_error($this->connection), mysqli_errno($this->connection));
