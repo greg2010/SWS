@@ -482,6 +482,16 @@ class db {
         }
     }
     
+    private function predefinedChangeLogin($id, $characterName, $accessMask) {
+        $stmt = mysqli_prepare($this->connection, "UPDATE `users` SET `login` = '$characterName', `accessMask` = '$accessMask' WHERE `id` = '$id");
+        mysqli_stmt_bind_param($stmt, "sss", $id, $characterName, $accessMask);
+        $success = mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception("predefinedChangeLogin: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+        mysqli_stmt_close($stmt);
+    }
+    
     public function getUserByLogin($login, $passwordHash) {
         $this->openConnection();
         $id = $this->predefinedMySQLLogin($login, $passwordHash);
@@ -532,6 +542,11 @@ class db {
         
         $keyType = 1;
         $this->predefinedAddApiKey($id, $keyID, $vCode, $characterID, $keyType);
+    }
+    
+    public function changeLogin($id, $characterName, $accessMask) {
+        $this->openConnection();
+        return $this->predefinedChangeLogin($id, $characterName, $accessMask);
     }
 
     public function deleteAPI($ownerID, $characterID) {

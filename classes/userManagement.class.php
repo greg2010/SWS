@@ -85,7 +85,7 @@ class userManagement implements IuserManagement {
             $_SESSION[userObject]->updateUserInfo();
             $pilotInfo = $_SESSION[userObject]->getApiPilotInfo();
             $newMask = $this->getAllowedListMask($pilotInfo[mainAPI]);
-            $query = "UPDATE `users` SET `login` = '$characterName', `accessMask` = '$newMask' WHERE `id` = '$this->id'";
+            $this->db->changeLogin($this->id, $characterName, $newMask);
             $this->db->query($query);
             $this->deleteFromTeamspeak();
         } catch (Exception $ex) {
