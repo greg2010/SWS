@@ -520,6 +520,11 @@ class db {
         $this->predefinedAddApiKey($id, $keyID, $vCode, $characterID, $keyType);
     }
     
+    public function populateAPITable($characterID, $characterName, $corporationID, $allianceID, $accessMask) {
+        $this->openConnection();
+        return $this->predefinedMySQLCheckIfApiIsInDB($characterID, $characterName, $corporationID, $allianceID, $accessMask);
+    }
+    
     public function changeMainAPI($id, $keyID, $vCode, $characterID) {
         $this->openConnection();
         $oldCharacterID = $this->predefinedGetMainApiKey($id);

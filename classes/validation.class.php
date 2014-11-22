@@ -145,7 +145,7 @@ class validation {
             $apiUserManagement = new APIUserManagement();
             $this->apiPilotInfo = $apiUserManagement->getPilotInfo($characterID, $keyID, $vCode);
         }
-        $this->db->predefinedMySQLapiPilotList($this->apiPilotInfo[characterID], $this->apiPilotInfo[characterName], $this->apiPilotInfo[corporationID], $this->apiPilotInfo[allianceID], $this->apiPilotInfo[accessMask]);  
+        $this->db->populateAPITable($this->apiPilotInfo[characterID], $this->apiPilotInfo[characterName], $this->apiPilotInfo[corporationID], $this->apiPilotInfo[allianceID], $this->apiPilotInfo[accessMask]);  
     }
 
     public function verifyPilotApiInfo($dbPilot = array()){
