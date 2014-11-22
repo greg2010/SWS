@@ -522,7 +522,7 @@ class db {
     
     public function populateAPITable($characterID, $characterName, $corporationID, $allianceID, $accessMask) {
         $this->openConnection();
-        return $this->predefinedMySQLCheckIfApiIsInDB($characterID, $characterName, $corporationID, $allianceID, $accessMask);
+        return $this->predefinedMySQLapiPilotList($characterID, $characterName, $corporationID, $allianceID, $accessMask);
     }
     
     public function changeMainAPI($id, $keyID, $vCode, $characterID) {
@@ -578,6 +578,8 @@ class db {
     }
 
     public function real_escape_string($txt) {
-        return mysqli_real_escape_string($this->connection, $txt);
+        $this->openConnection();
+        $return = mysqli_real_escape_string($this->connection, $txt);
+        return $return;
     }
 }

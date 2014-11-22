@@ -27,15 +27,15 @@ class userLogging {
     }
     
     private function getUserInfo() {
-        $this->basicSessionInfo['reqPage'] = $_SERVER[REQUEST_URI];
-        $this->basicSessionInfo['IP'] = $_SERVER[REMOTE_ADDR];
-        $this->basicSessionInfo['referer'] = $_SERVER[HTTP_REFERER];
-        $this->basicSessionInfo['userAgent'] = $_SERVER[HTTP_USER_AGENT];
+        $this->basicSessionInfo['reqPage'] = $this->db->real_escape_string($_SERVER[REQUEST_URI]);
+        $this->basicSessionInfo['IP'] = $this->db->real_escape_string($_SERVER[REMOTE_ADDR]);
+        $this->basicSessionInfo['referer'] = $this->db->real_escape_string($_SERVER[HTTP_REFERER]);
+        $this->basicSessionInfo['userAgent'] = $this->db->real_escape_string($_SERVER[HTTP_USER_AGENT]);
     }
     
     private function sanitizeArray($array) {
         foreach ($array as $key => $value) {
-            $arraySane[$key] = $this->db->sanitizeString($value);
+            $arraySane[$key] = addslashes($value);
         }
         return $arraySane;
     }
@@ -78,6 +78,7 @@ class userLogging {
                 }
                 break;
             case 'hits':
+                $this->sessionInfo = $this->sanitizeArray($this->sessionInfo);
                 $query = "INSERT INTO `log.user.hits` SET";
                 $query .=  " `page` = '{$this->basicSessionInfo[reqPage]}'";
                 
@@ -86,6 +87,7 @@ class userLogging {
                 }
                 break;
             case 'login':
+                $this->sessionInfo = $this->sanitizeArray($this->sessionInfo);
                 $query = "INSERT INTO `log.user.login` SET";
                 $query .=  " `exceptionCode` = '{$this->logInfo[exceptionCode]}'";
                 foreach ($this->logInfo as $key => $value) {
