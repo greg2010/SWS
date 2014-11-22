@@ -102,6 +102,12 @@ class registerNewUser {
     return $randomString;
     }
     
+    private function checkIfRegistered() {
+        if ($this->db->getIDByName($this->login) OR $this->db->checkIfCharRegistered($this->registerArray[$this->login][characterID])) {
+            throw new Exception("User is already registered!", 21);
+        }
+    }
+    
     public function testPassword($password) {
         $numbers = '/\d/';
         $lower = '/[a-z]/';
@@ -133,7 +139,6 @@ class registerNewUser {
             throw new Exception("This email is already used!", 11);
         }
     }
-
 
     public function AjaxAnswer() {
         $_SESSION['regArray'] = $this->registerArray;
@@ -190,6 +195,7 @@ class registerNewUser {
         if (!$this->login) {
             throw new Exception("There is something wrong with login. Value: " . $this->login, 10);
         }
+        $this->checkIfRegistered();
 
         if (!$this->passwordHash) {
             throw new Exception("There is something wrong with passwordHash. Value: " . $this->passwordHash, 10);
