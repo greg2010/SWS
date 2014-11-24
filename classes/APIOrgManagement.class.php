@@ -161,6 +161,14 @@ class APIOrgManagement {
         return $response->allianceID;
     }
 
+    public function getStationName($id){
+        $pheal = new Pheal(NULL, NULL, "eve");
+        $response = $pheal->ConquerableStationList();
+        foreach ($response->outposts as $outpost) {
+            if($outpost[stationID] == $id) return $outpost[stationName];
+        }
+    }
+
     public function getAllianceList(){
         $pheal = new Pheal(NULL, NULL, "eve");
         $response = $pheal->AllianceList();

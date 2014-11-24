@@ -53,7 +53,7 @@ class notif_send {
 
     private function genPermission($mask){
         $permissions = new permissions($this->id);
-        $this->posop = ($permissions->hasPermission("posMon_Valid")) ? (" OR (`typeID` = 76 AND `allianceID` = '" . $this->allianceID . "')") : (" OR (`typeID` = 76 AND `corporationID` = '" . $this->corporationID . "')");
+        //$this->posop = ($permissions->hasPermission("posMon_Valid")) ? (" OR (`typeID` = 76 AND `allianceID` = '" . $this->allianceID . "')") : (" OR (`typeID` = 76 AND `corporationID` = '" . $this->corporationID . "')");
         if($permissions->hasPermission("XMPP_Valid")){
             if($permissions->hasPermission("XMPP_Overmind") || $permissions->hasPermission("XMPP_FleetCom")){
                 return 3;
@@ -67,12 +67,18 @@ class notif_send {
 
     private function getNotifications(){
         $mailtext = NULL;
-        if($this->permission == 1) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` "
+        /*if($this->permission == 1) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` "
          . "WHERE `notificationID` > '$this->lastNotifID' AND ((`typeID` <> 76 AND `corporationID` = '$this->corporationID')" . $this->posop . ")";
         elseif($this->permission == 2) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` "
          . "WHERE `notificationID` > '$this->lastNotifID' AND ((`typeID` <> 76 AND `allianceID` = '$this->allianceID')" . $this->posop . ")";
         elseif($this->permission == 3) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` "
-         . "WHERE `notificationID` > '$this->lastNotifID' AND (`typeID` <> 76" . $this->posop . ")";
+         . "WHERE `notificationID` > '$this->lastNotifID' AND (`typeID` <> 76" . $this->posop . ")";*/
+        if($this->permission == 1) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` "
+         . "WHERE `notificationID` > '$this->lastNotifID' AND ((`typeID` <> 76 AND `corporationID` = '$this->corporationID') OR (`typeID` = 76 AND `corporationID` = '$this->corporationID'))";
+        elseif($this->permission == 2) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` "
+         . "WHERE `notificationID` > '$this->lastNotifID' AND ((`typeID` <> 76 AND `allianceID` = '$this->allianceID') OR (`typeID` = 76 AND `corporationID` = '$this->corporationID'))";
+        elseif($this->permission == 3) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` "
+         . "WHERE `notificationID` > '$this->lastNotifID' AND (`typeID` <> 76 OR (`typeID` = 76 AND `corporationID` = '$this->corporationID'))";
         $result = $this->db->query($query);
         $notifArr = $this->db->fetchArray($result);
         for ($j = 0; $j < $this->db->countRows($result); $j++){
@@ -144,20 +150,24 @@ class notif_send {
                 }
                 $mailtext .= " anchored by " . $strarr[corpsPresent][$i][corpName] . " [" . $strarr[corpsPresent][$i][corpTicker] . "] (" . $strarr[corpsPresent][$i][allyName] . " [" . $strarr[corpsPresent][$i][allyTicker] . "])" . "\n";
             }
-        } elseif($type == 43 || $type == 44 || $type == 41 || $type == 42 || $type == 37 || $type == 38){ // Sovereignty claim
+        } elseif($type == 43 || $type == 44 || $type == 41 || $type == 42 || $type == 46 || $type == 47 || $type == 48 || $type == 37 || $type == 38 || $type == 79){ // Sovereignty claim
             if($type == 37 || $type == 38) $mailtext .= "Sovereignty claim fails";
             if($type == 41 || $type == 42) $mailtext .= "Sovereignty claim lost";
             if($type == 43 || $type == 44) $mailtext .= "Sovereignty claim acquired";
+            if($type == 46 && $this->permission > 1) $mailtext .= "Alliance structure turns vulnerable";
+            if($type == 47 && $this->permission > 1) $mailtext .= "Alliance structure turns invulnerable";
+            if($type == 48 && $this->permission > 1) $mailtext .= "Sovereignty disruptor anchored";
+            if($type == 79) $mailtext .= "Station conquered";
             $mailtext .= " in " . $strarr[solarSystemName] . "\nOwner: ";
             $mailtext .= ($strarr[corpID] != NULL) ? ($strarr[corpName] . " [" . $strarr[corpTicker] . "]") : "Unknown";
             $mailtext .= ($strarr[allianceID] != NULL) ? (" (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])\n") : "\n";
         } else{
             if(($type == 39 || $type == 40) && $this->permission == 3) $mailtext .= "Sovereignty bill late in " . $strarr[solarSystemName] . "\n";
-            if($type == 46 && $this->permission > 1) $mailtext .= "Alliance structure turns vulnerable in " . $strarr[solarSystemName] . "\n";
-            if($type == 47 && $this->permission > 1) $mailtext .= "Alliance structure turns invulnerable in " . $strarr[solarSystemName] . "\n";
-            if($type == 48 && $this->permission > 1) $mailtext .= "Sovereignty disruptor anchored in " . $strarr[solarSystemName] . "\n";
+            
+            
+            
             if($type == 78 && $this->permission > 1) $mailtext .= "Station state change in " . $strarr[solarSystemName] . "\n";
-            if($type == 79) $mailtext .= "Station conquered in " . $strarr[solarSystemName] . "\n";
+            
         }
         return $mailtext;
     }

@@ -33,6 +33,7 @@ class notif_text {
         if($this->txtarr[moonID]) $this->txtarr[moonName] = $this->moonID($this->txtarr[moonID]);
         if($this->txtarr[solarSystemID]) $this->solarSystemID();
         if($this->txtarr[planetID]) $this->txtarr[planetName] = $this->moonID($this->txtarr[planetID]);
+        if($this->txtarr[stationID]) $this->stationID();
     }
 
     private function Owner($cid, $aid){
@@ -61,6 +62,14 @@ class notif_text {
             $this->txtarr[corpTicker] = $this->apiOrgManagement->getCorporationTicker($id);
         } catch (\Pheal\Exceptions\PhealException $e){
              $this->log->put("CorpID", "err " . $e->getMessage());
+        }
+    }
+
+    private function stationID(){
+        try{
+            $this->txtarr[typeName] = $this->apiOrgManagement->getStationName($this->txtarr[stationID]);
+        } catch (\Pheal\Exceptions\PhealException $e){
+             $this->log->put("stationID", "err " . $e->getMessage());
         }
     }
 
