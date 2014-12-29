@@ -374,4 +374,38 @@ class userSession {
         $jabbName = str_replace("'", '.', str_replace(' ', '_',$this->apiPilotList['mainAPI']['characterName']));
         return $jabbName;
     }
+    
+    public function getUserAffiliations() {
+        $apiInfo = $this->apiPilotList;
+        
+        $affiliations = array();
+        $affiliations['corporation'][] = $apiInfo[mainAPI][corporationID];
+        $affiliations['alliance'][] = $apiInfo[mainAPI][allianceID];
+        if (is_array($apiInfo[secAPI])) {
+            if (is_array($apiInfo[secAPI][0])) {
+                foreach ($apiInfo[secAPI] as $secApis) {
+                    $affiliations['corporation'][] = $secApis[corporationID];
+                    $affiliations['alliance'][] = $secApis[allianceID];
+                }
+            } else {
+                $affiliations['corporation'][] = $apiInfo[secAPI][corporationID];
+                $affiliations['alliance'][] = $apiInfo[secAPI][allianceID];
+            }
+        }
+        
+        $affiliations['corporation'] = array_unique($affiliations[corporation]);
+        $affiliations['alliance'] = array_unique($affiliations[alliance]);
+        return $affiliations;
+    }
+
+    public function hoursToDays($inputTime) { // просто копипаста из старого кода, не знаю где используется, наверно в гуи
+        $hoursInADay = 24;
+        $days = floor($inputTime / $hoursInADay);
+        $hoursLeft = $inputTime - $days * $hoursInADay;
+        $result = array (
+            'd' => $days,
+            'h' =>$hoursLeft
+        );
+        return $result;
+    }
 }

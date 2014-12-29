@@ -231,17 +231,6 @@ class starbases {
         return $fulllog->get();
     }
 
-    public function hoursToDays($inputTime) { // просто копипаста из старого кода, не знаю где используется, наверно в гуи
-        $hoursInADay = 24;
-        $days = floor($inputTime / $hoursInADay);
-        $hoursLeft = $inputTime - $days * $hoursInADay;
-        $result = array (
-            'd' => $days,
-            'h' =>$hoursLeft
-        );
-        return $result;
-    }
-
 }
 
 ?>
