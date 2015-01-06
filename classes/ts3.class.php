@@ -27,6 +27,7 @@ private $tsAdmin;
     $ts3_pass = config::ts3_pass;
     $date_now = date("Y-m-d H:i:s");
     
+    $path=dirname(__FILE__);
     
     $tsAdmin = new ts3admin($ts3_ip, $ts3_queryport);
 
@@ -34,7 +35,7 @@ private $tsAdmin;
 	    $tsAdmin->login($ts3_user, $ts3_pass);
     }else{
     
-	file_put_contents ("error_connect.txt", "error date: $date_now $ts3_ip:$ts3_queryport  \n", FILE_APPEND);
+	file_put_contents ("$path/error_connect.txt", "error date: $date_now $ts3_ip:$ts3_queryport  \n", FILE_APPEND);
 	sleep(1);
 	for ($gt=0;$gt<3;$gt++){
 	$date_now = date("Y-m-d H:i:s");
@@ -44,7 +45,7 @@ private $tsAdmin;
 		    $tsAdmin->login($ts3_user, $ts3_pass);
 		    break;
 		    }else{
-			    file_put_contents ("error_connect.txt", "error date2: $date_now $ts3_ip:$ts3_queryport  \n", FILE_APPEND);
+			    file_put_contents ("$path/error_connect.txt", "error date2: $date_now $ts3_ip:$ts3_queryport  \n", FILE_APPEND);
 			    sleep(1);
 			    
     			}
@@ -346,10 +347,11 @@ return $tsAdmin;
 
     public function deleteTsUser($id){
     $ts3_debug = config::ts3_debug;
+    $path=dirname(__FILE__);
      $tsAdmin=$this->tsAdmin;
     $Uid=$this->getTsUid($id);
     if ($ts3_debug==1){    
-    file_put_contents ("deleteTS.txt", "detele Unique ID TS for $id \n", FILE_APPEND);
+    file_put_contents ("$path/deleteTS.txt", "detele Unique ID TS for $id \n", FILE_APPEND);
     }
     $info=$tsAdmin->clientGetIds($Uid);
     $info2=$tsAdmin->clientDbFind("$Uid",'-uid');
