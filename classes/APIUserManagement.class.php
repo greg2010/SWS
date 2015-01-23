@@ -123,6 +123,37 @@ class APIUserManagement{
         }
     }
     
+    public function getAllianceStandings() {
+        $query = "SELECT * FROM `apiPilotList` WHERE `keyStatus` > '0'";
+        $apis = $db->fetchAssoc($db->query($query));
+        //TODO: EXCEPTIONS
+        $apiCorrect = array();
+        $allianceIDList = array();
+        foreach ($apis as $api) {
+            if ($api[accessMask] & 16 == TRUE) {
+                //Filter APIs without access to the designated XML
+                if (array_search($api[allianceID], $allianceIDList) === FALSE) {
+                    //Only one API per alliance
+                    $apiCorrect[] = $api;
+                    $allianceIDList[] = $api[allianceID];
+                }
+            }
+        }
+
+        foreach ($apiCorrect as $api) {
+            //TODO: REWRITE
+            $pheal = new Pheal($api[keyID], $api[vCode], "char");
+            $response = $pheal->contactList(array("characterID" => $api[characterID]));
+            $standings = array();
+            foreach ($response->allianceContactList as $row) {
+                $standings[$row->contactID] = $row->standing;
+            }
+
+        }
+
+        print_r($standings);
+    }
+    
     public function getServerStatus() {
         $pheal = new Pheal();
         $response = $pheal->serverScope->ServerStatus();

@@ -203,12 +203,27 @@ class userManagement implements IuserManagement {
     }
 
     public function registerInTeamspeak($UID = NULL) {
+        $ts3_debug = config::ts3_debug;
         if ($this->id === -1) {
             throw new Exception("Object created in fake user mode.", 30);
         }
         $ts3 = new ts3();
+        
+        
+        if ($ts3_debug==1){
+	file_put_contents ("debug.txt", "Before IF Unique ID: $UID \n", FILE_APPEND);
+	}
+        
+        
         if (!$UID) {
             $UID = $ts3->getUid($ts3->nickname($this->id));
+            
+        if ($ts3_debug==1){
+	file_put_contents ("debug.txt", "IN IF Unique ID: $UID \n", FILE_APPEND);
+	}
+        
+            
+            
         }
         $this->db->registerInTeamspeak($this->id, $UID);
         $ts3->validate($this->id);
