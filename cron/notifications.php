@@ -70,14 +70,23 @@ foreach ($pid_arr as $pid) pcntl_waitpid($pid, $status);
 
 $smta = round(microtime(1));
 $log = new logging();
-for($i=0; $i<count($userList); $i++){
+
+$connection = mysqli_connect(config::hostname, config::username, config::password);
+$selectdb = mysqli_select_db($connection, config::database);
+$query = "SELECT `id`, `accessMask`, `settingsMask`, `email`, `lastNotifID`, `login` FROM `users` WHERE ((`settingsMask` & 1) OR (`settingsMask` & 2)) AND (`banID`=0) AND (`accessMask` & 1024)";
+$result = mysqli_query($connection, $query);
+while($array = mysqli_fetch_assoc($result)) $users[] = $array;
+mysqli_close($connection);
+
+foreach ($users as $user) {
 	try{
-		$notification = new notif_send($userList[$i][id], $userList[$i][corporationID], $userList[$i][allianceID]);
+		$notification = new notif_send($user);
 	} catch (Exception $ex){	
-		$log->put("name", $userList[$i][characterName], $userList[$i][characterID]);
-		$log->put("exception", $ex->getMessage(), $userList[$i][characterID]);
+		$log->put("id", $user[id], $user[id]);
+		$log->put("exception", $ex->getMessage(), $user[id]);
 	}
 }
+
 if($log->get() != NULL){
 	$emta = round(microtime(1)) - $smta;
 	$log->put("total spent", $emta . " seconds");

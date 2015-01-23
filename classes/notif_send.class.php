@@ -12,26 +12,41 @@ class notif_send {
     private $send_email = false;
     private $send_jabber = false;
     private $permission = 0;
-    private $posop;
+    private $keys = array();
+    //private $posop;
 
-	public function __construct($id, $corporationID, $allianceID){
+	public function __construct($user){
         $this->db = db::getInstance();
-        $this->id = $id;
-        $this->corporationID = $corporationID;
-        $this->allianceID = $allianceID;
-        $this->getMoreInfoFromDB();
+        $this->id = $user[id];
+        $this->email = $user[email];
+        $this->login = $user[login];
+        $this->lastNotifID = $user[lastNotifID];
+        $this->permission = $this->genPermission($user[accessMask]);
+        $this->send_email = (($user[settingsMask] & 1) > 0) ? true : false;
+        $this->send_jabber = (($user[settingsMask] & 2) > 0) ? true : false;
+        $this->keys = $this->getKeys();
         if(($this->send_email || $this->send_jabber) && ($this->permission > 0)){
             $txt = $this->getNotifications();
             if($txt != NULL){
                 if($this->send_email){
                     $c_email = new email;
-                    if(!$c_email->sendmail($this->email, "New EvE Online notification update", date(DATE_RFC822) . " New notifications arrived.\n" . $txt)) 
+                    if(!$c_email->sendmail($this->email, "New EvE Online notification update", date(DATE_RFC822) . " New notifications arrived.\n" . $txt[starbase] . $txt[sovwarfare] . $txt[other])) 
                         throw new Exception("Mail sending failed", -1);
                 }
                 if($this->send_jabber){
                     $c_xmpp = new xmpp;
-                    if(!$c_xmpp->sendjabber($this->login, $txt))
-                        throw new Exception("Jabber sending failed", -2);
+                    if($txt[starbase] != NULL){
+                        if(!$c_xmpp->sendnotif("Starbase", $this->login, $txt[starbase]))
+                            throw new Exception("Jabber sending failed", -2);
+                    }
+                    if($txt[sovwarfare] != NULL){
+                        if(!$c_xmpp->sendnotif("Sov Warfare", $this->login, $txt[sovwarfare]))
+                            throw new Exception("Jabber sending failed", -2);
+                    }
+                    if($txt[other] != NULL){
+                        if(!$c_xmpp->sendnotif("Other", $this->login, $txt[other]))
+                            throw new Exception("Jabber sending failed", -2);
+                    }
                 }
                 $query = "UPDATE `users` SET `lastNotifID` = '$this->lastNotifID' WHERE `id`='$this->id'";
                 $result = $this->db->query($query);
@@ -39,16 +54,28 @@ class notif_send {
         }
     }
 
-    private function getMoreInfoFromDB(){
-        $query = "SELECT `accessMask`, `settingsMask`, `email`, `login`, `lastNotifID` FROM `users` WHERE `id` = '$this->id'";
+    private function getKeys(){
+        $query = "SELECT `corporationID`, `allianceID` FROM `apiPilotList` WHERE ((`keyStatus` > 0) AND (`id` = '$this->id'))";
         $result = $this->db->query($query);
-        $arr = $this->db->fetchAssoc($result);
-        $this->email = $arr[email];
-        $this->login = $arr[login];
-        $this->lastNotifID = $arr[lastNotifID];
-        $this->permission = $this->genPermission($arr[accessMask]);
-        $this->send_email = (($arr[settingsMask] & 1) > 0) ? true : false;
-        $this->send_jabber = (($arr[settingsMask] & 2) > 0) ? true : false;
+        $tmparr = $this->db->fetchAssoc($result);
+        if($this->db->countRows($result) == 1){
+            $ids[corporationID][0] = $tmparr[corporationID];
+            $ids[allianceID][0] = $tmparr[allianceID];
+        } else{
+            foreach($tmparr as $key){
+                if(count($ids[corporationID]) == 0){
+                    $ids[corporationID][] = $key[corporationID];
+                } else{
+                    if(!in_array($key[corporationID], $ids[corporationID])) $ids[corporationID][] = $key[corporationID];
+                }
+                if(count($ids[allianceID]) == 0){
+                    $ids[allianceID][] = $key[allianceID];
+                } else{
+                    if(!in_array($key[allianceID], $ids[allianceID])) $ids[allianceID][] = $key[allianceID];
+                }
+            }
+        }
+        return $ids;
     }
 
     private function genPermission($mask){
@@ -73,12 +100,31 @@ class notif_send {
          . "WHERE `notificationID` > '$this->lastNotifID' AND ((`typeID` <> 76 AND `allianceID` = '$this->allianceID')" . $this->posop . ")";
         elseif($this->permission == 3) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` "
          . "WHERE `notificationID` > '$this->lastNotifID' AND (`typeID` <> 76" . $this->posop . ")";*/
+
+        if(count($this->keys[corporationID]) == 1){
+            $cid_text = "`corporationID` = '{$this->keys[corporationID][0]}'";
+        } else{
+            for($i = 0; $i < count($this->keys[corporationID]); $i++){
+                $cid_text .= ($i == 0) ? "(" : " OR ";
+                $cid_text .= "(`corporationID` = '{$this->keys[corporationID][$i]}')";
+                if($i == count($this->keys[corporationID])-1) $cid_text .= ")";
+            }
+        }
+        if(count($this->keys[allianceID]) == 1){
+            $aid_text = "`allianceID` = '{$this->keys[allianceID][0]}'";
+        } else{
+            for($i = 0; $i < count($this->keys[allianceID]); $i++){
+                $aid_text .= ($i == 0) ? "(" : " OR ";
+                $aid_text .= "(`allianceID` = '{$this->keys[allianceID][$i]}')";
+                if($i == count($this->keys[allianceID])-1) $aid_text .= ")";
+            }
+        }
         if($this->permission == 1) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` "
-         . "WHERE `notificationID` > '$this->lastNotifID' AND ((`typeID` <> 76 AND `corporationID` = '$this->corporationID') OR (`typeID` = 76 AND `corporationID` = '$this->corporationID'))";
+         . "WHERE `notificationID` > '$this->lastNotifID' AND ((`typeID` <> 76 AND " . $aid_text . ") OR (`typeID` = 76 AND " . $cid_text . "))";
         elseif($this->permission == 2) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` "
-         . "WHERE `notificationID` > '$this->lastNotifID' AND ((`typeID` <> 76 AND `allianceID` = '$this->allianceID') OR (`typeID` = 76 AND `corporationID` = '$this->corporationID'))";
+         . "WHERE `notificationID` > '$this->lastNotifID' AND ((`typeID` <> 76 AND " . $aid_text . ") OR (`typeID` = 76 AND " . $cid_text . "))";
         elseif($this->permission == 3) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` "
-         . "WHERE `notificationID` > '$this->lastNotifID' AND (`typeID` <> 76 OR (`typeID` = 76 AND `corporationID` = '$this->corporationID'))";
+         . "WHERE `notificationID` > '$this->lastNotifID' AND (`typeID` <> 76 OR (`typeID` = 76 AND " . $cid_text . "))";
         $result = $this->db->query($query);
         $notifArr = $this->db->fetchArray($result);
         for ($j = 0; $j < $this->db->countRows($result); $j++){
@@ -95,7 +141,12 @@ class notif_send {
                     }
                 }
             } else $returntext = $this->GenerateMailText($notifArr[$j][typeID], $notifArr[$j][NotificationText]);
-            if($returntext != NULL) $mailtext .= "\n" . $notifArr[$j][sentDate] . " " . $returntext;
+            if($returntext != NULL){
+                $t = $notifArr[$j][typeID];
+                if($t==75 || $t==76) $mailtext[starbase] .= "\n" . $notifArr[$j][sentDate] . " " . $returntext;
+                elseif($t==80 || $t==86 || $t==87 || $t==88 || $t==43 || $t==44 || $t==41 || $t==42 || $t==46 || $t==47 || $t==48 || $t==37 || $t==38 || $t==79) $mailtext[sovwarfare] .= "\n" . $notifArr[$j][sentDate] . " " . $returntext;
+                else $mailtext[other] .= "\n" . $notifArr[$j][sentDate] . " " . $returntext;
+            }
         }
         return $mailtext;
     }
@@ -163,11 +214,7 @@ class notif_send {
             $mailtext .= ($strarr[allianceID] != NULL) ? (" (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])\n") : "\n";
         } else{
             if(($type == 39 || $type == 40) && $this->permission == 3) $mailtext .= "Sovereignty bill late in " . $strarr[solarSystemName] . "\n";
-            
-            
-            
             if($type == 78 && $this->permission > 1) $mailtext .= "Station state change in " . $strarr[solarSystemName] . "\n";
-            
         }
         return $mailtext;
     }
