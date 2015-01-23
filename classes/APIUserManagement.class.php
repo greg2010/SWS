@@ -135,10 +135,26 @@ class APIUserManagement{
         foreach ($apis as $api) {
             if ($api[accessMask] & 16 == TRUE) {
                 //Filter APIs without access to the designated XML
-                if (array_search($api[allianceID], $allianceIDList) === FALSE) {
-                    //Only one API per alliance
-                    $apiCorrect[] = $api;
-                    $allianceIDList[] = $api[allianceID];
+                
+                $requestArray = array (
+                    "characterID" => "",
+                    "corporationID" => "",
+                    "allianceID" => "$api[allianceID]"
+                );
+                $keyPermissions = $this->userManagement->getAllowedListMask($requestArray);
+                if (!$keyPermissions) {
+                    $keyPermissions = 0;
+                }
+                $permissions = new permissions();
+                $permissions->setUserMask($keyPermissions);
+                
+                if ($permissions->hasPermission("webReg_Valid") == TRUE) {
+                    //Filter alliances with access to the resources
+                    if (array_search($api[allianceID], $allianceIDList) === FALSE) {
+                        //Only one API per alliance
+                        $apiCorrect[] = $api;
+                        $allianceIDList[] = $api[allianceID];
+                    }
                 }
             }
         }
