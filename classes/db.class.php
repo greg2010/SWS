@@ -465,6 +465,12 @@ class db {
     }
     
     private function predefinedAddUniqueID($id, $UID) {
+    
+	$ts3_debug = config::ts3_debug;
+        if ($ts3_debug==1){
+	file_put_contents ("debug.txt", "insert in DB Unique ID: $UID for ID $id \n", FILE_APPEND);
+	}
+	
         $stmt = mysqli_prepare($this->connection, "INSERT INTO `teamspeak` SET `id`=?, `uniqueID`=?");
         mysqli_stmt_bind_param($stmt, "ss", $id, $UID);
         mysqli_stmt_execute($stmt);

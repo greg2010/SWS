@@ -21,10 +21,10 @@ class config {
     const cookie_lifetime = 604800; //7 days
     
     const ts3_ip = '213.134.207.130';
-    const ts3_queryport = '10011';
+    const ts3_queryport = '10015';
     const ts3_user = 'serveradmin';
     const ts3_pass = 'cYg9HoIr';
-    const ts3_debug = 1;
+    const ts3_debug = 0;
 
     const xmpp_address = 'localhost:7092';
     const xmpp_send_from = 'Angel Cartel';

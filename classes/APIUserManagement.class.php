@@ -123,6 +123,75 @@ class APIUserManagement{
         }
     }
     
+    public function getAllianceStandings() {
+        $db = db::getInstance();
+        $apiOrgManagement = new APIOrgManagement();
+        
+        $query = "SELECT * FROM `apiPilotList` WHERE `keyStatus` > '0'";
+        $apis = $db->fetchAssoc($db->query($query));
+        //TODO: EXCEPTIONS
+        $apiCorrect = array();
+        $allianceIDList = array();
+        foreach ($apis as $api) {
+            if ($api[accessMask] & 16 == TRUE) {
+                //Filter APIs without access to the designated XML
+                
+                $requestArray = array (
+                    "characterID" => "",
+                    "corporationID" => "",
+                    "allianceID" => "$api[allianceID]"
+                );
+                $keyPermissions = $this->userManagement->getAllowedListMask($requestArray);
+                if (!$keyPermissions) {
+                    $keyPermissions = 0;
+                }
+                $permissions = new permissions();
+                $permissions->setUserMask($keyPermissions);
+                
+                if ($permissions->hasPermission("webReg_Valid") == TRUE) {
+                    //Filter alliances with access to the resources
+                    if (array_search($api[allianceID], $allianceIDList) === FALSE) {
+                        //Only one API per alliance
+                        $apiCorrect[] = $api;
+                        $allianceIDList[] = $api[allianceID];
+                    }
+                }
+            }
+        }
+        $output = array();
+        
+        try {
+            foreach ($apiCorrect as $api) {
+                //TODO: REWRITE
+                $pheal = new Pheal($api[keyID], $api[vCode], "char");
+                $response = $pheal->contactList(array("characterID" => $api[characterID]));
+                foreach ($response->allianceContactList as $row) {
+                    switch ($row->contactTypeID) {
+                        case 2:
+                            $type = "corp";
+                            break;
+                        case 16159:
+                            $type = "alliance";
+                            break;
+                        default:
+                            $type = "char";
+                            break;
+                    }
+                    $output[$apiOrgManagement->getAllianceName($api[allianceID])][$type][$row->contactName] = $row->standing;
+                    
+                    $gotTypes = array_keys($output[$apiOrgManagement->getAllianceName($api[allianceID])]);
+                    foreach ($gotTypes as $type) {
+                         arsort($output[$apiOrgManagement->getAllianceName($api[allianceID])][$type]);
+                    }
+                }
+            }
+        } catch(\Pheal\Exceptions\PhealException $e){
+            throw new Exception($e->getMessage(), $e->getCode());
+        }
+        
+        return $output;
+    }
+    
     public function getServerStatus() {
         $pheal = new Pheal();
         $response = $pheal->serverScope->ServerStatus();

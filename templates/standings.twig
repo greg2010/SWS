@@ -1,0 +1,39 @@
+{% extends "base.twig" %}
+
+{% block title %}Standings{% endblock %}
+
+{% block content %}
+    <div id="formSettings">
+        <h1>Standings Page</h1>
+        {% for alliance, types in standings %}
+            <h2>{# Тут выводится имя альянса: #}{{ alliance }}</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Standings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for type, typeStanding in types %}
+                        <tr>
+                            <td>{# Тип стендов: char/corp/alliance #}{{type}}</td>
+                            <td>
+                                <table class="">
+                                    <tbody>
+                                        {% for name, standing in typeStanding %}
+                                            <tr>
+                                            <td>{# Кому проставлен стенд #}{{name}}</td>
+                                            <td>{# Сам стенд #}{{standing}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
+        </div>
+{% endblock %}
