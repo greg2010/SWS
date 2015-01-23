@@ -124,6 +124,9 @@ class APIUserManagement{
     }
     
     public function getAllianceStandings() {
+        $db = db::getInstance();
+        $apiOrgManagement = new APIOrgManagement();
+        
         $query = "SELECT * FROM `apiPilotList` WHERE `keyStatus` > '0'";
         $apis = $db->fetchAssoc($db->query($query));
         //TODO: EXCEPTIONS
@@ -139,19 +142,38 @@ class APIUserManagement{
                 }
             }
         }
-
-        foreach ($apiCorrect as $api) {
-            //TODO: REWRITE
-            $pheal = new Pheal($api[keyID], $api[vCode], "char");
-            $response = $pheal->contactList(array("characterID" => $api[characterID]));
-            $standings = array();
-            foreach ($response->allianceContactList as $row) {
-                $standings[$row->contactID] = $row->standing;
+        $output = array();
+        
+        try {
+            foreach ($apiCorrect as $api) {
+                //TODO: REWRITE
+                $pheal = new Pheal($api[keyID], $api[vCode], "char");
+                $response = $pheal->contactList(array("characterID" => $api[characterID]));
+                foreach ($response->allianceContactList as $row) {
+                    switch ($row->contactTypeID) {
+                        case 2:
+                            $type = "corp";
+                            break;
+                        case 16159:
+                            $type = "alliance";
+                            break;
+                        default:
+                            $type = "char";
+                            break;
+                    }
+                    $output[$apiOrgManagement->getAllianceName($api[allianceID])][$type][$row->contactName] = $row->standing;
+                    
+                    $gotTypes = array_keys($output[$apiOrgManagement->getAllianceName($api[allianceID])]);
+                    foreach ($gotTypes as $type) {
+                         asort($output[$apiOrgManagement->getAllianceName($api[allianceID])][$type]);
+                    }
+                }
             }
-
+        } catch(\Pheal\Exceptions\PhealException $e){
+            throw new Exception($e->getMessage(), $e->getCode());
         }
-
-        print_r($standings);
+        
+        return $output;
     }
     
     public function getServerStatus() {
