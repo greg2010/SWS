@@ -29,6 +29,12 @@ if ($_SESSION[userObject]->isLoggedIn() == 0) {
         $toTemplate['isIndex'] = '';
     }
     
+    if ($thisPage === 'standings') {
+        $toTemplate['isStandings'] = $active;
+    } else {
+        $toTemplate['isStandings'] = '';
+    }
+    
     if ($thisPage === 'admin') {
         $toTemplate['isadmin'] = $active;
     } else {

@@ -181,7 +181,7 @@ class APIUserManagement{
                     
                     $gotTypes = array_keys($output[$apiOrgManagement->getAllianceName($api[allianceID])]);
                     foreach ($gotTypes as $type) {
-                         asort($output[$apiOrgManagement->getAllianceName($api[allianceID])][$type]);
+                         arsort($output[$apiOrgManagement->getAllianceName($api[allianceID])][$type]);
                     }
                 }
             }
