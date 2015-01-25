@@ -1,7 +1,92 @@
 {% extends "base.twig" %}
 
-{% block title %}Standings{% endblock %}
+{% block title %}Posmon{% endblock %}
 
 {% block content %}
-{# Здесь будет стиль #}
-{% endblock %}
+    <div class="container" id="posmon">            
+        <h1>POS MONITOR</h1>
+        <table class="table table-condensed" style="width: 1080px; margin-left: 30px;">
+        <tbody>
+        <tr align="center">
+          <th>
+            <h2>Sistem</h>
+          </th>
+           <th>
+            <h2>Type</h>
+          </th>
+          <th>
+            <center><h2>Moon</h></center>
+          </th>
+          <th>
+            <center><h2>State</h></center>
+          </th>
+          <th>
+            <center><h2>Fuel left<br>(Days and hours)</h></center>
+          </th>
+          <th>
+            <center><h2>Strontium time left<br>(reinforce timer)</h></center>
+          </th>
+          <th>
+            <center><h2>Moons</h></center>
+          </th>
+          <th>
+            <center><h2>Silo fill</h></center>
+          </th>
+        </tr>
+        <tr>
+           <th>
+            <center><span>9PX2-F</span></center>
+          </th>
+           <th>
+            <center><span>Minmatar Control Tower Medium</span></center>
+          </th>
+          <th>
+             <center><span>9PX2-F IV - Moon 4</span></center>
+          </th>
+          <th>
+            <center><span id="success">Online</span></center>
+          </th>
+          <th>
+            <center><span>10d 6h</span></center>
+          </th>
+          <th>
+            <center><span>1d 11h</span></center>
+          </th>
+          <th>
+            <center><i class="fa fa-circle" style="color:#ccc; cursor: pointer;" title="Hafnium"></i></center>
+          </th>
+          <th>
+            <center><i class="fa fa-cubes" style="color:#ccc; cursor: pointer;" title="2300/10000"></i></center>
+          </th>
+        </tr>
+        <tr>
+           <th>
+            <center><span>9PX2-F</span></center>
+          </th>
+           <th>
+            <center><span>Minmatar Control Tower</span></center>
+          </th>
+          <th>
+             <center><span>9PX2-F IV - Moon 5</span></center>
+          </th>
+          <th>
+            <center><span id="danger">Reinforced!</span></center>
+          </th>
+          <th>
+            <center><span>4d 6h</span></center>
+          </th>
+          <th>
+            <center><span id="danger">2014-11-21 10:15:32</span></center>
+          </th>
+          <th>
+            <center><span>N/A</span></center>
+          </th>
+          <th>
+            <center><span>N/A</span></center>
+          </th>
+        </tr>
+        </tbody>
+        </table> 
+      </div>
+    
+{% endblock %}{# empty Twig template #}
