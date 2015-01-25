@@ -11,5 +11,4 @@ $pagePermissions = array("webReg_Valid");
 $posmon = new posmon();
 
 $toTemplate["posList"] = $posmon->getSortedPosList();
-print_r($toTemplate[posList]);
-//require 'twigRender.php';
+require 'twigRender.php';

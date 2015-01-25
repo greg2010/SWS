@@ -3,90 +3,68 @@
 {% block title %}Posmon{% endblock %}
 
 {% block content %}
+    <div id="formSettings">
     <div class="container" id="posmon">            
         <h1>POS MONITOR</h1>
-        <table class="table table-condensed" style="width: 1080px; margin-left: 30px;">
-        <tbody>
-        <tr align="center">
-          <th>
-            <h2>Sistem</h>
-          </th>
-           <th>
-            <h2>Type</h>
-          </th>
-          <th>
-            <center><h2>Moon</h></center>
-          </th>
-          <th>
-            <center><h2>State</h></center>
-          </th>
-          <th>
-            <center><h2>Fuel left<br>(Days and hours)</h></center>
-          </th>
-          <th>
-            <center><h2>Strontium time left<br>(reinforce timer)</h></center>
-          </th>
-          <th>
-            <center><h2>Moons</h></center>
-          </th>
-          <th>
-            <center><h2>Silo fill</h></center>
-          </th>
-        </tr>
-        <tr>
-           <th>
-            <center><span>9PX2-F</span></center>
-          </th>
-           <th>
-            <center><span>Minmatar Control Tower Medium</span></center>
-          </th>
-          <th>
-             <center><span>9PX2-F IV - Moon 4</span></center>
-          </th>
-          <th>
-            <center><span id="success">Online</span></center>
-          </th>
-          <th>
-            <center><span>10d 6h</span></center>
-          </th>
-          <th>
-            <center><span>1d 11h</span></center>
-          </th>
-          <th>
-            <center><i class="fa fa-circle" style="color:#ccc; cursor: pointer;" title="Hafnium"></i></center>
-          </th>
-          <th>
-            <center><i class="fa fa-cubes" style="color:#ccc; cursor: pointer;" title="2300/10000"></i></center>
-          </th>
-        </tr>
-        <tr>
-           <th>
-            <center><span>9PX2-F</span></center>
-          </th>
-           <th>
-            <center><span>Minmatar Control Tower</span></center>
-          </th>
-          <th>
-             <center><span>9PX2-F IV - Moon 5</span></center>
-          </th>
-          <th>
-            <center><span id="danger">Reinforced!</span></center>
-          </th>
-          <th>
-            <center><span>4d 6h</span></center>
-          </th>
-          <th>
-            <center><span id="danger">2014-11-21 10:15:32</span></center>
-          </th>
-          <th>
-            <center><span>N/A</span></center>
-          </th>
-          <th>
-            <center><span>N/A</span></center>
-          </th>
-        </tr>
-        </tbody>
-        </table> 
-      </div>
-    
+        {% for allianceName, alliancePoses in posList%}
+            <h2>{{ allianceName }}</h2>
+            {% for corpName, corpPoses in alliancePoses%}
+                <h2>{{ corpName }}</h2>
+                <table class="table table-condensed" style="width: 1080px; margin-left: 30px;">
+                    <tbody>
+                        <tr align="center">
+                            <th width = "10%"><center><h2>System</h2></center></th>
+                            <th width = "20%"><center><h2>Type</h2></center></th>
+                            <th width = "20%"><center><h2>Moon</h2></center></th>
+                            <th width = "10%"><center><h2>State</h2></center></th>
+                            <th width = "10%"><center><h2>Fuel left<br>(Days and hours)</h2></center></th>
+                            <th width = "10%"><center><h2>Strontium time left<br>(reinforce timer)</h></center></th>
+                            <th width = "10%"><center><h2>Moons</h2></center></th>
+                            <th width = "10%"><center><h2>Silo fill</h2></center></th>
+                        </tr>
+                        {% for pos in corpPoses%}
+                            <tr>
+                                <td><center><span>{{pos.locationName}}</span></center></td>
+                                <td><center><span>{{pos.typeName}}</span></center></td>
+                                <td><center><span>{{pos.moonName}}</span></center></td>
+                                <td>
+                                    <center>
+                                        {% if pos.state == 4 %}
+                                            {% set id = "success" %}
+                                            {% set msg = "Online" %}
+                                            {% set rftime = pos.rfTime.d ~ "d " ~ pos.rfTime.h ~ "h" %}
+                                        {% elseif pos.state == 3 %}
+                                            {% set id = "danger" %}
+                                            {% set msg = "Reinforced" %}
+                                            {% set rftime = pos.stateTimestamp ~ "ET" %}
+                                        {% elseif pos.state == 2 %}
+                                            {% set id = "success" %}
+                                            {% set msg = "Onlining/Offlining" %}
+                                            {% set rftime = pos.rfTime.d ~ "d " ~ pos.rfTime.h ~ "h" %}
+                                        {% elseif pos.state == 1 %}
+                                            {% set id = "success" %}
+                                            {% set msg = "Anchored / Offline" %}
+                                            {% set rftime = pos.rfTime.d ~ "d " ~ pos.rfTime.h ~ "h" %}
+                                        {% elseif pos.state == 0 %}
+                                            {% set id = "success" %}
+                                            {% set msg = "Unanchored" %}
+                                            {% set rftime = pos.rfTime.d ~ "d " ~ pos.rfTime.h ~ "h" %}
+                                        {% endif %}
+                                        <span id="{{id}}}">{{msg}}</span>
+                                    </center>
+                                </td>
+                                <td><center><span>{{pos.time.d}}d {{pos.time.h}}h</span></center></td>
+                                <td>
+                                    <center><span>{{rftime}}</span></center>
+                                </td>
+                                <td><center><i class="fa fa-circle" style="color:#ccc; cursor: pointer;" title="Hafnium"></i></center></td>
+                                <td><center><i class="fa fa-cubes" style="color:#ccc; cursor: pointer;" title="2300/10000"></i></center></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endfor %}
+        {% endfor %}
+        </div>
+    </div>
 {% endblock %}{# empty Twig template #}

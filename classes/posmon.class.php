@@ -69,6 +69,8 @@ class posmon {
             foreach ($corpList as $corporation => $list) {
                 for ($i = 0; $i < count($list); $i++) {
                     $posListRender[$alliance][$corporation][$i][time] = $this->hoursToDays($posListRender[$alliance][$corporation][$i][time]);
+                    $locationName = explode(" ", $posListRender[$alliance][$corporation][$i][moonName]);
+                    $posListRender[$alliance][$corporation][$i]["locationName"] = $locationName[0];
                     if ($posListRender[$alliance][$corporation][$i][state] == 3) {
                         $posListRender[$alliance][$corporation][$i][rfTime] = $posListRender[$alliance][$corporation][$i][stateTimestamp];
                     } else {
