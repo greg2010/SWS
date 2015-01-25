@@ -355,6 +355,7 @@ class userSession {
     }
     
     public function getUserSettings() {
+        $this->updateUserInfo();
         return $this->settings;
     }
     
@@ -396,16 +397,5 @@ class userSession {
         $affiliations['corporation'] = array_unique($affiliations[corporation]);
         $affiliations['alliance'] = array_unique($affiliations[alliance]);
         return $affiliations;
-    }
-
-    public function hoursToDays($inputTime) { // просто копипаста из старого кода, не знаю где используется, наверно в гуи
-        $hoursInADay = 24;
-        $days = floor($inputTime / $hoursInADay);
-        $hoursLeft = $inputTime - $days * $hoursInADay;
-        $result = array (
-            'd' => $days,
-            'h' =>$hoursLeft
-        );
-        return $result;
     }
 }
