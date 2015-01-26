@@ -152,3 +152,9 @@ function formCheck() {
 
 formCheck();
 });
+
+$(document).ready(function() 
+    { 
+        $('table[id^="posmonSort"]').tablesorter(); 
+    } 
+); 
