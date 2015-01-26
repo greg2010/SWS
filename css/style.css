@@ -596,10 +596,10 @@ input[type=button]:hover {
             margin-bottom: 80px;
 }
 
- table {
+table {
     width: 100%;
-   }
-   td {
+}
+#posmon td {
     padding: 5px;
-    vertical-align: top;
+    vertical-align: middle;
    }

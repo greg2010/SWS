@@ -7,7 +7,10 @@ include 'header.php';
 $templateName = $thisPage;
 
 $APIUserManagement = new APIUserManagement();
+try {
 $toTemplate["standings"] = $APIUserManagement->getAllianceStandings();
-
+} catch (Exception $ex) {
+    $toTemplate["errorMsg"] = "Database error. Try again later.";
+}
 
 require 'twigRender.php';

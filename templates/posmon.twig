@@ -42,7 +42,7 @@
                                         {% elseif pos.state == 3 %}
                                             {% set id = "danger" %}
                                             {% set msg = "Reinforced" %}
-                                            {% set rftime = pos.stateTimestamp ~ "ET" %}
+                                            {% set rftime = pos.stateTimestamp %}
                                         {% elseif pos.state == 2 %}
                                             {% set id = "success" %}
                                             {% set msg = "Onlining/Offlining" %}
