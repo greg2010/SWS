@@ -56,6 +56,54 @@ class posmon {
     return $this->db->fetchAssoc($this->db->query($query));
     }
     
+    private function getSiloInformation($posID, $posType) {
+        $query = "SELECT * FROM `siloList` WHERE `posID` = '$posID'";
+        $result = $this->db->query($query);
+        if ($this->db->countRows($result) > 1) {
+            $siloList = $this->db->fetchAssoc($result);
+        } elseif ($this->db->countRows($result) == 1) {
+            $siloList[0] = $this->db->fetchAssoc($result);
+        }
+        
+        switch ($posType) {
+            case "Minmatar":
+            case "Angel":
+            case "Domination":
+                $siloMax = "20000";
+                break;
+            case "Caldari":
+            case "Guristas":
+            case "Dread":
+                $siloMax = "20000";
+                break;
+            case "Amarr":
+            case "True":
+            case "Dark":
+            case "Sansha":
+            case "Blood":
+                $siloMax = "30000";
+                break;
+            case "Gallente":
+            case "Shadow":
+            case "Serpentis":
+                $siloMax = "40000";
+                break;
+            default:
+                $siloMax = "0";
+                break;
+        }
+        
+        if (is_array($siloList)) {
+            foreach ($siloList as $i => $silo) {
+                $siloList[$i]['Percentage'] = round($silo[mmvolume]*$silo[quantity]*100/$siloMax);
+                $siloList[$i]['siloMax'] = $siloMax;
+            }
+        } else {
+            
+        }
+        return $siloList;
+    }  
+    
     public function getSortedPosList() {
         $posList = $this->getPosList();
         $org = new orgManagement();
@@ -73,7 +121,13 @@ class posmon {
             ksort($posListRender[$alliance]);
             foreach ($corpList as $corporation => $list) {
                 for ($i = 0; $i < count($list); $i++) {
+                    $query = "SELECT `itemName` FROM `mapDenormalize` WHERE `itemID` = (SELECT  `regionID` FROM  `mapSolarSystems` WHERE  `solarSystemID` =  '{$posListRender[$alliance][$corporation][$i][locationID]}' LIMIT 1)";
+                    $posListRender[$alliance][$corporation][$i]["region"] = $this->db->getMySQLResult($this->db->query($query));
                     $posListRender[$alliance][$corporation][$i][time] = $this->hoursToDays($posListRender[$alliance][$corporation][$i][time]);
+                    
+                    $posType = explode(" ", $posListRender[$alliance][$corporation][$i][typeName]);
+                    $posListRender[$alliance][$corporation][$i]['silo'] = $this->getSiloInformation( $posListRender[$alliance][$corporation][$i][posID], $posType[0]);
+                    
                     $locationName = explode(" ", $posListRender[$alliance][$corporation][$i][moonName]);
                     $posListRender[$alliance][$corporation][$i]["locationName"] = $locationName[0];
                     if ($posListRender[$alliance][$corporation][$i][state] == 3) {
