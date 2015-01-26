@@ -603,3 +603,13 @@ table {
     padding: 5px;
     vertical-align: middle;
    }
+   
+   #posmonH2 {
+        color: #FF4500;
+        margin-left: 40px;
+   }
+   
+   #tablehead {
+       color: #f6c000;
+       font-size: 16px;
+   }

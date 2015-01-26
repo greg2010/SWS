@@ -11,22 +11,22 @@
         <h1>POS MONITOR</h1>
         {% set i = 0 %}
         {% for allianceName, alliancePoses in posList%}
-            <h2>{{ allianceName }}</h2>
+            <center><h2 style="color: #fff;">{{ allianceName }}</h2></center>
             {% for corpName, corpPoses in alliancePoses%}
-                <h2>{{ corpName }}</h2>
+                <h2 id="posmonH2">{{ corpName }}</h2>
                     <table class="table table-condensed" style="width: 1080px; margin-left: 30px;" id="posmonSort{{i}}">
                         <thead>
                             <tr align="center">
                                 <th width = "5%"></th>
-                                <th width = "5%"><center><h2>System</h2></center></th>
-                                <th width = "5%"><center><h2>Region</h2></center></th>
-                                <th width = "15%"><center><h2>Type</h2></center></th>
-                                <th width = "20%"><center><h2>Moon</h2></center></th>
-                                <th width = "10%"><center><h2>State</h2></center></th>
-                                <th width = "10%"><center><h2>Fuel Left</h2></center></th>
-                                <th width = "10%"><center><h2>Strontium Timer</h2></center></th>
-                                <th width = "5%"><center><h2>Moon Material</h2></center></th>
-                                <th width = "10%"><center><h2>Silo</h2></center></th>
+                                <th width = "5%"><center><span id="tablehead">System</span></center></th>
+                                <th width = "5%"><center><span id="tablehead">Region</span></center></th>
+                                <th width = "15%"><center><span id="tablehead">Type</span></center></th>
+                                <th width = "20%"><center><span id="tablehead">Moon</span></center></th>
+                                <th width = "10%"><center><span id="tablehead">State</span></center></th>
+                                <th width = "10%"><center><span id="tablehead">Fuel Left</span></center></th>
+                                <th width = "10%"><center><span id="tablehead">Strontium Timer</span></center></th>
+                                <th width = "5%"><center><span id="tablehead">Moon Material</span></center></th>
+                                <th width = "10%"><center><span id="tablehead">Silo</span></center></th>
                             </tr>
                         </thead>
                     <tbody>
