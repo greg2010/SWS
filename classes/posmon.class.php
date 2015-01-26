@@ -61,7 +61,12 @@ class posmon {
         $org = new orgManagement();
         $posListRender = array();
         foreach ($posList as $pos) {
-            $posListRender[$org->getAllianceName($pos[allianceID])][$org->getCorporationName($pos[corporationID])][] = $pos;
+            if ($pos[allianceID] == NULL) {
+                $allianceName = "Without Alliance";
+            } else {
+                $allianceName = $org->getAllianceName($pos[allianceID]);
+            }
+            $posListRender[$allianceName][$org->getCorporationName($pos[corporationID])][] = $pos;
         }
         ksort($posListRender);
         foreach ($posListRender as $alliance => $corpList) {
