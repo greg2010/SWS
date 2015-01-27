@@ -16,7 +16,7 @@ class statistics {
     public function getRegistrationStats() {
         $query = "SELECT `allianceID` FROM `allowedList` WHERE `characterID` IS NULL AND `corporationID` IS NULL and `allianceID` IS NOT NULL";
         $allianceList = $this->db->fetchRow($this->db->query($query));
-        
+        //check mask
         $orgManagement = new orgManagement();
         
         $total = 0;
