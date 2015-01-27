@@ -22,7 +22,7 @@ if ($_SESSION[userObject]->isLoggedIn() == 0) {
         $toTemplate['isAbout'] = '';
     }
 } else {
-    $permissions = $_SESSION[userObject]->permissions->getWebPermissions();
+    $permissions = $_SESSION[userObject]->permissions->getAllPermissions();
     if ($thisPage === 'index') {
         $toTemplate['isIndex'] = $active;
     } else {
@@ -35,21 +35,38 @@ if ($_SESSION[userObject]->isLoggedIn() == 0) {
         $toTemplate['isStandings'] = '';
     }
     
+    if ($thisPage === 'posmon') {
+        $toTemplate['isPosmon'] = $active;
+    } else {
+        $toTemplate['isPosmon'] = '';
+    }
+    
+    if ($thisPage === 'stats') {
+        $toTemplate['isStats'] = $active;
+    } else {
+        $toTemplate['isStats'] = '';
+    }
+    
     if ($thisPage === 'admin') {
         $toTemplate['isadmin'] = $active;
     } else {
         $toTemplate['isadmin'] = '';
-    }
-    if (in_array('webReg_AdminPanel', $permissions)) {
-        $toTemplate['hasAdminAccess'] = 1;
-    } else {
-        $toTemplate['hasAdminAccess'] = 0;
     }
     
     if ($thisPage === 'about') {
         $toTemplate['isAbout'] = $active;
     } else {
         $toTemplate['isAbout'] = '';
+    }
+    if (in_array('posMon_Valid', $permissions) || in_array('XMPP_Overmind', $permissions)) {
+        $toTemplate['hasPosmonAccess'] = 1;
+    } else {
+        $toTemplate['hasPosmonAccess'] = 0;
+    }
+    if (in_array('webReg_AdminPanel', $permissions)) {
+        $toTemplate['hasAdminAccess'] = 1;
+    } else {
+        $toTemplate['hasAdminAccess'] = 0;
     }
     
 }

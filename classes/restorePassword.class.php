@@ -39,8 +39,12 @@ class restorePassword {
     }
     
     private function makeDBRecord() {
-        $query = "INSERT INTO `passwordRestore` SET `id` = '$this->id', `keyHash` = '$this->hash', `creationTime` = 'NOW()'";
-        $this->db->query($query);
+        try {
+            $query = "INSERT INTO `passwordRestore` SET `id` = '$this->id', `keyHash` = '$this->hash', `creationTime` = 'NOW()'";
+            $this->db->query($query);
+        } catch (Exception $ex) {
+            throw new Exception("Database error.", 30);
+        }
     }
 
     private function setCookie() {
@@ -64,12 +68,17 @@ class restorePassword {
             throw new Exception ("Your code is wrong. Please try again.", 24);
         }
         $query = "SELECT `id` FROM `passwordRestore` WHERE `keyHash` = '$hash' LIMIT 1";
-        $result = $this->db->query($query);
+        try {
+            $result = $this->db->query($query);
+        } catch (Exception $ex) {
+            throw new Exception("Database error.", 30);
+        }
         if ($this->db->countRows($result) <> 1) {
             throw new Exception("Something went terribly wrong. Please contact administrator to prevent the end of the world!", 30);
         }
         $this->changeUserID = $this->db->fetchMySQLResult($result);
         $this->verified = TRUE;
+        return TRUE;
     }
 
 
@@ -89,7 +98,11 @@ class restorePassword {
             throw new Exception("No such user!", 21);
         }
         $query = "SELECT `email` FROM `users` WHERE `id` = '$id'";
-        $dbEmail = $this->db->getMySQLResult($this->db->query($query));
+        try {
+            $dbEmail = $this->db->getMySQLResult($this->db->query($query));
+        } catch (Exception $ex) {
+            throw new Exception("Database error.", 30);
+        }
         if ($dbEmail == NULL) {
             throw new Exception("No email for this user. Please contact your CEO / director to your change password.", 22);
         }
@@ -104,10 +117,14 @@ class restorePassword {
         $subj = "RADRF Web Services Password Restoration";
         $text = "Hello, $login!\n\n"
                 . "According to our records, you requested to reset your password password .\n"
-                . "Please click on <a href ='https://coalition.redalliance.pw/restore.php?hash=$this->hash'>this</a> link to change your password.\n\n"
+                . "Please click on <a href ='https://coalition.redalliance.pw/restore.php?a=step_1&hash=$this->hash'>this</a> link to change your password.\n\n"
                 . "If you did not request this, please click <a href ='https://coalition.redalliance.pw/restore.php?hash=$this->hash&action=remove'>this</a> link.\n\n"
                 . "Thank you,\n"
                 . "RADRF Web Services.";
         $this->sendmail($subj, $text);
+    }
+    
+    public function isVerified() {
+        return $this->verified;
     }
 }

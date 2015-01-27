@@ -1,0 +1,23 @@
+{% extends "base.twig" %}
+
+{% block title %}Statistics{% endblock %}
+
+{% block content %}
+    <div id="formSettings">
+        <h1>Statistics</h1>
+        <table class="table table-condensed" style="width: 1080px; margin-left: 30px;">
+            <thead>
+                <th>Alliance</th>
+                <th>Registrations</th>
+            </thead>
+            <tbody>
+                {% for alliance,regs in regStats %}
+                    <tr>
+                        <td>{{alliance}}</td>
+                        <td>{{regs}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
