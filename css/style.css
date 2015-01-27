@@ -597,19 +597,38 @@ input[type=button]:hover {
 }
 
 table {
-    width: 100%;
+            width: 100%;
 }
 #posmon td {
-    padding: 5px;
-    vertical-align: middle;
+            padding: 5px;
+            vertical-align: middle;
    }
    
-   #posmonH2 {
-        color: #FF4500;
-        margin-left: 40px;
+#posmonH2 {
+            color: #FF4500;
+            margin-left: 40px;
    }
    
-   #tablehead {
-       color: #f6c000;
-       font-size: 16px;
+#tablehead {
+            color: #f6c000;
+            font-size: 16px;
    }
+   
+.dropdown-menu{
+            background-color:#333;
+    }
+
+.dropdown-menu>li>a{
+            color:#ccc;
+}
+
+.nav .open > a:focus {
+            background-color: #111;
+            border-color: #f6c000;
+}
+
+#siloselect {
+            width: 120px;
+            height: 30px;
+            font-size: 12px;
+}
