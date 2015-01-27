@@ -3,11 +3,34 @@
 require_once 'auth.php';
 
 switch ($_GET[a]) {
-    case "s1":
+    case "step_1":
         //Ask for the code, if works redirect to s2
+        try {
+            if ($_POST[form] == 'sent') {
+                $verified = $_SESSION[restore]->verifyUser($_POST[hash]);
+            } elseif(isset($_GET[hash])) {
+                $verified = $_SESSION[restore]->verifyUser($_GET[hash]);
+            }
+            if ($verified) {
+                header("Location: /restorePassword.php?a=step_2");
+            }
+        } catch (Exception $ex) {
+            //24,30
+        }
         break;
-    case "s2":
+    case "step_2":
         //Ask for new pwd and pwd-repeat. If fine, set new pwd and redirect to index
+        try {
+            if (!$_SESSION[restore]->isVerified()) {
+                header("Location: /restorePassword.php");
+            }
+            if ($_POST[form] == 'sent') {
+            $_SESSION[restore]->setNewPassword($_POST[password], $_POST[passwordRepeat]);
+            }
+            ("Location: /login.php");
+        } catch (Exception $ex) {
+            //11,25,30
+        }
         break;
     default:
         //Ask for email and login, if fine redirect to s1
@@ -16,10 +39,11 @@ switch ($_GET[a]) {
         $email = $_POST[email];
         $_SESSION['restore'] = new restorePassword();
         try {
-            $restorePassword->setUserData($login, $email);
-            $restorePassword->mail();
+            $_SESSION[restore]->setUserData($login, $email);
+            $_SESSION[restore]->mail();
+            header("Location: /restorePassword.php?a=step_1");
         } catch (Exception $ex) {
-
+            //21,22,23,30
         }
     }
         break;

@@ -48,7 +48,9 @@
                 </ul>
                 </li>
                 <li{{isStandings}}><a href="standings.php">STANDINGS</a></li>
-                <li{{isAdmin}}><a href="admin.php">ADMIN</a></li>
+                {% if (hasAdminAccess == 1) or (hasPosmonAccess == 1) %}<li{{isPosmon}}><a href="posmon.php">POSMON</a></li>{% endif %}
+                {% if hasAdminAccess == 1 %}<li{{isAdmin}}><a href="admin.php">ADMIN</a></li>{% endif %}
+                <li{{isStats}}><a href="stats.php">STATS</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">

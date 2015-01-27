@@ -1,18 +1,17 @@
 <?php
 
-$thisPage = "posmon";
+$thisPage = "stats";
 require_once 'auth.php';
 include 'header.php';
-
 $templateName = $thisPage;
-//$pagePermissions = array("webReg_Valid", "posMon_Valid");
+
 $pagePermissions = array("webReg_Valid");
 
-$posmon = new posmon();
-try { 
-    
-$toTemplate["posList"] = $posmon->getSortedPosList();
+$stats = new statistics();
+try {
+    $toTemplate['regStats'] = $stats->getRegistrationStats();
 } catch (Exception $ex) {
     $toTemplate["errorMsg"] = "Database error. Try again later.";
 }
+
 require 'twigRender.php';

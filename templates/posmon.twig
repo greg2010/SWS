@@ -10,7 +10,9 @@
     <div class="container" id="posmon">            
         <h1>POS MONITOR</h1>
         {% set i = 0 %}
+        {% set j = 0 %}
         {% for allianceName, alliancePoses in posList%}
+<<<<<<< HEAD
             <center><h2 style="color: #fff;">{{ allianceName }}</h2></center>
             {% for corpName, corpPoses in alliancePoses%}
                 <h2 id="posmonH2">{{ corpName }}</h2>
@@ -117,6 +119,82 @@
                 </table>
             {% set i = i + 1 %}
             {% endfor %}
+=======
+            <a data-toggle="collapse" href="#posmonAlliance{{j}}" aria-expanded="false" aria-controls="collapsePosmonAlliance"><center><h2 style="color: #fff;">{{ allianceName }}</h2></center></a>
+                <div class="collapse in" id="posmonAlliance{{j}}">
+                    {% for corpName, corpPoses in alliancePoses%}
+                    <a data-toggle="collapse" href="#posmonCorp{{i}}" aria-expanded="false" aria-controls="collapsePosmonCorp"><h2 id="posmonH2">{{ corpName }}</h2></a>
+                        <div class="collapse in" id="posmonCorp{{i}}">
+                            <table class="table table-condensed" style="width: 1080px; margin-left: 30px;" id="posmonSort{{i}}">
+                                <thead>
+                                    <tr align="center">
+                                        <th width = "5%"></th>
+                                        <th width = "5%"><center><span id="tablehead">System</span></center></th>
+                                        <th width = "5%"><center><span id="tablehead">Region</span></center></th>
+                                        <th width = "15%"><center><span id="tablehead">Type</span></center></th>
+                                        <th width = "20%"><center><span id="tablehead">Moon</span></center></th>
+                                        <th width = "10%"><center><span id="tablehead">State</span></center></th>
+                                        <th width = "10%"><center><span id="tablehead">Fuel Left</span></center></th>
+                                        <th width = "10%"><center><span id="tablehead">Strontium Timer</span></center></th>
+                                        <th width = "5%"><center><span id="tablehead">Moon Material</span></center></th>
+                                        <th width = "10%"><center><span id="tablehead">Silo</span></center></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for pos in corpPoses%}
+                                        <tr>
+                                            <td><center><img src="https://image.eveonline.com/Type/{{pos.typeID}}_64.png"></center></td>
+                                            <td><center><span>{{pos.locationName}}</span></center></td>
+                                            <td><center><span>{{pos.region}}</span></center></td>
+                                            <td><center><span>{{pos.typeName}}</span></center></td>
+                                            <td><center><span>{{pos.moonName}}</span></center></td>
+                                            <td>
+                                                <center>
+                                                    {% if pos.state == 4 %}
+                                                        {% set id = "success" %}
+                                                        {% set msg = "Online" %}
+                                                        {% set rftime = pos.rfTime.d ~ "d " ~ pos.rfTime.h ~ "h" %}
+                                                    {% elseif pos.state == 3 %}
+                                                        {% set id = "danger" %}
+                                                        {% set msg = "Reinforced" %}
+                                                        {% set rftime = pos.stateTimestamp %}
+                                                    {% elseif pos.state == 2 %}
+                                                        {% set id = "success" %}
+                                                        {% set msg = "Onlining/Offlining" %}
+                                                        {% set rftime = pos.rfTime.d ~ "d " ~ pos.rfTime.h ~ "h" %}
+                                                    {% elseif pos.state == 1 %}
+                                                        {% set id = "" %}
+                                                        {% set msg = "Anchored / Offline" %}
+                                                        {% set rftime = pos.rfTime.d ~ "d " ~ pos.rfTime.h ~ "h" %}
+                                                    {% elseif pos.state == 0 %}
+                                                        {% set id = "" %}
+                                                        {% set msg = "Unanchored" %}
+                                                        {% set rftime = pos.rfTime.d ~ "d " ~ pos.rfTime.h ~ "h" %}
+                                                    {% endif %}
+                                                    <span id="{{id}}">{{msg}}</span>
+                                                </center>
+                                            </td>
+                                            <td><center><span>{{pos.time.d}}d {{pos.time.h}}h</span></center></td>
+                                            <td>
+                                                <center><span>{{rftime}}</span></center>
+                                            </td>
+                                            {% if pos.silo.0 is defined %}
+                                                <td><center><i class="fa fa-circle" style="color:#ccc; cursor: pointer;" title="N/A">N/A</i></center></td>
+                                                <td><center><i class="fa fa-cubes" style="color:#ccc; cursor: pointer;" title="{{pos.silo.0.quantity}}/{{pos.silo.0.siloMax}}">{{pos.silo.0.Percentage}}%</i></center></td>
+                                            {% else %}
+                                                <td><center><i class="fa fa-circle" style="color:#ccc; cursor: pointer;" title="N/A">N/A</i></center></td>
+                                                <td><center><i class="fa fa-cubes" style="color:#ccc; cursor: pointer;">N/A</i></center></td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% set i = i + 1 %}
+                    {% endfor %}
+                </div>
+        {% set j = j + 1 %}
+>>>>>>> a361d52a036fd487f695ce7cb532ba08f20e6fbc
         {% endfor %}
         </div>
     </div>

@@ -104,6 +104,23 @@ class posmon {
         return $siloList;
     }  
     
+    public function updateSiloOwner($siloID, $newPosID) {
+        $query = "SELECT `corporationID`,`locationID` FROM `posList` WHERE `posID` = '$newPosID' LIMIT 1";
+        $newPosInfo = $this->db->fetchAssoc($this->db->query($query));
+        
+        $query = "SELECT `corporationID`,`locationID` FROM `siloList` WHERE `siloID` = '$siloID' LIMIT 1";
+        $siloInfo = $this->db->fetchAssoc($this->db->query($query));
+        if ($siloInfo[locationID] <> $newPosInfo[locationID]) {
+            throw new Exception("Wrong system!", 13);
+        }
+        if ($siloInfo[corporationID] <> $newPosInfo[corporationID]) {
+            throw new Exception("Wrong corporation!", 13);
+        }
+        
+        $query = "UPDATE `siloList` SET `posID` = '$newPosID' WHERE `siloID` = '$siloID'";
+        $this->db->query($query);
+    }
+    
     public function getSortedPosList() {
         $posList = $this->getPosList();
         $org = new orgManagement();
@@ -135,6 +152,16 @@ class posmon {
                     } else {
                          $posListRender[$alliance][$corporation][$i][rfTime] = $this->hoursToDays($posListRender[$alliance][$corporation][$i][rfTime]);
                     }
+                    
+                    $query = "SELECT `moonName`, `posID` FROM `posList` WHERE `corporationID` = '{$posListRender[$alliance][$corporation][$i][corporationID]}' AND `locationID` = '{$posListRender[$alliance][$corporation][$i][locationID]}'";
+                    $result = $this->db->query($query);
+                    if ($this->db->countRows($result) > 1) {
+                        $altPoses = $this->db->fetchAssoc($result);
+                    } elseif ($this->db->countRows($result) == 1) {
+                        $altPoses[0] = $this->db->fetchAssoc($result);
+                    }
+                    $posListRender[$alliance][$corporation][$i][altPoses] = $altPoses;
+                    unset($altPoses);
                 }
             }
         }
