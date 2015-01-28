@@ -8,4 +8,4 @@ try {
 } catch (Exception $ex) {
     //13,30
 }
-header(); //redirect
+header("Location: /posmon.php"); //redirect

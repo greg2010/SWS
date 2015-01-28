@@ -98,8 +98,6 @@ class posmon {
                 $siloList[$i]['Percentage'] = round($silo[mmvolume]*$silo[quantity]*100/$siloMax);
                 $siloList[$i]['siloMax'] = $siloMax;
             }
-        } else {
-            
         }
         return $siloList;
     }  
@@ -160,7 +158,7 @@ class posmon {
                     } elseif ($this->db->countRows($result) == 1) {
                         $altPoses[0] = $this->db->fetchAssoc($result);
                     }
-                    $posListRender[$alliance][$corporation][$i][altPoses] = $altPoses;
+                    $posListRender[$alliance][$corporation][$i][silo][altPoses] = $altPoses;
                     unset($altPoses);
                 }
             }

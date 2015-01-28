@@ -3,8 +3,16 @@
 {% block title %}Statistics{% endblock %}
 
 {% block content %}
+    {% if errorMsg is defined %}
+        {% set isErrorHidden = "" %}
+    {% else %}
+        {% set isErrorHidden = "hidden" %}
+    {% endif %}
     <div id="formSettings">
         <h1>Statistics</h1>
+        <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
+            {{errorMsg}}
+        </div>
         <table class="table table-condensed" style="width: 1080px; margin-left: 30px;">
             <thead>
                 <th>Alliance</th>
