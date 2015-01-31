@@ -27,28 +27,29 @@
                     {% for corpName, corpPoses in alliancePoses%}
                     <a data-toggle="collapse" href="#posmonCorp{{i}}" aria-expanded="false" aria-controls="collapsePosmonCorp"><h2 id="posmonH2">{{ corpName }}</h2></a>
                         <div class="collapse in" id="posmonCorp{{i}}">
-                            <table class="table table-condensed tablesorter" style="width: 95%; margin: 0 auto;" id="posmonSort{{i}}">
+                            <table class="table table-condensed tablesorter" style="width: 97%; margin: 0 auto; margin-left: 5px;" id="posmonSort{{i}}">
                                 <thead>
+                                    <tr></tr>
                                     <tr align="center">
-                                        <th width = "5%"><center><i class="fa fa-minus-circle"></i></center></th>
-                                        <th width = "5%"><center><span id="tablehead">System</span></center></th>
-                                        <th width = "5%"><center><span id="tablehead">Region</span></center></th>
-                                        <th width = "25%"><center><span id="tablehead">Type</span></center></th>
-                                        <th width = "16%"><center><span id="tablehead">Moon</span></center></th>
-                                        <th width = "10%"><center><span id="tablehead">State</span></center></th>
-                                        <th width = "7%"><center><span id="tablehead">Fuel Left</span></center></th>
-                                        <th width = "7%"><center><span id="tablehead">Strontium Timer</span></center></th>
-                                        <th width = "15%"><center><span id="tablehead">Moon Material(s) / Silo(s)</span></center></th>
+                                        <th width = "5%"><center><span class="glyphicon glyphicon-refresh" style="color:#ccc;"></span></center></th>
+                                        <th width = "7%"><center><a id="tablehead" style="font-size: 14px;">SYSTEM </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                                        <th width = "5%"><center><a id="tablehead" style="font-size: 14px;">REGION </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                                        <th width = "20%"><center><a id="tablehead" style="font-size: 14px;">TYPE </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                                        <th width = "11%"><center><a id="tablehead" style="font-size: 14px;">MOON </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                                        <th width = "7%"><center><a id="tablehead" style="font-size: 14px;">STATE </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                                        <th width = "10%"><center><a id="tablehead" style="font-size: 14px;">FUEL LEFT </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                                        <th width = "13%"><center><a id="tablehead" style="font-size: 14px;">STRONTIUM TIMER </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                                        <th width = "22%"><center><a id="tablehead" style="font-size: 14px;">MOONMATERIAL(S) / SILO(S) </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for pos in corpPoses%}
                                         <tr>
                                             <td><center><img src="https://image.eveonline.com/Type/{{pos.typeID}}_64.png"></center></td>
-                                            <td><center><span>{{pos.locationName}}</span></center></td>
-                                            <td><center><span>{{pos.region}}</span></center></td>
-                                            <td><center><span>{{pos.typeName}}</span></center></td>
-                                            <td><center><span>{{pos.moonName}}</span></center></td>
+                                <td><center><span style="font-size: 14px;">{{pos.locationName}}</span></center></td>
+                                            <td><center><span style="font-size: 14px;">{{pos.region}}</span></center></td>
+                                            <td><center><span style="font-size: 14px;">{{pos.typeName}}</span></center></td>
+                                            <td><center><span style="font-size: 14px;">{{pos.moonName}}</span></center></td>
                                             <td>
                                                 <center>
                                                     {% if pos.state == 4 %}
@@ -72,16 +73,16 @@
                                                         {% set msg = "Unanchored" %}
                                                         {% set rftime = pos.rfTime.d ~ "d " ~ pos.rfTime.h ~ "h" %}
                                                     {% endif %}
-                                                    <span id="{{id}}">{{msg}}</span>
+                                                    <span id="{{id}}" style="font-size: 14px;">{{msg}}</span>
                                                 </center>
                                             </td>
-                                            <td><center><span>{{pos.time.d}}d {{pos.time.h}}h</span></center></td>
+                                            <td><center><span <span style="font-size: 14px;">{{pos.time.d}}d {{pos.time.h}}h</span></center></td>
                                             <td>
-                                                <center><span>{{rftime}}</span></center>
+                                                <center><span <span style="font-size: 14px;">{{rftime}}</span></center>
                                             </td>
                                             {% if pos.silo.0 is defined %}
                                                 <td>
-                                                    <table width="100%" height="100%" cellpadding="2" cellspacing="1">
+                                                    <table width="100%" height="100%" cellpadding="2" cellspacing="1" style="font-size: 14px;">
                                                         {% for silo in pos.silo %}
                                                             {% if silo.siloID is defined %} 
                                                                 <tr>
@@ -90,7 +91,7 @@
                                                                             <ul class="nav nav-pills">
                                                                                 <center><li class="dropdown" id="silo">
                                                                                 <a data-toggle="dropdown" role="menu" data-target="#" href="#" id="siloselect">
-                                                                                        <center><span>{{silo.mmname}}<b class="caret"></b></center></span>
+                                                                                        <center><span style="font-size: 14px;">{{silo.mmname}}<b class="caret"></b></center></span>
                                                                                     </a>
                                                                                     <ul class="dropdown-menu" id="silo">
                                                                                         {% for altpos in pos.silo.altPoses %}
@@ -102,14 +103,14 @@
                                                                     {% else %}
                                                                         <td width="75%"><center><span>{{silo.mmname}}</span></center></td>
                                                                     {% endif %}
-                                                                        <td bgcolor="#111" width="25%"><center><span title="{{silo.quantity}}/{{silo.siloMax}}">{{silo.Percentage}}%</span></center></td>
+                                                                        <td bgcolor="#111" width="25%"><center><span title="{{silo.quantity}}/{{silo.siloMax}}" style="font-size: 14px;">{{silo.Percentage}}%</span></center></td>
                                                                 </tr>
                                                             {% endif %}
                                                         {% endfor %}
                                                      </table>
                                                 </td>                   
                                             {% else %}
-                                                <td><center><span>N/A</span></center></td>
+                                                <td><center><span style="font-size: 14px;">N/A</span></center></td>
                                             {% endif %}
                                         </tr>
                                     {% endfor %}
