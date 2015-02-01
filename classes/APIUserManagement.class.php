@@ -169,16 +169,18 @@ class APIUserManagement{
                     switch ($row->contactTypeID) {
                         case 2:
                             $type = "corp";
+                            $ticker = $apiOrgManagement->getCorporationTicker($apiOrgManagement->getCorporationID($row->contactName));
                             break;
                         case 16159:
                             $type = "alliance";
+                            $ticker = $apiOrgManagement->getAllianceTicker($apiOrgManagement->getAllianceID($row->contactName));
                             break;
                         default:
                             $type = "char";
                             break;
                     }
                     $output[$apiOrgManagement->getAllianceName($api[allianceID])][$type][$row->contactName]["actualStanding"] = $row->standing;
-                    
+                    $output[$apiOrgManagement->getAllianceName($api[allianceID])][$type][$row->contactName]["contactTicker"] = $ticker;
                     if ($row->standing > 5) {
                         $picStanding = 10;
                     } elseif ($row->standing < -5) {

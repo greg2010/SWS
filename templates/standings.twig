@@ -22,26 +22,28 @@
                 <table class="table table-condensed" style="width: 99%; margin: 0 auto; margin-left: 5px;">
                     <tbody>
                         <tr>
-                            <td>
+                            <td width="36%">
                                 <table>
                                     <tr>
-                                        <td width = "25%" style="color: #f6c000;">ALLIANCES</td>
-                                        <td width = "5%" style="color: #f6c000;"><center>STAND</center></td>
+                                        <td width = "60%" style="color: #f6c000;">ALLIANCE</td>
+                                        <td width = "20%" style="color: #f6c000;" align="right">TICKER</td>
+                                        <td width = "20%" style="color: #f6c000;"><center>STAND</center></td>
                                     </tr>
                                 </table>
                             </td>
-                            <td>
+                            <td width="36%">
                                 <table>
                                     <tr>
-                                        <td width = "25%" style="color: #f6c000;">CORPORATIONS</td>
-                                        <td width = "5%" style="color: #f6c000;"><center>STAND</center></td>
+                                        <td width = "60%" style="color: #f6c000;">CORPORATION</td>
+                                        <td width = "20%" style="color: #f6c000;" align="right">TICKER</td>
+                                        <td width = "20%" style="color: #f6c000;"><center>STAND</center></td>
                                 </table>
                             </td> 
-                            <td>
+                            <td width="28%">
                                 <table>
                                     <tr>
-                                        <td width = "25%" style="color: #f6c000;">CHARACTERS</td>
-                                        <td width = "5%" style="color: #f6c000;"><center>STAND</center></td>
+                                        <td width = "80%" style="color: #f6c000;">CHARACTER</td>
+                                        <td width = "20%" style="color: #f6c000;"><center>STAND</center></td>
                                     </tr>
                                 </table>
                             </td> 
@@ -51,8 +53,9 @@
                                 <table>
                                 {% for allianceName,standing in types.alliance %}
                                     <tr>
-                                        <td width = "25%" title="{{standing.actualStanding}}">{{ allianceName }}</td>
-                                        <td width = "5%" title="{{standing.actualStanding}}" align="right" style="padding-right: 5%;">{{standing.actualStanding}} <img src="images/{{standing.picStanding}}.png"></td>
+                                        <td width = "60%" title="{{standing.actualStanding}}">{{ allianceName }}</td>
+                                        <td width = "20%" title="{{standing.actualStanding}}" align="right">{{ standing.contactTicker }}</td>
+                                        <td width = "20%" title="{{standing.actualStanding}}" align="right" style="padding-right: 5%;">{{standing.actualStanding}} <img src="images/{{standing.picStanding}}.png"></td>
                                     </tr>
                                 {% endfor %}
                                 </table>
@@ -61,8 +64,9 @@
                                 <table>
                                     {% for corpName,standing in types.corp %}
                                     <tr>
-                                        <td width = "25%" title="{{standing.actualStanding}}">{{ corpName }}</td>
-                                        <td width = "5%" title="{{standing.actualStanding}}" align="right" style="padding-right: 5%;">{{standing.actualStanding}} <img src="images/{{standing.picStanding}}.png"></td>
+                                        <td width = "60%" title="{{standing.actualStanding}}">{{ corpName }}</td>
+                                        <td width = "20%" title="{{standing.actualStanding}}" align="right">{{ standing.contactTicker }}</td>
+                                        <td width = "20%" title="{{standing.actualStanding}}" align="right" style="padding-right: 5%;">{{standing.actualStanding}} <img src="images/{{standing.picStanding}}.png"></td>
                                     </tr>
                                     {% endfor %}
                                 </table>
@@ -71,8 +75,8 @@
                                 <table>
                                     {% for charName,standing in types.char %}
                                     <tr>
-                                        <td width = "25%" title="{{standing.actualStanding}}">{{ charName }}</td>
-                                        <td width = "5%" title="{{standing.actualStanding}}" align="right" style="padding-right: 5%;">{{standing.actualStanding}} <img src="images/{{standing.picStanding}}.png"></td>
+                                        <td width = "80%" title="{{standing.actualStanding}}">{{ charName }}</td>
+                                        <td width = "20%" title="{{standing.actualStanding}}" align="right" style="padding-right: 5%;">{{standing.actualStanding}} <img src="images/{{standing.picStanding}}.png"></td>
                                     </tr>
                                     {% endfor %}
                                 </table>
