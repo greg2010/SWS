@@ -103,7 +103,7 @@ class posmon {
     }  
     
     public function checkIfHasApiKey($corporationID) {
-        $query = "SELECT * FROM `apiCorpList` WHERE `corporationID` = '$corporationID' LIMIT 1";
+        $query = "SELECT * FROM `apiCorpList` WHERE `corporationID` = '$corporationID' AND `keyStatus` = '1' LIMIT 1";
         if (!$this->db->hasRows($this->db->query($query))) {
             throw new Exception("No API key for main corp!", 26);
         }
