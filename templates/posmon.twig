@@ -86,7 +86,7 @@
                                                         {% for silo in pos.silo %}
                                                             {% if silo.siloID is defined %} 
                                                                 <tr>
-                                                                    {% if pos.silo.altPoses|length > 1 %}
+                                                                    {% if (pos.silo.altPoses|length > 1) or (pos.silo.altPoses|length == 1 and pos.silo.altPoses.iterable == 1) %}
                                                                         <td width="75%">
                                                                             <ul class="nav nav-pills">
                                                                                 <center><li class="dropdown" id="silo">

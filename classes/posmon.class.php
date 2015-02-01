@@ -162,6 +162,14 @@ class posmon {
                     $result = $this->db->query($query);
                     if ($this->db->countRows($result) > 1) {
                         $altPoses = $this->db->fetchAssoc($result);
+                        for ($j=0;$j<=count($altPoses);$j++) {
+                            if ($altPoses[$j][moonName] == $posListRender[$alliance][$corporation][$i][moonName]) {
+                                unset($altPoses[$j]);
+                            }
+                        }
+                        if (count($altPoses) == 1) {
+                            $altPoses['switchable'] = 1;
+                        }
                     } elseif ($this->db->countRows($result) == 1) {
                         $altPoses[0] = $this->db->fetchAssoc($result);
                     }
