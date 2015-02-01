@@ -177,7 +177,23 @@ class APIUserManagement{
                             $type = "char";
                             break;
                     }
-                    $output[$apiOrgManagement->getAllianceName($api[allianceID])][$type][$row->contactName] = $row->standing;
+                    $output[$apiOrgManagement->getAllianceName($api[allianceID])][$type][$row->contactName]["actualStanding"] = $row->standing;
+                    
+                    if ($row->standing > 5) {
+                        $picStanding = 10;
+                    } elseif ($row->standing < -5) {
+                        $picStanding = -10;
+                    } elseif ($row->standing > 0) {
+                        $picStanding = 5;
+                    } elseif ($row->standing < 0) {
+                        $picStanding = -5;
+                    } else {
+                        $picStanding = 0;
+                    }
+                    
+                    $output[$apiOrgManagement->getAllianceName($api[allianceID])][$type][$row->contactName]["picStanding"] = $picStanding;
+                    
+                    unset($picStanding);
                     
                     $gotTypes = array_keys($output[$apiOrgManagement->getAllianceName($api[allianceID])]);
                     foreach ($gotTypes as $type) {
