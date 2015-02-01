@@ -9,10 +9,15 @@ $templateName = $thisPage;
 $pagePermissions = array("webReg_Valid");
 
 $posmon = new posmon();
-try { 
-    
-$toTemplate["posList"] = $posmon->getSortedPosList();
+try {
+    $pilotInfo = $_SESSION[userObject]->getApiPilotInfo();
+    $posmon->checkIfHasApiKey($pilotInfo[mainAPI][corporationID]);
+    $toTemplate["posList"] = $posmon->getSortedPosList();
 } catch (Exception $ex) {
-    $toTemplate["errorMsg"] = "Database error. Try again later.";
+    if ($ex->getCode() == 26) {
+        $toTemplate["errorMsg"] = "No API key for your main corp. Please contact your CEO/director to provide one.";
+    } else {
+        $toTemplate["errorMsg"] = "Database error. Try again later.";
+    }
 }
 require 'twigRender.php';

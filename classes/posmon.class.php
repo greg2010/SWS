@@ -102,6 +102,13 @@ class posmon {
         return $siloList;
     }  
     
+    public function checkIfHasApiKey($corporationID) {
+        $query = "SELECT * FROM `apiCorpList` WHERE `corporationID` = '$corporationID' LIMIT 1";
+        if (!$this->db->hasRows($this->db->query($query))) {
+            throw new Exception("No API key for main corp!", 26);
+        }
+    }
+    
     public function updateSiloOwner($siloID, $newPosID) {
         $query = "SELECT `corporationID`,`locationID` FROM `posList` WHERE `posID` = '$newPosID' LIMIT 1";
         $newPosInfo = $this->db->fetchAssoc($this->db->query($query));
