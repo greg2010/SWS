@@ -186,7 +186,7 @@ class notif_send {
             if($strarr[aggressorAllianceID] != NULL) $mailtext .= " (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])";
             $mailtext .= "\nShield: " . round($strarr[shieldLevel]*100) . "%\n";
         } elseif($type == 77 && $this->permission > 1){ // Station service aggression message
-            $mailtext .= $strarr[typeName] . " in " . $strarr[solarSystemName] . " is under attack\n";
+            $mailtext .= $strarr[typeName] . " is under attack at " . $strarr[stationName] . " in " . $strarr[solarSystemName] . "\n";
             $mailtext .= "Owner: " . $strarr[OwnerCorpName] . " [" . $strarr[OwnerCorpTicker] . "] (" . $strarr[OwnerAllyName] . " [" . $strarr[OwnerAllyTicker] . "])" . "\n";
             $mailtext .= ($strarr[aggressorID] != NULL) ? ("Aggressor: " . $strarr[aggressorName]) : ("Aggressor: Unknown");
             $mailtext .= ($strarr[aggressorCorpID] != NULL) ? (" from " . $strarr[corpName] . " [" . $strarr[corpTicker] . "]") : (" from Unknown Corporation");
