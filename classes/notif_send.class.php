@@ -36,15 +36,15 @@ class notif_send {
                 if($this->send_jabber){
                     $c_xmpp = new xmpp;
                     if($txt[starbase] != NULL){
-                        if(!$c_xmpp->sendfrom("Starbase", $this->login, $txt[starbase]))
+                        if(!$c_xmpp->sendfrom("starbase alert", $this->login, $txt[starbase]))
                             throw new Exception("Jabber sending failed", -2);
                     }
                     if($txt[sovwarfare] != NULL){
-                        if(!$c_xmpp->sendfrom("Sov Warfare", $this->login, $txt[sovwarfare]))
+                        if(!$c_xmpp->sendfrom("sovereignty alert", $this->login, $txt[sovwarfare]))
                             throw new Exception("Jabber sending failed", -2);
                     }
                     if($txt[other] != NULL){
-                        if(!$c_xmpp->sendfrom("Other", $this->login, $txt[other]))
+                        if(!$c_xmpp->sendfrom("other alert", $this->login, $txt[other]))
                             throw new Exception("Jabber sending failed", -2);
                     }
                 }
