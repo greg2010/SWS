@@ -258,7 +258,7 @@ class APIOrgManagement {
                 );
             }
         }catch(\Pheal\Exceptions\PhealException $e){
-            throw new \Pheal\Exceptions\PhealException("getLocations " . $ex->getMessage(), ($ex->getCode())*-1000);;
+            throw new Exception("getLocations " . $e->getMessage(), ($e->getCode())*-1000);
         }
         return $locations;
     }

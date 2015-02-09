@@ -120,24 +120,37 @@ class starbases {
         }
     }
 
+    private function updateLocation($id){
+        try {
+            $apiOrgManagement = new APIOrgManagement();
+            $tmparr = $apiOrgManagement->getLocations($this->keyInfo[keyID], $this->keyInfo[vCode], array($id));
+            return ", `x` = '{$tmparr[0][x]}', `y` = '{$tmparr[0][y]}', `z` = '{$tmparr[0][z]}', `name` = '{$tmparr[0][name]}'";
+        } catch (Exception $ex) {
+            $this->log->put("updateLocation " . $id, "err " . $ex->getMessage());
+        }
+    }
+
     public function updateStarbaseList(){
         if($this->getStarbaseList()){
             $this->checkStarbaseAlive();
             foreach($this->poslist as $pos){
                 if($pos[changed]){
                     try {
-                        $query = "SELECT `posID` FROM `posList` WHERE `posID`='{$pos[posID]}' LIMIT 1";
+                        $query = "SELECT `posID`, `locationID` FROM `posList` WHERE `posID`='{$pos[posID]}' LIMIT 1";
                         $result = $this->db->query($query);
                         $moonName = $this->getMoonName($pos[moonID]);
                         $typeName = $this->getTypeName($pos[typeID]);
                         if($this->db->hasRows($result)){
-                            $query = "UPDATE `posList` SET `locationID` = '{$pos[locationID]}', `moonID` = '{$pos[moonID]}', `moonName` = '$moonName', `typeName` = '$typeName',
-                             `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}' WHERE `posID`='{$pos[posID]}'";
+                            $query = "UPDATE `posList` SET `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}'";
+                            $tmprow = $this->db->fetchAssoc($result);
+                            $query .= ($tmprow[locationID] == $pos[locationID]) ? "" : ", `locationID` = '{$pos[locationID]}', `moonID` = '{$pos[moonID]}', `moonName` = '$moonName'" . $this->updateLocation($pos[posID]);
+                            $query .= " WHERE `posID`='{$pos[posID]}'";
                             $result = $this->db->query($query);
                             $this->log->put("updateStarbaseList " . $pos[posID], "ok update");
                         } else{
-                            $query = "INSERT INTO `posList` SET `posID`= '{$pos[posID]}', `typeID` = '{$pos[typeID]}', `locationID` = '{$pos[locationID]}', `moonID` = '{$pos[moonID]}', `state` = '{$pos[state]}',
-                             `stateTimestamp` = '{$pos[stateTimestamp]}', `moonName` = '$moonName', `typeName` = '$typeName', `corporationID` = '{$this->keyInfo[corporationID]}',`allianceID` = '{$this->keyInfo[allianceID]}'";
+                            $query = "INSERT INTO `posList` SET `posID` = '{$pos[posID]}', `typeID` = '{$pos[typeID]}', `locationID` = '{$pos[locationID]}', `moonID` = '{$pos[moonID]}', `state` = '{$pos[state]}',
+                             `stateTimestamp` = '{$pos[stateTimestamp]}', `moonName` = '$moonName', `typeName` = '$typeName', `corporationID` = '{$this->keyInfo[corporationID]}',`allianceID` = '{$this->keyInfo[allianceID]}'"
+                             . $this->updateLocation($pos[posID]);
                             $result = $this->db->query($query);
                             $this->log->put("updateStarbaseList " . $pos[posID], "ok insert");
                         } 
