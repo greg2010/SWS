@@ -243,6 +243,25 @@ class APIOrgManagement {
             return $corporation = array("name" => $response->corporationName, "ticker" => $response->ticker);
         } else return NULL;
     }
+
+    public function getLocations($keyID, $vCode, $IDs = array()){
+        $pheal = new Pheal($keyID, $vCode, "corp");
+        try{
+            $response = $pheal->Locations(array("IDs" => implode(",", $IDs)));
+            foreach($response->locations as $location){
+                $locations[] = array(
+                    "id" => $location->itemID,
+                    "name" => $location->itemName,
+                    "x" => intval($location->x),
+                    "y" => intval($location->y),
+                    "z" => intval($location->z)
+                );
+            }
+        }catch(\Pheal\Exceptions\PhealException $e){
+            throw new \Pheal\Exceptions\PhealException("getLocations " . $ex->getMessage(), ($ex->getCode())*-1000);;
+        }
+        return $locations;
+    }
 }
 
 ?>
