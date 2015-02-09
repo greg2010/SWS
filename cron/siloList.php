@@ -13,7 +13,7 @@ if($pid == -2){
         $query = "SELECT * FROM `apiCorpList` WHERE `keyStatus` > 0";
 		$result = mysqli_query($connection, $query);
 		while($array = mysqli_fetch_assoc($result)) {
-			if(($array[accessMask] & 2) > 0) $userList[] = $array;
+			if((($array[accessMask] & 16777216) > 0) && (($array[accessMask] & 2) > 0)) $userList[] = $array; // Locations & Asset List
 		}
         mysqli_close($connection);
 
