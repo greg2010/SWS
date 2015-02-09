@@ -193,13 +193,15 @@ class notif_send {
             if($strarr[aggressorAllianceID] != NULL) $mailtext .= " (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])";
             $mailtext .= "\nShield: " . round($strarr[shieldValue]*100) . "%\n";
         } elseif($type == 45 && $this->permission == 3){
-            $mailtext .= "New " . $strarr[typeName] . " anchored on " . $strarr[moonName] . " by " . $strarr[corpName] . " [" . $strarr[corpTicker] . "] (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])" . "\n";
+            $mailtext .= "New " . $strarr[typeName] . " anchored on " . $strarr[moonName] . " by " . $strarr[corpName] . " [" . $strarr[corpTicker] . "]";
+            $mailtext .= ($strarr[allyName] != NULL) ? (" (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])\n") : ("\n");
             $mailtext .= "Old towers in system:\n";
             for($i=0; $i < count($strarr[corpsPresent]); $i++){
                 for($j=0; $j < count($strarr[corpsPresent][$i][towers]); $j++){
                     $mailtext .= $strarr[corpsPresent][$i][towers][$j][typeName] . " on " . $strarr[corpsPresent][$i][towers][$j][moonName] . ", ";
                 }
-                $mailtext .= " anchored by " . $strarr[corpsPresent][$i][corpName] . " [" . $strarr[corpsPresent][$i][corpTicker] . "] (" . $strarr[corpsPresent][$i][allyName] . " [" . $strarr[corpsPresent][$i][allyTicker] . "])" . "\n";
+                $mailtext .= " anchored by " . $strarr[corpsPresent][$i][corpName] . " [" . $strarr[corpsPresent][$i][corpTicker] . "]";
+                $mailtext .= ($strarr[corpsPresent][$i][allyName] != NULL) ? (" (" . $strarr[corpsPresent][$i][allyName] . " [" . $strarr[corpsPresent][$i][allyTicker] . "])\n") : ("\n");
             }
         } elseif($type == 43 || $type == 44 || $type == 41 || $type == 42 || $type == 46 || $type == 47 || $type == 48 || $type == 37 || $type == 38 || $type == 79){ // Sovereignty claim
             if($type == 37 || $type == 38) $mailtext .= "Sovereignty claim fails";
