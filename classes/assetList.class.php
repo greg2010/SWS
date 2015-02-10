@@ -32,7 +32,10 @@ class assetList {
                     );
                 }
             }
-            return ($this->silolist != NULL) ? true : false;
+            if($this->silolist != NULL){
+                $this->getLocations();
+                return true;
+            } else return false;
         } catch (\Pheal\Exceptions\PhealException $e){
             $this->log->put("getSiloList", "err " . $e->getMessage());
             return false;
@@ -85,10 +88,10 @@ class assetList {
         }
     }
 
-    private function getPOSforSilo($location, $xyz = array()){
+    private function getPOSforSilo($location, $x, $y, $z){
         try {
             $delta = 400000;
-            $xd = $xyz[x] - $delta; $xu = $xyz[x] + $delta; $yd = $xyz[y] - $delta; $yu = $xyz[y] + $delta; $zd = $xyz[z] - $delta; $zu = $xyz[z] + $delta;
+            $xd = $x - $delta; $xu = $x + $delta; $yd = $y - $delta; $yu = $y + $delta; $zd = $z - $delta; $zu = $z + $delta;
             $query = "SELECT `posID` FROM `posList` WHERE `locationID`='$location' AND `corporationID` = '{$this->keyInfo[corporationID]}' AND `x`>'$xd' AND `x`<'$xu' AND `y`>'$yd' AND `y`<'$yu' AND `z`>'$zd' AND `z`<'$zu' LIMIT 1";
             $result = $this->db->query($query); 
             return $this->db->getMysqlResult($result, 0);
@@ -97,13 +100,24 @@ class assetList {
         }
     }
 
-    private function updateLocation($id){
+    private function getLocations(){
         try {
+            foreach($this->silolist as $silo) $ids[] = $silo[siloID];
             $apiOrgManagement = new APIOrgManagement();
-            $tmparr = $apiOrgManagement->getLocations($this->keyInfo[keyID], $this->keyInfo[vCode], array($id));
-            return $tmparr[0];
+            $tmparr = $apiOrgManagement->getLocations($this->keyInfo[keyID], $this->keyInfo[vCode], $ids);
+            for($i=0; $i<count($this->silolist); $i++){
+                foreach($tmparr as $apisilo){
+                    if($apisilo[id] == $this->silolist[$i][siloID]){
+                        $this->silolist[$i][x] = $apisilo[x];
+                        $this->silolist[$i][y] = $apisilo[y];
+                        $this->silolist[$i][z] = $apisilo[z];
+                        $this->silolist[$i][name] = $apisilo[name];
+                        break;
+                    }
+                }
+            }
         } catch (Exception $ex) {
-            $this->log->put("updateLocation " . $id, "err " . $ex->getMessage());
+            $this->log->put("getLocations", "err " . $ex->getMessage());
         }
     }
 
@@ -112,39 +126,28 @@ class assetList {
             $this->checkSiloAlive();
             foreach($this->silolist as $silo){
                 try {
-                    $query = "SELECT `siloID`, `typeID`, `locationID` FROM `siloList` WHERE `siloID`='{$silo[siloID]}' LIMIT 1";
+                    $query = "SELECT `siloID`, `typeID` FROM `siloList` WHERE `siloID`='{$silo[siloID]}' LIMIT 1";
                     $result = $this->db->query($query);
                     unset($moonMatInfo);
                     if($this->db->getMysqlResult($result, 1) != $silo[moonmatType]){
                         $moonMatInfo = $this->getMoonMatInfo($silo[moonmatType]);
                     }
+                    $posID = $this->getPOSforSilo($silo[locationID], $silo[x], $silo[y], $silo[z]);
                     if($this->db->hasRows($result)){
                         if(isset($moonMatInfo)){
                             $query = "UPDATE `siloList` SET `typeID` = '{$silo[moonmatType]}', `quantity` = '{$silo[moonmatQuantity]}', `mmname` = '{$moonMatInfo[typeName]}',
-                             `mmvolume` = '{$moonMatInfo[volume]}', `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}'";
-                            $tmprow = $this->db->fetchAssoc($result);
-                            if($tmprow[locationID] != $silo[locationID]){
-                                $tmparr = $this->updateLocation($silo[siloID]);
-                                $query .= ", `locationID` = '{$silo[locationID]}', `x` = '{$tmparr[x]}', `y` = '{$tmparr[y]}', `z` = '{$tmparr[z]}', `name` = '{$tmparr[name]}'";
-                            }
-                            $query .= " WHERE `siloID`='{$silo[siloID]}'";
+                             `mmvolume` = '{$moonMatInfo[volume]}', `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}',
+                             `locationID` = '{$silo[locationID]}', `x` = '{$silo[x]}', `y` = '{$silo[y]}', `z` = '{$silo[z]}', `name` = '{$silo[name]}', `posID` = '$posID' WHERE `siloID`='{$silo[siloID]}'";
                         } else{
-                            $query = "UPDATE `siloList` SET `quantity` = '{$silo[moonmatQuantity]}', `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}'";
-                            $tmprow = $this->db->fetchAssoc($result);
-                            if($tmprow[locationID] != $silo[locationID]){
-                                $tmparr = $this->updateLocation($silo[siloID]);
-                                $query .= ", `locationID` = '{$silo[locationID]}', `x` = '{$tmparr[x]}', `y` = '{$tmparr[y]}', `z` = '{$tmparr[z]}', `name` = '{$tmparr[name]}'";
-                            }
-                            $query .= " WHERE `siloID`='{$silo[siloID]}'";
+                            $query = "UPDATE `siloList` SET `quantity` = '{$silo[moonmatQuantity]}', `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}',
+                             `locationID` = '{$silo[locationID]}', `x` = '{$silo[x]}', `y` = '{$silo[y]}', `z` = '{$silo[z]}', `name` = '{$silo[name]}', `posID` = '$posID' WHERE `siloID`='{$silo[siloID]}'";
                         }
-                        $result = $this->db->query($query);
+                        $result = $this->db->query($query, "utf8");
                     } else{
                         $query = "INSERT INTO `siloList` SET `locationID` = '{$silo[locationID]}', `siloID`='{$silo[siloID]}', `typeID` = '{$silo[moonmatType]}', `quantity` = '{$silo[moonmatQuantity]}',
-                         `mmname` = '{$moonMatInfo[typeName]}', `mmvolume` = '{$moonMatInfo[volume]}', `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}'";
-                        $tmparr = $this->updateLocation($silo[siloID]);
-                        $posID = $this->getPOSforSilo($silo[locationID], $tmparr);
-                        $query .= ", `x` = '{$tmparr[x]}', `y` = '{$tmparr[y]}', `z` = '{$tmparr[z]}', `name` = '{$tmparr[name]}', `posID` = '$posID'";
-                        $result = $this->db->query($query);
+                         `mmname` = '{$moonMatInfo[typeName]}', `mmvolume` = '{$moonMatInfo[volume]}', `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}',
+                         `x` = '{$silo[x]}', `y` = '{$silo[y]}', `z` = '{$silo[z]}', `name` = '{$silo[name]}', `posID` = '$posID'";
+                        $result = $this->db->query($query, "utf8");
                         $this->log->put("updateSiloList " . $silo[siloID], "ok insert");
                     } 
                 } catch (Exception $ex) {

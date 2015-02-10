@@ -8,7 +8,7 @@ class APIOrgManagement {
     private $orgManagement;
 
     public function __construct() {
-        PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage(dirname(__FILE__) . '/../phealcache/');
+        PhealConfig::getInstance()->cache = new \Pheal\Cache\HashedNameFileStorage(dirname(__FILE__) . '/../phealcache/');
         $this->orgManagement = new orgManagement();
     }
 
