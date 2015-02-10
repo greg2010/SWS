@@ -583,6 +583,11 @@ input[type=button]:hover {
             border-color: #458B00;
             color: #458B00;
 }
+
+#offline {
+            color: #c9e2b3;
+}
+
 #success2 {
             border-color: #458B00;
             color: #458B00;
