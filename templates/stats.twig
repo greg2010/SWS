@@ -1,0 +1,33 @@
+{% extends "base.twig" %}
+
+{% block title %}Statistics{% endblock %}
+
+{% block content %}
+    {% if errorMsg is defined %}
+        {% set isErrorHidden = "" %}
+    {% else %}
+        {% set isErrorHidden = "hidden" %}
+    {% endif %}
+    <div id="formSettings">
+        <h1>Statistics</h1>
+        <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
+            {{errorMsg}}
+        </div>
+        <center>
+        <table class="table table-condensed" style="width: 680px;">
+            <tr>
+                <td style="color: #f6c000;">ALLIANCE</td>
+                <td style="color: #f6c000;"><center>REGISTRATIONS</center></td>
+            </tr>
+            <tbody>
+                {% for alliance,regs in regStats %}
+                    <tr>
+                        <td style="color: #FF4500;">{{alliance}}</td>
+                        <td style="color: #458B00"><center>{{regs}}</center></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </center>
+    </div>
+{% endblock %}

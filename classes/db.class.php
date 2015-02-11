@@ -72,9 +72,10 @@ class db {
      * @return string|\Exception
      */
     
-    public function query($query) {
+    public function query($query, $charset = NULL) {
         if(empty($this->connection)) {
             $this->openConnection();
+            if($charset != NULL) mysqli_set_charset($this->connection, $charset);
             $this->lastQuery = mysqli_query($this->connection, $query);
             if (mysqli_error($this->connection)) {
                 throw new Exception(mysqli_error($this->connection), mysqli_errno($this->connection));
@@ -83,6 +84,7 @@ class db {
             }
             $this->closeConnection();
         } else {
+            if($charset != NULL) mysqli_set_charset($this->connection, $charset);
             $this->lastQuery = mysqli_query($this->connection, $query);
             if (mysqli_error($this->connection)) {
                 throw new Exception(mysqli_error($this->connection), mysqli_errno($this->connection));

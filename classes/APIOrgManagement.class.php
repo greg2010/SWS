@@ -8,7 +8,7 @@ class APIOrgManagement {
     private $orgManagement;
 
     public function __construct() {
-        PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage(dirname(__FILE__) . '/../phealcache/');
+        PhealConfig::getInstance()->cache = new \Pheal\Cache\HashedNameFileStorage(dirname(__FILE__) . '/../phealcache/');
         $this->orgManagement = new orgManagement();
     }
 
@@ -161,6 +161,16 @@ class APIOrgManagement {
         return $response->allianceID;
     }
 
+    public function getCorporationsByAlliance($id) {
+        $list = $this->getAllianceList();
+        foreach ($list as $alliance) {
+            if ($alliance[id] == $id) {
+                return $alliance[corporations];
+            }
+        }
+        return FALSE;
+    }
+    
     public function getStationName($id){
         $pheal = new Pheal(NULL, NULL, "eve");
         $response = $pheal->ConquerableStationList();
@@ -232,6 +242,25 @@ class APIOrgManagement {
             }
             return $corporation = array("name" => $response->corporationName, "ticker" => $response->ticker);
         } else return NULL;
+    }
+
+    public function getLocations($keyID, $vCode, $IDs = array()){
+        $pheal = new Pheal($keyID, $vCode, "corp");
+        try{
+            $response = $pheal->Locations(array("IDs" => implode(",", $IDs)));
+            foreach($response->locations as $location){
+                $locations[] = array(
+                    "id" => $location->itemID,
+                    "name" => $location->itemName,
+                    "x" => intval($location->x),
+                    "y" => intval($location->y),
+                    "z" => intval($location->z)
+                );
+            }
+        }catch(\Pheal\Exceptions\PhealException $e){
+            throw new Exception("getLocations " . $e->getMessage(), ($e->getCode())*-1000);
+        }
+        return $locations;
     }
 }
 

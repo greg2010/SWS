@@ -13,7 +13,7 @@ class config {
 
     const correctKeyMask = 49160;
 
-    const notif_types = "37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 75, 76, 77, 78, 79, 80, 86, 87, 88, 93"; // http://wiki.eve-id.net/APIv2_Char_Notifications_XML
+    const notif_types = "37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 75, 76, 77, 79, 80, 86, 87, 88, 93"; // http://wiki.eve-id.net/APIv2_Char_Notifications_XML
 
     const password_hash_type = "sha512";
     const cookie_hash_type = "sha256";
