@@ -145,6 +145,7 @@ return $tsAdmin;
 
 
     public function syncDbTs(){
+    $ts3_debug = config::ts3_debug;
     $tsAdmin=$this->tsAdmin;
     $this->db=db::getInstance();
     $info=$tsAdmin->clientDbList('0');
@@ -156,7 +157,10 @@ return $tsAdmin;
 		    $id_raw=$this->db->fetchRow($result);
 		    $id=$id_raw[0];
 		    if($id==NULL){
-		    
+
+		    if ($ts3_debug==1){
+		    file_put_contents ("/var/www/coalition.redalliance.pw/fullvalidateTS.txt", "call metod TS3 validate $uniID $date_now \n", FILE_APPEND);
+		    }
 		    $chOnline=$tsAdmin->clientGetIds($uniID);
 		    $cl_id=$info['data'][$key]['cldbid'];
 		    
