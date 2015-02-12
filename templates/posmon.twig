@@ -33,6 +33,7 @@
                                     <tr align="center">
                                         <th width = "5%"><center><span class="glyphicon glyphicon-refresh" style="color:#ccc;"></span></center></th>
                                         <th width = "7%"><center><a id="tablehead" style="font-size: 14px;">SYSTEM </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                                        <th width = "12%"><center><a id="tablehead" style="font-size: 14px;">CONSTELLATION </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
                                         <th width = "5%"><center><a id="tablehead" style="font-size: 14px;">REGION </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
                                         <th width = "20%"><center><a id="tablehead" style="font-size: 14px;">TYPE </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
                                         <th width = "11%"><center><a id="tablehead" style="font-size: 14px;">MOON </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
@@ -46,7 +47,8 @@
                                     {% for pos in corpPoses%}
                                         <tr>
                                             <td><center><img src="https://image.eveonline.com/Type/{{pos.typeID}}_64.png"></center></td>
-                                <td><center><span style="font-size: 14px;">{{pos.locationName}}</span></center></td>
+                                            <td><center><span style="font-size: 14px;">{{pos.locationName}}</span></center></td>
+                                            <td><center><span style="font-size: 14px;">{{pos.constellation}}</span></center></td>
                                             <td><center><span style="font-size: 14px;">{{pos.region}}</span></center></td>
                                             <td><center><span style="font-size: 14px;">{{pos.typeName}}</span></center></td>
                                             <td><center><span style="font-size: 14px;">{{pos.moonName}}</span></center></td>
