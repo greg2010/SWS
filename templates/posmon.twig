@@ -78,9 +78,9 @@
                                                     <span id="{{id}}" style="font-size: 14px;">{{msg}}</span>
                                                 </center>
                                             </td>
-                                            <td><center><span <span style="font-size: 14px;">{{pos.time.d}}d {{pos.time.h}}h</span></center></td>
+                                            <td><center><span title="{{pos.fuel}}" style="font-size: 14px;">{{pos.time.d}}d {{pos.time.h}}h</span></center></td>
                                             <td>
-                                                <center><span <span style="font-size: 14px;">{{rftime}}</span></center>
+                                                <center><span title="{{pos.stront}}" style="font-size: 14px;">{{rftime}}</span></center>
                                             </td>
                                             {% if pos.silo.0 is defined %}
                                                 <td>
@@ -88,22 +88,16 @@
                                                         {% for silo in pos.silo %}
                                                             {% if silo.siloID is defined %} 
                                                                 <tr>
-                                                                    {% if (pos.silo.altPoses|length > 1) or (pos.silo.altPoses|length == 1 and pos.silo.altPoses.iterable == 1) %}
+                                                                    {% if (pos.silo.altPoses|length > 1) %}
                                                                         <td width="75%">
                                                                             <ul class="nav nav-pills">
                                                                                 <center><li class="dropdown" id="silo">
-                                                                                <a data-toggle="dropdown" role="menu" data-target="#" href="#" id="siloselect">
-                                                                                        <center><span style="font-size: 14px;">{{silo.mmname}}<b class="caret"></b></center></span>
-                                                                                    </a>
-                                                                                    <ul class="dropdown-menu" id="silo">
-                                                                                        {% for altpos in pos.silo.altPoses %}
-                                                                                            <li><a href="updateSiloInfo.php?posID={{altpos.posID}}&siloID={{silo.siloID}}">{{altpos.moonName}}</a></li>
-                                                                                        {% endfor %}
+                                                                                <center><span title="{{silo.quantity}}/{{silo.siloMax}}" style="font-size: 14px;">{{silo.mmname}}</center></span>
                                                                                     </ul>
                                                                                 </li></center>
                                                                             </ul></td>
                                                                     {% else %}
-                                                                        <td width="75%"><center><span>{{silo.mmname}}</span></center></td>
+                                                                        <td width="75%"><center><span title="{{silo.quantity}}/{{silo.siloMax}}">{{silo.mmname}}</span></center></td>
                                                                     {% endif %}
                                                                         <td bgcolor="#111" width="25%"><center><span title="{{silo.quantity}}/{{silo.siloMax}}" style="font-size: 14px;">{{silo.Percentage}}%</span></center></td>
                                                                 </tr>
