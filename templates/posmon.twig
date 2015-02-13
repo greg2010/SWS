@@ -84,7 +84,11 @@
                                                 <td><center><span title="{{pos.fuel}} Fuel Blocks" style="font-size: 14px;">{{pos.time.d}}d {{pos.time.h}}h</span></center></td>
                                             {% endif %}
                                             <td>
+                                            {% if (rftime == "0d 0h") %}
+                                                <center><span id = "danger" title="{{pos.stront}} Strontium clathrates" style="font-size: 14px;">{{rftime}}</span></center>
+                                            {% else %}
                                                 <center><span title="{{pos.stront}} Strontium clathrates" style="font-size: 14px;">{{rftime}}</span></center>
+                                            {% endif %}
                                             </td>
                                             {% if pos.silo.0 is defined %}
                                                 <td>
@@ -92,34 +96,39 @@
                                                         {% for silo in pos.silo %}
                                                             {% if silo.siloID is defined %} 
                                                                 <tr>
+                                                                {% if ((silo.quantity * silo.mmvolume) / silo.siloMax > 0.9) %}
                                                                     {% if (pos.silo.altPoses|length > 1) %}
-                                                                        <td width="75%">
-                                                                            <ul class="nav nav-pills">
-                                                                                <center><li class="dropdown" id="silo">
-                                                                                {% if ((silo.quantity * silo.mmvolume) / silo.siloMax > 0.9) %}
-                                                                                    <center><span id = "danger" title="{{silo.quantity * silo.mmvolume}}/{{silo.siloMax}}" style="font-size: 14px;">{{silo.mmname}}</center></span>
-                                                                                {% else %}
-                                                                                    <center><span title="{{silo.quantity * silo.mmvolume}}/{{silo.siloMax}}" style="font-size: 14px;">{{silo.mmname}}</center></span>
-                                                                                {% endif %}
-                                                                                </li></center>
-                                                                            </ul></td>
+                                                                        <td width="75%"><ul class="nav nav-pills">
+                                                                            <center><li class="dropdown" id="silo">
+                                                                            <center><span id = "danger" title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}" style="font-size: 14px;">{{silo.mmname}}</center></span>
+                                                                            </li></center>
+                                                                        </ul></td>
                                                                     {% else %}
-                                                                        {% if ((silo.quantity * silo.mmvolume) / silo.siloMax > 0.9) %}
-                                                                            <td width="75%"><center><span id = "danger" title="{{silo.quantity * silo.mmvolume}}/{{silo.siloMax}}">{{silo.mmname}}</span></center></td>
-                                                                        {% else %}
-                                                                            <td width="75%"><center><span title="{{silo.quantity * silo.mmvolume}}/{{silo.siloMax}}">{{silo.mmname}}</span></center></td>
-                                                                        {% endif %}
+                                                                        <td width="75%"><center><span id = "danger" title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}">{{silo.mmname}}</span></center></td>
                                                                     {% endif %}
-                                                                        {% if ((silo.quantity * silo.mmvolume) / silo.siloMax > 0.9) %}
-                                                                            <td bgcolor="#111" width="25%"><center><span id = "danger" title="{{silo.quantity * silo.mmvolume}}/{{silo.siloMax}}" style="font-size: 14px;">{{silo.Percentage}}%</span></center></td>
-                                                                        {% else %}
-                                                                            <td bgcolor="#111" width="25%"><center><span title="{{silo.quantity * silo.mmvolume}}/{{silo.siloMax}}" style="font-size: 14px;">{{silo.Percentage}}%</span></center></td>
-                                                                        {% endif %}
+                                                                    <td bgcolor="#111" width="25%"><center>
+                                                                    <span id = "danger" title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}" style="font-size: 14px;">{{silo.Percentage}}%</span></center></td>    
+                                                                {% else %}
+                                                                    {% if (pos.silo.altPoses|length > 1) %}
+                                                                        <td width="75%"><ul class="nav nav-pills">
+                                                                            <center><li class="dropdown" id="silo">
+                                                                            <center><span title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}" style="font-size: 14px;">{{silo.mmname}}</center></span>
+                                                                            </li></center>
+                                                                        </ul></td>
+                                                                    {% else %}
+                                                                        <td width="75%"><center><span title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}">{{silo.mmname}}</span></center></td>
+                                                                    {% endif %}
+                                                                    <td bgcolor="#111" width="25%"><center>
+                                                                    <span title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}" style="font-size: 14px;">{{silo.Percentage}}%</span></center></td> 
+                                                                {% endif %}
                                                                 </tr>
                                                             {% endif %}
                                                         {% endfor %}
+                                                        {% if pos.siphon == 1 %}
+                                                            <td colspan="2" bgcolor="#111" width="25%"><center><span id = "danger" style="font-size: 14px;">Mobile Siphon Unit</span></center></td>
+                                                        {% endif %}
                                                      </table>
-                                                </td>                   
+                                                </td>                  
                                             {% else %}
                                                 <td><center><span style="font-size: 14px;">N/A</span></center></td>
                                             {% endif %}

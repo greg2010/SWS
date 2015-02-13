@@ -121,12 +121,25 @@ class assetList {
         }
     }
 
+    /*private function checkSiphon($oldQty, $newQty, $posID){ // Only for raw materials
+        try {
+            if(($newQty - $oldQty) % 32 == 0){
+                $query = "UPDATE `posList` SET `siphon` = '1' WHERE `posID`='$posID'";
+            } else{
+                $query = "UPDATE `posList` SET `siphon` = '0' WHERE `posID`='$posID'";
+            }
+            $result = $this->db->query($query);
+        } catch (Exception $ex) {
+            $this->log->put("checkSiphon", "err " . $ex->getMessage());
+        }
+    }*/
+
     public function updateSiloList(){
         if($this->getSiloList()){
             $this->checkSiloAlive();
             foreach($this->silolist as $silo){
                 try {
-                    $query = "SELECT `siloID`, `typeID` FROM `siloList` WHERE `siloID`='{$silo[siloID]}' LIMIT 1";
+                    $query = "SELECT `siloID`, `typeID`, `quantity` FROM `siloList` WHERE `siloID`='{$silo[siloID]}' LIMIT 1";
                     $result = $this->db->query($query);
                     unset($moonMatInfo);
                     if($this->db->getMysqlResult($result, 1) != $silo[moonmatType]){
@@ -134,6 +147,7 @@ class assetList {
                     }
                     $posID = $this->getPOSforSilo($silo[locationID], $silo[x], $silo[y], $silo[z]);
                     if($this->db->hasRows($result)){
+                        //$this->checkSiphon($this->db->getMysqlResult($result, 2), $silo[moonmatQuantity], $posID);
                         if(isset($moonMatInfo)){
                             $query = "UPDATE `siloList` SET `typeID` = '{$silo[moonmatType]}', `quantity` = '{$silo[moonmatQuantity]}', `mmname` = '{$moonMatInfo[typeName]}',
                              `mmvolume` = '{$moonMatInfo[volume]}', `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}',

@@ -161,7 +161,7 @@ class starbases {
                             $query = "UPDATE `posList` SET `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}', `locationID` = '{$pos[locationID]}', `moonID` = '{$pos[moonID]}',
                              `moonName` = '$moonName', `x` = '{$pos[x]}', `y` = '{$pos[y]}', `z` = '{$pos[z]}', `name` = '{$pos[name]}' WHERE `posID`='{$pos[posID]}'";
                             $result = $this->db->query($query, "utf8");
-                            $this->log->put("updateStarbaseList " . $pos[posID], "ok update");
+                            //$this->log->put("updateStarbaseList " . $pos[posID], "ok update");
                         } else{
                             $query = "INSERT INTO `posList` SET `posID` = '{$pos[posID]}', `typeID` = '{$pos[typeID]}', `locationID` = '{$pos[locationID]}', `moonID` = '{$pos[moonID]}', `state` = '{$pos[state]}',
                              `stateTimestamp` = '{$pos[stateTimestamp]}', `moonName` = '$moonName', `typeName` = '$typeName', `corporationID` = '{$this->keyInfo[corporationID]}',`allianceID` = '{$this->keyInfo[allianceID]}',
