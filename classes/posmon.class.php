@@ -107,6 +107,10 @@ class posmon {
         if (!$this->db->hasRows($this->db->query($query))) {
             throw new Exception("No API key for main corp!", 26);
         }
+        $roles = $this->db->fetchAssoc($this->db->query($query));
+        if ((($roles[accessMask] & 16777216) == 0) && (($roles[accessMask] & 524288) == 0) && (($roles[accessMask] & 2) == 0)) {
+            throw new Exception("Invalid API key for main corp!", 27);
+        }
     }
     
     public function updateSiloOwner($siloID, $newPosID) {
