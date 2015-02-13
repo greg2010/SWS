@@ -67,7 +67,7 @@ class notif_text {
 
     private function stationID(){
         try{
-            $this->txtarr[typeName] = $this->apiOrgManagement->getStationName($this->txtarr[stationID]);
+            $this->txtarr[stationName] = $this->apiOrgManagement->getStationName($this->txtarr[stationID]);
         } catch (\Pheal\Exceptions\PhealException $e){
              $this->log->put("stationID", "err " . $e->getMessage());
         }

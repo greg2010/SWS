@@ -10,10 +10,10 @@ if($pid == -2){
 	try{
 		$connection = mysqli_connect(config::hostname, config::username, config::password);
         $selectdb = mysqli_select_db($connection, config::database);
-        $query = "SELECT * FROM `apiCorpList`";
+        $query = "SELECT * FROM `apiCorpList` WHERE `keyStatus` > 0";
 		$result = mysqli_query($connection, $query);
 		while($array = mysqli_fetch_assoc($result)) {
-			if(($array[accessMask] & 524288) > 0) $userList[] = $array;
+			if((($array[accessMask] & 16777216) > 0) && (($array[accessMask] & 524288) > 0)) $userList[] = $array; // Locations & Starbase List
 		}
         mysqli_close($connection);
 

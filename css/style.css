@@ -583,6 +583,11 @@ input[type=button]:hover {
             border-color: #458B00;
             color: #458B00;
 }
+
+#offline {
+            color: #c18354;
+}
+
 #success2 {
             border-color: #458B00;
             color: #458B00;
@@ -612,6 +617,7 @@ table {
 #tablehead {
             color: #f6c000;
             font-size: 16px;
+            cursor: pointer;
    }
    
 .dropdown-menu{

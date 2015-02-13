@@ -20,7 +20,7 @@ class posmon {
         $hoursLeft = $inputTime - $days * $hoursInADay;
         $result = array (
             'd' => $days,
-            'h' =>$hoursLeft
+            'h' => $hoursLeft
         );
         return $result;
     }
@@ -107,6 +107,10 @@ class posmon {
         if (!$this->db->hasRows($this->db->query($query))) {
             throw new Exception("No API key for main corp!", 26);
         }
+        $roles = $this->db->fetchAssoc($this->db->query($query));
+        if ((($roles[accessMask] & 16777216) == 0) && (($roles[accessMask] & 524288) == 0) && (($roles[accessMask] & 2) == 0)) {
+            throw new Exception("Invalid API key for main corp!", 27);
+        }
     }
     
     public function updateSiloOwner($siloID, $newPosID) {
@@ -143,8 +147,10 @@ class posmon {
             ksort($posListRender[$alliance]);
             foreach ($corpList as $corporation => $list) {
                 for ($i = 0; $i < count($list); $i++) {
-                    $query = "SELECT `itemName` FROM `mapDenormalize` WHERE `itemID` = (SELECT  `regionID` FROM  `mapSolarSystems` WHERE  `solarSystemID` =  '{$posListRender[$alliance][$corporation][$i][locationID]}' LIMIT 1)";
+                    $query = "SELECT `a`.`itemName` FROM `mapDenormalize` AS `a` INNER JOIN `mapDenormalize` AS `b` ON `b`.`itemID` = '{$posListRender[$alliance][$corporation][$i][locationID]}' WHERE `a`.`itemID` = `b`.`regionID`";
                     $posListRender[$alliance][$corporation][$i]["region"] = $this->db->getMySQLResult($this->db->query($query));
+                    $query = "SELECT `a`.`itemName` FROM `mapDenormalize` AS `a` INNER JOIN `mapDenormalize` AS `b` ON `b`.`itemID` = '{$posListRender[$alliance][$corporation][$i][locationID]}' WHERE `a`.`itemID` = `b`.`constellationID`";
+                    $posListRender[$alliance][$corporation][$i]["constellation"] = $this->db->getMySQLResult($this->db->query($query));
                     $posListRender[$alliance][$corporation][$i][time] = $this->hoursToDays($posListRender[$alliance][$corporation][$i][time]);
                     
                     $posType = explode(" ", $posListRender[$alliance][$corporation][$i][typeName]);

@@ -57,11 +57,29 @@ return $tsAdmin;
     }
     
     
-    private function hostinfo(){
+    public function hostinfo(){
     $tsAdmin=$this->tsAdmin;
-    $info=$tsAdmin->clientDbList(0);
+    $info=$tsAdmin->clientDbList();
     $cl_list=$info[data];
-    return $cl_list;
+    $count_ar=count($cl_list);
+    $it=0;
+    $cl[$it]=$cl_list;
+
+        if ($count_ar>199){
+        for ($i=0;$i<10;$i++){
+        $num=$num+199;
+        $info=$tsAdmin->clientDbList($num);
+        $cl_list=$info[data];
+        $it++;
+        $cl[$it]=$cl_list;
+        $count_ar=count($cl_list);
+	    if($count_ar<199){
+	    break;
+	    }
+        }
+        }
+#file_put_contents ("/var/www/coalition.redalliance.pw/fullvalidateTS.txt", "$i \n", FILE_APPEND);
+    return $cl;
     }
 
     public function nickname($id){
@@ -145,24 +163,54 @@ return $tsAdmin;
 
 
     public function syncDbTs(){
+    $ts3_debug = config::ts3_debug;
     $tsAdmin=$this->tsAdmin;
     $this->db=db::getInstance();
     $info=$tsAdmin->clientDbList('0');
-	    foreach ($info['data'] as $key=>$val){
-	    	    $uniID = $info['data'][$key]['client_unique_identifier'];
+    
+    $cl_list=$info['data'];
+    $count_ar=count($cl_list);
+    $it=0;
+    $cll[$it]=$cl_list;
+
+        if ($count_ar>199){
+        for ($i=0;$i<10;$i++){
+        $num=$num+199;
+        $info=$tsAdmin->clientDbList($num);
+        $cl_list=$info[data];
+        $it++;
+        $cll[$it]=$cl_list;
+        $count_ar=count($cl_list);
+	    if($count_ar<199){
+	    break;
+	    }
+        }
+        }
+
+	foreach($cll as $client_list){
+	    foreach ($client_list as $key=>$val){
+	    	    $uniID = $val['client_unique_identifier'];
+		    if($uniID==''){
+		    break;
+		    }
+	    	    if ($ts3_debug==1){
+		    file_put_contents ("/var/www/coalition.redalliance.pw/fullvalidateTS.txt", "TS3 $it fullvalidate($key) $uniID $date_now \n", FILE_APPEND);
+		    }
 	        
 	            $query = "SELECT `id` FROM `teamspeak` WHERE `uniqueID`= '$uniID'";
 		    $result = $this->db->query($query);
 		    $id_raw=$this->db->fetchRow($result);
 		    $id=$id_raw[0];
 		    if($id==NULL){
-		    
+
+		    if ($ts3_debug==1){
+		    file_put_contents ("/var/www/coalition.redalliance.pw/fullvalidateTS.txt", "call to delete $it metod TS3 validate $uniID $date_now \n", FILE_APPEND);
+		    }
 		    $chOnline=$tsAdmin->clientGetIds($uniID);
-		    $cl_id=$info['data'][$key]['cldbid'];
+		    $cl_id=$val['cldbid'];
 		    
 		    	if($chOnline['success']=false){
 			$delete=$tsAdmin->clientDbDelete("$cl_id");
-#			}elseif($info['success']=true){
 			}elseif($chOnline['success']=true){
 					    $cid=$chOnline['data'][0]['clid'];
 					    $kick=$tsAdmin->clientKick($cid,'server','Need register now');
@@ -175,6 +223,10 @@ return $tsAdmin;
 				}
 	        
 	        }
+	        
+	        
+	    }
+
 #    return $delete;
     }
 

@@ -24,7 +24,6 @@ class starbases {
             $response = $pheal->StarbaseList();
             foreach($response->starbases as $row){
                 $this->poslist[] = array(
-                    'changed' => $this->checkStarbaseChanged($row),
                     'posID' => $row[itemID],
                     'typeID' => $row[typeID],
                     'locationID' => $row[locationID],
@@ -33,7 +32,13 @@ class starbases {
                     'stateTimestamp' => $row[stateTimestamp]
                 );
             }
-            return ($this->poslist != NULL) ? true : false;
+            if($this->poslist != NULL){
+                $this->getLocations();
+                for($i=0; $i<count($this->poslist); $i++){
+                    $this->poslist[$i][changed] = $this->checkStarbaseChanged($this->poslist[$i]);
+                }
+                return true;
+            } else return false;
         } catch (\Pheal\Exceptions\PhealException $e){
             $this->log->put("getStarbaseList", "err " . $e->getMessage());
             return false;
@@ -88,10 +93,11 @@ class starbases {
 
     private function checkStarbaseChanged($pos = array()){
         try {
-            $query = "SELECT `locationID`, `moonID`, `corporationID`, `allianceID` FROM `posList` WHERE `posID`='{$pos[itemID]}'";
+            $query = "SELECT `locationID`, `moonID`, `corporationID`, `allianceID`, `x`, `y`, `z`, `name` FROM `posList` WHERE `posID`='{$pos[itemID]}'";
             $result = $this->db->query($query);
             $dbpos = $this->db->fetchRow($result);
-            return ($pos[locationID] == $dbpos[0] && $pos[moonID] == $dbpos[1] && $this->keyInfo[corporationID] == $dbpos[2] && $this->keyInfo[allianceID] == $dbpos[3]) ? false : true;
+            return ($pos[locationID] == $dbpos[0] && $pos[moonID] == $dbpos[1] && $this->keyInfo[corporationID] == $dbpos[2] && $this->keyInfo[allianceID] == $dbpos[3]
+             && $pos[x] == $dbpos[4] && $pos[y] == $dbpos[5] && $pos[z] == $dbpos[6] && $pos[name] == $dbpos[7]) ? false : true;
         } catch (Exception $ex) {
             $this->log->put("checkStarbaseNotChanged " . $pos[itemID], "err " . $ex->getMessage());
             return false;
@@ -120,6 +126,27 @@ class starbases {
         }
     }
 
+    private function getLocations(){
+        try {
+            foreach($this->poslist as $pos) $ids[] = $pos[posID];
+            $apiOrgManagement = new APIOrgManagement();
+            $tmparr = $apiOrgManagement->getLocations($this->keyInfo[keyID], $this->keyInfo[vCode], $ids);
+            for($i=0; $i<count($this->poslist); $i++){
+                foreach($tmparr as $apipos){
+                    if($apipos[id] == $this->poslist[$i][posID]){
+                        $this->poslist[$i][x] = $apipos[x];
+                        $this->poslist[$i][y] = $apipos[y];
+                        $this->poslist[$i][z] = $apipos[z];
+                        $this->poslist[$i][name] = $apipos[name];
+                        break;
+                    }
+                }
+            }
+        } catch (Exception $ex) {
+            $this->log->put("getLocations", "err " . $ex->getMessage());
+        }
+    }
+
     public function updateStarbaseList(){
         if($this->getStarbaseList()){
             $this->checkStarbaseAlive();
@@ -131,16 +158,17 @@ class starbases {
                         $moonName = $this->getMoonName($pos[moonID]);
                         $typeName = $this->getTypeName($pos[typeID]);
                         if($this->db->hasRows($result)){
-                            $query = "UPDATE `posList` SET `locationID` = '{$pos[locationID]}', `moonID` = '{$pos[moonID]}', `moonName` = '$moonName', `typeName` = '$typeName',
-                             `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}' WHERE `posID`='{$pos[posID]}'";
-                            $result = $this->db->query($query);
-                            $this->log->put("updateStarbaseList " . $pos[posID], "ok update");
+                            $query = "UPDATE `posList` SET `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}', `locationID` = '{$pos[locationID]}', `moonID` = '{$pos[moonID]}',
+                             `moonName` = '$moonName', `x` = '{$pos[x]}', `y` = '{$pos[y]}', `z` = '{$pos[z]}', `name` = '{$pos[name]}' WHERE `posID`='{$pos[posID]}'";
+                            $result = $this->db->query($query, "utf8");
+                            //$this->log->put("updateStarbaseList " . $pos[posID], "ok update");
                         } else{
-                            $query = "INSERT INTO `posList` SET `posID`= '{$pos[posID]}', `typeID` = '{$pos[typeID]}', `locationID` = '{$pos[locationID]}', `moonID` = '{$pos[moonID]}', `state` = '{$pos[state]}',
-                             `stateTimestamp` = '{$pos[stateTimestamp]}', `moonName` = '$moonName', `typeName` = '$typeName', `corporationID` = '{$this->keyInfo[corporationID]}',`allianceID` = '{$this->keyInfo[allianceID]}'";
-                            $result = $this->db->query($query);
+                            $query = "INSERT INTO `posList` SET `posID` = '{$pos[posID]}', `typeID` = '{$pos[typeID]}', `locationID` = '{$pos[locationID]}', `moonID` = '{$pos[moonID]}', `state` = '{$pos[state]}',
+                             `stateTimestamp` = '{$pos[stateTimestamp]}', `moonName` = '$moonName', `typeName` = '$typeName', `corporationID` = '{$this->keyInfo[corporationID]}',`allianceID` = '{$this->keyInfo[allianceID]}',
+                             `x` = '{$pos[x]}', `y` = '{$pos[y]}', `z` = '{$pos[z]}', `name` = '{$pos[name]}'";
+                            $result = $this->db->query($query, "utf8");
                             $this->log->put("updateStarbaseList " . $pos[posID], "ok insert");
-                        } 
+                        }
                     } catch (Exception $ex) {
                         $this->log->put("updateStarbaseList " . $pos[posID], "err " . $ex->getMessage());
                     }
@@ -160,7 +188,7 @@ class starbases {
                 foreach ($response->fuel as $fuel) {
                     if($fuel->typeID == 16275){ // Strontium Clathrates
                         $pos[stront] = $fuel->quantity;
-                        $pos[rfTime] = $this->calcFuelTime($type, $location, 16275, $fuel->quantity);
+                        $pos[rfTime] = floor($pos[stront] / $this->calcFuelTime($type, $location, 16275, $fuel->quantity));
                     } elseif($fuel->typeID == 4051 || $fuel->typeID == 4247 || $fuel->typeID == 4312 || $fuel->typeID == 4246){ // Fuel Blocks
                         $pos[fuel] = $fuel->quantity;
                         $pos[fuelph] = $this->calcFuelTime($type, $location, $fuel->typeID, $fuel->quantity);
@@ -179,8 +207,7 @@ class starbases {
             $query = "SELECT `quantity` FROM `invControlTowerResources` WHERE `controlTowerTypeID` = '$controlTowerTypeID' AND `resourceTypeID` = '$resourceTypeID'";
             $result = $this->db->query($query);
             $quantity = $this->db->getMysqlResult($result, 0);
-            $div = ($this->keyInfo[allianceID] != $this->getSolarSystemOwner($systemID)) ? $quantity : $quantity*0.75;
-            $time = ($div == 0) ? 0 : ($resourceQuantity / $div);
+            $time = ($this->keyInfo[allianceID] != $this->getSolarSystemOwner($systemID)) ? $quantity : $quantity*0.75;
             return floor($time);
         } catch (Exception $ex) {
             $this->log->put("calcFuelTime" . $resourceTypeID, "err " . $ex->getMessage());
@@ -213,7 +240,7 @@ class starbases {
                             $result = $this->db->query($query);
                         }
                     } elseif($pos[state] == 4){
-                        $query = "UPDATE `posList` SET `state` = '{$pos[state]}', `fuel` = '{$pos[fuel]}', `stront` = '{$pos[stront]}', `fuelph` = '{$pos[fuelph]}',`time` = '{$pos[time]}',
+                        $query = "UPDATE `posList` SET `state` = '{$pos[state]}', `fuel` = '{$pos[fuel]}', `stront` = '{$pos[stront]}', `fuelph` = '{$pos[fuelph]}', `time` = '{$pos[time]}',
                          `rfTime` = '{$pos[rfTime]}' WHERE `posID`='{$dbpos[posID]}'";
                         $result = $this->db->query($query);
                     } else{

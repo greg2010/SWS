@@ -36,15 +36,15 @@ class notif_send {
                 if($this->send_jabber){
                     $c_xmpp = new xmpp;
                     if($txt[starbase] != NULL){
-                        if(!$c_xmpp->sendfrom("Starbase", $this->login, $txt[starbase]))
+                        if(!$c_xmpp->sendfrom("starbase alert", $this->login, $txt[starbase]))
                             throw new Exception("Jabber sending failed", -2);
                     }
                     if($txt[sovwarfare] != NULL){
-                        if(!$c_xmpp->sendfrom("Sov Warfare", $this->login, $txt[sovwarfare]))
+                        if(!$c_xmpp->sendfrom("sovereignty alert", $this->login, $txt[sovwarfare]))
                             throw new Exception("Jabber sending failed", -2);
                     }
                     if($txt[other] != NULL){
-                        if(!$c_xmpp->sendfrom("Other", $this->login, $txt[other]))
+                        if(!$c_xmpp->sendfrom("other alert", $this->login, $txt[other]))
                             throw new Exception("Jabber sending failed", -2);
                     }
                 }
@@ -186,20 +186,22 @@ class notif_send {
             if($strarr[aggressorAllianceID] != NULL) $mailtext .= " (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])";
             $mailtext .= "\nShield: " . round($strarr[shieldLevel]*100) . "%\n";
         } elseif($type == 77 && $this->permission > 1){ // Station service aggression message
-            $mailtext .= $strarr[typeName] . " in " . $strarr[solarSystemName] . " is under attack\n";
+            $mailtext .= $strarr[typeName] . " is under attack at " . $strarr[stationName] . " in " . $strarr[solarSystemName] . "\n";
             $mailtext .= "Owner: " . $strarr[OwnerCorpName] . " [" . $strarr[OwnerCorpTicker] . "] (" . $strarr[OwnerAllyName] . " [" . $strarr[OwnerAllyTicker] . "])" . "\n";
             $mailtext .= ($strarr[aggressorID] != NULL) ? ("Aggressor: " . $strarr[aggressorName]) : ("Aggressor: Unknown");
             $mailtext .= ($strarr[aggressorCorpID] != NULL) ? (" from " . $strarr[corpName] . " [" . $strarr[corpTicker] . "]") : (" from Unknown Corporation");
             if($strarr[aggressorAllianceID] != NULL) $mailtext .= " (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])";
             $mailtext .= "\nShield: " . round($strarr[shieldValue]*100) . "%\n";
         } elseif($type == 45 && $this->permission == 3){
-            $mailtext .= "New " . $strarr[typeName] . " anchored on " . $strarr[moonName] . " by " . $strarr[corpName] . " [" . $strarr[corpTicker] . "] (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])" . "\n";
+            $mailtext .= "New " . $strarr[typeName] . " anchored on " . $strarr[moonName] . " by " . $strarr[corpName] . " [" . $strarr[corpTicker] . "]";
+            $mailtext .= ($strarr[allyName] != NULL) ? (" (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])\n") : ("\n");
             $mailtext .= "Old towers in system:\n";
             for($i=0; $i < count($strarr[corpsPresent]); $i++){
                 for($j=0; $j < count($strarr[corpsPresent][$i][towers]); $j++){
                     $mailtext .= $strarr[corpsPresent][$i][towers][$j][typeName] . " on " . $strarr[corpsPresent][$i][towers][$j][moonName] . ", ";
                 }
-                $mailtext .= " anchored by " . $strarr[corpsPresent][$i][corpName] . " [" . $strarr[corpsPresent][$i][corpTicker] . "] (" . $strarr[corpsPresent][$i][allyName] . " [" . $strarr[corpsPresent][$i][allyTicker] . "])" . "\n";
+                $mailtext .= " anchored by " . $strarr[corpsPresent][$i][corpName] . " [" . $strarr[corpsPresent][$i][corpTicker] . "]";
+                $mailtext .= ($strarr[corpsPresent][$i][allyName] != NULL) ? (" (" . $strarr[corpsPresent][$i][allyName] . " [" . $strarr[corpsPresent][$i][allyTicker] . "])\n") : ("\n");
             }
         } elseif($type == 43 || $type == 44 || $type == 41 || $type == 42 || $type == 46 || $type == 47 || $type == 48 || $type == 37 || $type == 38 || $type == 79){ // Sovereignty claim
             if($type == 37 || $type == 38) $mailtext .= "Sovereignty claim fails";

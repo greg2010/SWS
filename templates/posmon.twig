@@ -33,20 +33,22 @@
                                     <tr align="center">
                                         <th width = "5%"><center><span class="glyphicon glyphicon-refresh" style="color:#ccc;"></span></center></th>
                                         <th width = "7%"><center><a id="tablehead" style="font-size: 14px;">SYSTEM </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
-                                        <th width = "5%"><center><a id="tablehead" style="font-size: 14px;">REGION </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
-                                        <th width = "20%"><center><a id="tablehead" style="font-size: 14px;">TYPE </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
-                                        <th width = "11%"><center><a id="tablehead" style="font-size: 14px;">MOON </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                                        <th width = "7%"><center><a id="tablehead" style="font-size: 14px;">CONST </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                                        <th width = "7%"><center><a id="tablehead" style="font-size: 14px;">REGION </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                                        <th width = "18%"><center><a id="tablehead" style="font-size: 14px;">TYPE </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                                        <th width = "9%"><center><a id="tablehead" style="font-size: 14px;">MOON </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
                                         <th width = "7%"><center><a id="tablehead" style="font-size: 14px;">STATE </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
                                         <th width = "10%"><center><a id="tablehead" style="font-size: 14px;">FUEL LEFT </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
-                                        <th width = "13%"><center><a id="tablehead" style="font-size: 14px;">STRONTIUM TIMER </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
-                                        <th width = "22%"><center><a id="tablehead" style="font-size: 14px;">MOONMATERIAL(S) / SILO(S) </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                                        <th width = "12%"><center><a id="tablehead" style="font-size: 14px;">STRON. TIMER </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                                        <th width = "18%"><center><a id="tablehead" style="font-size: 14px;">MOONMAT(S) / SILO(S) </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for pos in corpPoses%}
                                         <tr>
                                             <td><center><img src="https://image.eveonline.com/Type/{{pos.typeID}}_64.png"></center></td>
-                                <td><center><span style="font-size: 14px;">{{pos.locationName}}</span></center></td>
+                                            <td><center><span style="font-size: 14px;">{{pos.locationName}}</span></center></td>
+                                            <td><center><span style="font-size: 14px;">{{pos.constellation}}</span></center></td>
                                             <td><center><span style="font-size: 14px;">{{pos.region}}</span></center></td>
                                             <td><center><span style="font-size: 14px;">{{pos.typeName}}</span></center></td>
                                             <td><center><span style="font-size: 14px;">{{pos.moonName}}</span></center></td>
@@ -65,20 +67,28 @@
                                                         {% set msg = "Onlining / Offlining" %}
                                                         {% set rftime = pos.rfTime.d ~ "d " ~ pos.rfTime.h ~ "h" %}
                                                     {% elseif pos.state == 1 %}
-                                                        {% set id = "" %}
-                                                        {% set msg = "Anchored / Offline" %}
+                                                        {% set id = "offline" %}
+                                                        {% set msg = "Offline" %}
                                                         {% set rftime = pos.rfTime.d ~ "d " ~ pos.rfTime.h ~ "h" %}
                                                     {% elseif pos.state == 0 %}
-                                                        {% set id = "" %}
+                                                        {% set id = "offline" %}
                                                         {% set msg = "Unanchored" %}
                                                         {% set rftime = pos.rfTime.d ~ "d " ~ pos.rfTime.h ~ "h" %}
                                                     {% endif %}
                                                     <span id="{{id}}" style="font-size: 14px;">{{msg}}</span>
                                                 </center>
                                             </td>
-                                            <td><center><span <span style="font-size: 14px;">{{pos.time.d}}d {{pos.time.h}}h</span></center></td>
+                                            {% if (pos.time.d < 1) %}
+                                                <td><center><span id = "danger" title="{{pos.fuel}} Fuel Blocks" style="font-size: 14px;">{{pos.time.d}}d {{pos.time.h}}h</span></center></td>
+                                            {% else %}
+                                                <td><center><span title="{{pos.fuel}} Fuel Blocks" style="font-size: 14px;">{{pos.time.d}}d {{pos.time.h}}h</span></center></td>
+                                            {% endif %}
                                             <td>
-                                                <center><span <span style="font-size: 14px;">{{rftime}}</span></center>
+                                            {% if (rftime == "0d 0h") %}
+                                                <center><span id = "danger" title="{{pos.stront}} Strontium clathrates" style="font-size: 14px;">{{rftime}}</span></center>
+                                            {% else %}
+                                                <center><span title="{{pos.stront}} Strontium clathrates" style="font-size: 14px;">{{rftime}}</span></center>
+                                            {% endif %}
                                             </td>
                                             {% if pos.silo.0 is defined %}
                                                 <td>
@@ -86,29 +96,39 @@
                                                         {% for silo in pos.silo %}
                                                             {% if silo.siloID is defined %} 
                                                                 <tr>
-                                                                    {% if (pos.silo.altPoses|length > 1) or (pos.silo.altPoses|length == 1 and pos.silo.altPoses.iterable == 1) %}
-                                                                        <td width="75%">
-                                                                            <ul class="nav nav-pills">
-                                                                                <center><li class="dropdown" id="silo">
-                                                                                <a data-toggle="dropdown" role="menu" data-target="#" href="#" id="siloselect">
-                                                                                        <center><span style="font-size: 14px;">{{silo.mmname}}<b class="caret"></b></center></span>
-                                                                                    </a>
-                                                                                    <ul class="dropdown-menu" id="silo">
-                                                                                        {% for altpos in pos.silo.altPoses %}
-                                                                                            <li><a href="updateSiloInfo.php?posID={{altpos.posID}}&siloID={{silo.siloID}}">{{altpos.moonName}}</a></li>
-                                                                                        {% endfor %}
-                                                                                    </ul>
-                                                                                </li></center>
-                                                                            </ul></td>
+                                                                {% if ((silo.quantity * silo.mmvolume) / silo.siloMax > 0.9) %}
+                                                                    {% if (pos.silo.altPoses|length > 1) %}
+                                                                        <td width="75%"><ul class="nav nav-pills">
+                                                                            <center><li class="dropdown" id="silo">
+                                                                            <center><span id = "danger" title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}" style="font-size: 14px;">{{silo.mmname}}</center></span>
+                                                                            </li></center>
+                                                                        </ul></td>
                                                                     {% else %}
-                                                                        <td width="75%"><center><span>{{silo.mmname}}</span></center></td>
+                                                                        <td width="75%"><center><span id = "danger" title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}">{{silo.mmname}}</span></center></td>
                                                                     {% endif %}
-                                                                        <td bgcolor="#111" width="25%"><center><span title="{{silo.quantity}}/{{silo.siloMax}}" style="font-size: 14px;">{{silo.Percentage}}%</span></center></td>
+                                                                    <td bgcolor="#111" width="25%"><center>
+                                                                    <span id = "danger" title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}" style="font-size: 14px;">{{silo.Percentage}}%</span></center></td>    
+                                                                {% else %}
+                                                                    {% if (pos.silo.altPoses|length > 1) %}
+                                                                        <td width="75%"><ul class="nav nav-pills">
+                                                                            <center><li class="dropdown" id="silo">
+                                                                            <center><span title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}" style="font-size: 14px;">{{silo.mmname}}</center></span>
+                                                                            </li></center>
+                                                                        </ul></td>
+                                                                    {% else %}
+                                                                        <td width="75%"><center><span title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}">{{silo.mmname}}</span></center></td>
+                                                                    {% endif %}
+                                                                    <td bgcolor="#111" width="25%"><center>
+                                                                    <span title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}" style="font-size: 14px;">{{silo.Percentage}}%</span></center></td> 
+                                                                {% endif %}
                                                                 </tr>
                                                             {% endif %}
                                                         {% endfor %}
+                                                        {% if pos.siphon == 1 %}
+                                                            <td colspan="2" bgcolor="#111" width="25%"><center><span id = "danger" style="font-size: 14px;">Mobile Siphon Unit</span></center></td>
+                                                        {% endif %}
                                                      </table>
-                                                </td>                   
+                                                </td>                  
                                             {% else %}
                                                 <td><center><span style="font-size: 14px;">N/A</span></center></td>
                                             {% endif %}

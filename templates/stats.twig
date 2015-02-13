@@ -13,19 +13,21 @@
         <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
             {{errorMsg}}
         </div>
-        <table class="table table-condensed" style="width: 1080px; margin-left: 30px;">
-            <thead>
-                <th>Alliance</th>
-                <th>Registrations</th>
-            </thead>
+        <center>
+        <table class="table table-condensed" style="width: 680px;">
+            <tr>
+                <td style="color: #f6c000;">ALLIANCE</td>
+                <td style="color: #f6c000;"><center>REGISTRATIONS</center></td>
+            </tr>
             <tbody>
                 {% for alliance,regs in regStats %}
                     <tr>
-                        <td>{{alliance}}</td>
-                        <td>{{regs}}</td>
+                        <td style="color: #FF4500;">{{alliance}}</td>
+                        <td style="color: #458B00"><center>{{regs}}</center></td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+        </center>
     </div>
 {% endblock %}
