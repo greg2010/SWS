@@ -188,7 +188,7 @@ class starbases {
                 foreach ($response->fuel as $fuel) {
                     if($fuel->typeID == 16275){ // Strontium Clathrates
                         $pos[stront] = $fuel->quantity;
-                        $pos[rfTime] = $this->calcFuelTime($type, $location, 16275, $fuel->quantity);
+                        $pos[rfTime] = floor($pos[stront] / $this->calcFuelTime($type, $location, 16275, $fuel->quantity));
                     } elseif($fuel->typeID == 4051 || $fuel->typeID == 4247 || $fuel->typeID == 4312 || $fuel->typeID == 4246){ // Fuel Blocks
                         $pos[fuel] = $fuel->quantity;
                         $pos[fuelph] = $this->calcFuelTime($type, $location, $fuel->typeID, $fuel->quantity);
@@ -207,8 +207,7 @@ class starbases {
             $query = "SELECT `quantity` FROM `invControlTowerResources` WHERE `controlTowerTypeID` = '$controlTowerTypeID' AND `resourceTypeID` = '$resourceTypeID'";
             $result = $this->db->query($query);
             $quantity = $this->db->getMysqlResult($result, 0);
-            $div = ($this->keyInfo[allianceID] != $this->getSolarSystemOwner($systemID)) ? $quantity : $quantity*0.75;
-            $time = ($div == 0) ? 0 : ($resourceQuantity / $div);
+            $time = ($this->keyInfo[allianceID] != $this->getSolarSystemOwner($systemID)) ? $quantity : $quantity*0.75;
             return floor($time);
         } catch (Exception $ex) {
             $this->log->put("calcFuelTime" . $resourceTypeID, "err " . $ex->getMessage());
@@ -241,7 +240,7 @@ class starbases {
                             $result = $this->db->query($query);
                         }
                     } elseif($pos[state] == 4){
-                        $query = "UPDATE `posList` SET `state` = '{$pos[state]}', `fuel` = '{$pos[fuel]}', `stront` = '{$pos[stront]}', `fuelph` = '{$pos[fuelph]}',`time` = '{$pos[time]}',
+                        $query = "UPDATE `posList` SET `state` = '{$pos[state]}', `fuel` = '{$pos[fuel]}', `stront` = '{$pos[stront]}', `fuelph` = '{$pos[fuelph]}', `time` = '{$pos[time]}',
                          `rfTime` = '{$pos[rfTime]}' WHERE `posID`='{$dbpos[posID]}'";
                         $result = $this->db->query($query);
                     } else{

@@ -20,7 +20,7 @@ class posmon {
         $hoursLeft = $inputTime - $days * $hoursInADay;
         $result = array (
             'd' => $days,
-            'h' =>$hoursLeft
+            'h' => $hoursLeft
         );
         return $result;
     }
