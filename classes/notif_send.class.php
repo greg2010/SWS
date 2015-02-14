@@ -163,7 +163,7 @@ class notif_send {
         $strarr = yaml_parse($str);
         if($type == 76){
             $mailtext .= $strarr[typeName] . " low on resources on " . $strarr[moonName] . "\n";
-            $mailtext .= "Owner: " . $strarr[corpName] . " [" . $strarr[corpTicker] . "] (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])" . "\n";
+            $mailtext .= "Owner: " . $strarr[OwnerCorpName] . " [" . $strarr[OwnerCorpTicker] . "] (" . $strarr[OwnerAllyName] . " [" . $strarr[OwnerAllyTicker] . "])" . "\n";
             for($i=0; $i < count($strarr[wants]); $i++){
                 $mailtext .= "Remaining " . $strarr[wants][$i][quantity] . " " . $strarr[wants][$i][typeName] . "\n";
             }
