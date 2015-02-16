@@ -64,7 +64,6 @@ class posmon {
         } elseif ($this->db->countRows($result) == 1) {
             $siloList[0] = $this->db->fetchAssoc($result);
         }
-        
         switch ($posType) {
             case "Minmatar":
             case "Angel":
@@ -95,8 +94,13 @@ class posmon {
         
         if (is_array($siloList)) {
             foreach ($siloList as $i => $silo) {
-                $siloList[$i]['Percentage'] = round($silo[mmvolume]*$silo[quantity]*100/$siloMax);
-                $siloList[$i]['siloMax'] = $siloMax;
+                if($silo[typeID] == 16273){
+                    $siloList[$i]['Percentage'] = round($silo[mmvolume]*$silo[quantity]*100/60000);
+                    $siloList[$i]['siloMax'] = 60000;
+                } else{
+                    $siloList[$i]['Percentage'] = round($silo[mmvolume]*$silo[quantity]*100/$siloMax);
+                    $siloList[$i]['siloMax'] = $siloMax;
+                }
             }
         }
         return $siloList;

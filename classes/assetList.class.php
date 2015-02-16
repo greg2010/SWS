@@ -23,7 +23,7 @@ class assetList {
         try{
             $response = $pheal->AssetList();
             foreach ($response->assets as $assets) {
-                if($assets->typeID == 14343 && $assets->flag == 0 && $assets->singleton == 1 && $assets->contents[0]->typeID != 0 && $assets->locationID < 40000000){ // 60000000
+                if(($assets->typeID == 14343 || $assets->typeID == 27897) && $assets->flag == 0 && $assets->singleton == 1 && $assets->contents[0]->typeID != 0 && $assets->locationID < 40000000){ // 60000000
                     $this->silolist[] = array(
                         'siloID' => $assets->itemID,
                         'locationID' => $assets->locationID,
