@@ -188,11 +188,11 @@ class starbases {
                 foreach ($response->fuel as $fuel) {
                     if($fuel->typeID == 16275){ // Strontium Clathrates
                         $pos[stront] = $fuel->quantity;
-                        $pos[rfTime] = floor($pos[stront] / $this->calcFuelTime($type, $location, 16275, $fuel->quantity));
+                        $pos[rfTime] = round($pos[stront] / $this->calcFuelTime($type, $location, 16275, $fuel->quantity));
                     } elseif($fuel->typeID == 4051 || $fuel->typeID == 4247 || $fuel->typeID == 4312 || $fuel->typeID == 4246){ // Fuel Blocks
                         $pos[fuel] = $fuel->quantity;
                         $pos[fuelph] = $this->calcFuelTime($type, $location, $fuel->typeID, $fuel->quantity);
-                        $pos[time] = floor($pos[fuel] / $pos[fuelph]);
+                        $pos[time] = round($pos[fuel] / $pos[fuelph]);
                     }
                 }
             }
@@ -208,7 +208,7 @@ class starbases {
             $result = $this->db->query($query);
             $quantity = $this->db->getMysqlResult($result, 0);
             $time = ($this->keyInfo[allianceID] != $this->getSolarSystemOwner($systemID)) ? $quantity : $quantity*0.75;
-            return floor($time);
+            return round($time);
         } catch (Exception $ex) {
             $this->log->put("calcFuelTime" . $resourceTypeID, "err " . $ex->getMessage());
         }
