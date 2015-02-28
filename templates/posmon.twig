@@ -113,26 +113,26 @@
                                                                         {% if (pos.silo.altPoses|length > 1) %}
                                                                             <td width="75%"><ul class="nav nav-pills">
                                                                                 <center><li class="dropdown" id="silo">
-                                                                                <center><span id = "danger" title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}" style="font-size: 14px;">{{silo.mmname}}</center></span>
+                                                                                <center><span id = "danger" title="{{silo.quantity}} / {{silo.siloMax / silo.mmvolume}}" style="font-size: 14px;">{{silo.mmname}}</center></span>
                                                                                 </li></center>
                                                                             </ul></td>
                                                                         {% else %}
-                                                                            <td width="75%"><center><span id = "danger" title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}">{{silo.mmname}}</span></center></td>
+                                                                            <td width="75%"><center><span id = "danger" title="{{silo.quantity}} / {{silo.siloMax / silo.mmvolume}}">{{silo.mmname}}</span></center></td>
                                                                         {% endif %}
                                                                         <td bgcolor="#111" width="25%"><center>
-                                                                        <span id = "danger" title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}" style="font-size: 14px;">{{silo.Percentage}}%</span></center></td>    
+                                                                        <span id = "danger" title="{{silo.quantity}} / {{silo.siloMax / silo.mmvolume}}" style="font-size: 14px;">{{silo.Percentage}}%</span></center></td>    
                                                                     {% else %}
                                                                         {% if (pos.silo.altPoses|length > 1) %}
                                                                             <td width="75%"><ul class="nav nav-pills">
                                                                                 <center><li class="dropdown" id="silo">
-                                                                                <center><span title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}" style="font-size: 14px;">{{silo.mmname}}</center></span>
+                                                                                <center><span title="{{silo.quantity}} / {{silo.siloMax / silo.mmvolume}}" style="font-size: 14px;">{{silo.mmname}}</center></span>
                                                                                 </li></center>
                                                                             </ul></td>
                                                                         {% else %}
-                                                                            <td width="75%"><center><span title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}">{{silo.mmname}}</span></center></td>
+                                                                            <td width="75%"><center><span title="{{silo.quantity}} / {{silo.siloMax / silo.mmvolume}}">{{silo.mmname}}</span></center></td>
                                                                         {% endif %}
                                                                         <td bgcolor="#111" width="25%"><center>
-                                                                        <span title="{{silo.quantity * silo.mmvolume}} / {{silo.siloMax}}" style="font-size: 14px;">{{silo.Percentage}}%</span></center></td> 
+                                                                        <span title="{{silo.quantity}} / {{silo.siloMax / silo.mmvolume}}" style="font-size: 14px;">{{silo.Percentage}}%</span></center></td> 
                                                                     {% endif %}
                                                                 {% endif %}
                                                                 </tr>
