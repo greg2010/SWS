@@ -41,8 +41,12 @@ class memberTracking {
             $result = $this->db->query($query);
             $tmparr = $this->db->fetchAssoc($result);
             if(isset($tmparr)){
-                foreach ($tmparr as $value) {
-                    if(isset($value[characterID])) $tmpre[] = $value[characterID];
+                if(count($tmparr) == 1){
+                    if(isset($tmparr[characterID])) $tmpre[] = $tmparr[characterID];
+                }else{
+                    foreach ($tmparr as $value) {
+                        if(isset($value[characterID])) $tmpre[] = $value[characterID];
+                    }
                 }
                 return $tmpre;
             }
@@ -90,7 +94,7 @@ class memberTracking {
     }
 
     private function getShipClass($shipType){
-        return ($row[shipType] == "Avatar" OR $row[shipType] == "Erebus" OR $row[shipType] == "Leviathan" OR $row[shipType] == "Ragnarok") ? "Titan" : "Mothership";
+        return ($shipType == "Avatar" OR $shipType == "Erebus" OR $shipType == "Leviathan" OR $shipType == "Ragnarok") ? "Titan" : "Mothership";
     }
 
     private function getRegion($locationID){
@@ -132,9 +136,9 @@ class memberTracking {
                     } else{
                         $SS = $this->getSS($superCap[locationID]);
                         $region = $this->getRegion($superCap[locationID]);
-                        $query = "INSERT INTO `superCapitalList` SET `characterName` = '{$superCap[name]}', `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}',
+                        $query = "INSERT INTO `superCapitalList` SET `characterID` = '{$superCap[characterID]}', `characterName` = '{$superCap[name]}', `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}',
                              `logonDateTime` = '{$superCap[logonDateTime]}', `logoffDateTime` = '{$superCap[logoffDateTime]}', `locationID` = '{$superCap[locationID]}', `SS` = '$SS', `locationName` = '{$superCap[location]}',
-                             `regionName` = '$region', `shipTypeID` = '{$superCap[shipTypeID]}', `shipTypeName` = '{$superCap[shipType]}', `shipClass` = '$shipClass', `characterID`='{$superCap[characterID]}'";
+                             `regionName` = '$region', `shipTypeID` = '{$superCap[shipTypeID]}', `shipTypeName` = '{$superCap[shipType]}', `shipClass` = '$shipClass'";
                         $result = $this->db->query($query);
                     }
 
