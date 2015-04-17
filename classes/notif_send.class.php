@@ -100,7 +100,7 @@ class notif_send {
                 if($permissions->hasPermission("XMPP_Overmind") || $permissions->hasPermission("XMPP_FleetCom")){
                     return 3;
                 } else{
-                    if($permissions->hasPermission("XMPP_RoamingFC")){
+                    if($permissions->hasPermission("XMPP_RoamingFC") || $permissions->hasPermission("TS_ChannelCom"))){
                         return 2;
                     } else return 1;
                 }
