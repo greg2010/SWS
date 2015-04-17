@@ -93,15 +93,17 @@ class notif_get {
     private function insertToDB(){
         try {
             foreach ($this->notif as $n){
-                $notixtxttosql = addslashes($n['NotificationText']);
-                $query = "INSERT INTO `notifications` SET `notificationID` = '{$n[notificationID]}', `typeID` = '{$n[typeID]}', `senderID` = '{$n[senderID]}', `senderName` = '{$n[senderName]}',
-                 `sentDate` = '{$n[sentDate]}', `NotificationText` = '$notixtxttosql', `corporationID` = '{$this->key[corporationID]}', `allianceID` = '{$this->key[allianceID]}'";
-                $result = $this->db->query($query);
+                if($n['NotificationText'] != ""){
+                    $notixtxttosql = addslashes($n['NotificationText']);
+                    $query = "INSERT INTO `notifications` SET `notificationID` = '{$n[notificationID]}', `typeID` = '{$n[typeID]}', `senderID` = '{$n[senderID]}', `senderName` = '{$n[senderName]}',
+                     `sentDate` = '{$n[sentDate]}', `NotificationText` = '$notixtxttosql', `corporationID` = '{$this->key[corporationID]}', `allianceID` = '{$this->key[allianceID]}'";
+                    $result = $this->db->query($query);
+                }
             }
         } catch (Exception $ex) {
             $this->log->put("insertToDB", "err " . $ex->getMessage());
         }
-    } 
+    }
 
     public function processNotif(){
         if($this->getNotificationsXML() && count($this->notif) > 0){

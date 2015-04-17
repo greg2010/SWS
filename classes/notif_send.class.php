@@ -54,6 +54,18 @@ class notif_send {
         }
     }
 
+    private function getMembers(){
+        $query = "SELECT `allianceID` FROM `allowedList` WHERE `accessMask`>'0' AND `characterID` IS NULL AND `corporationID` IS NULL AND `allianceID` IS NOT NULL";
+        $result = $this->db->query($query);
+        $tmp = $db->fetchRow($result);
+        $txt = "(";
+        for($i=0; $i<count($tmp); $i++){
+            $txt .= ($i == 0) ? "`allianceID` = '{$tmp[$i][0]}'" : " OR `allianceID` = '{$tmp[$i][0]}'";
+        }
+        $txt .= ")";
+        return $txt;
+    }
+
     private function getKeys(){
         $query = "SELECT `corporationID`, `allianceID` FROM `apiPilotList` WHERE ((`keyStatus` > 0) AND (`id` = '$this->id'))";
         $result = $this->db->query($query);
@@ -82,12 +94,16 @@ class notif_send {
         $permissions = new permissions($this->id);
         //$this->posop = ($permissions->hasPermission("posMon_Valid")) ? (" OR (`typeID` = 76 AND `allianceID` = '" . $this->allianceID . "')") : (" OR (`typeID` = 76 AND `corporationID` = '" . $this->corporationID . "')");
         if($permissions->hasPermission("XMPP_Valid")){
-            if($permissions->hasPermission("XMPP_Overmind") || $permissions->hasPermission("XMPP_FleetCom")){
-                return 3;
+            if($permissions->hasPermission("TS_serverAdmin")){ // XMPP_Overmind ?
+                return 4;
             } else{
-                if($permissions->hasPermission("XMPP_RoamingFC")){
-                    return 2;
-                } else return 1;
+                if($permissions->hasPermission("XMPP_Overmind") || $permissions->hasPermission("XMPP_FleetCom")){
+                    return 3;
+                } else{
+                    if($permissions->hasPermission("XMPP_RoamingFC")){
+                        return 2;
+                    } else return 1;
+                }
             }
         } else return 0;
     }
@@ -124,6 +140,8 @@ class notif_send {
         elseif($this->permission == 2) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` "
          . "WHERE `notificationID` > '$this->lastNotifID' AND ((`typeID` <> 76 AND " . $aid_text . ") OR (`typeID` = 76 AND " . $cid_text . "))";
         elseif($this->permission == 3) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` "
+         . "WHERE `notificationID` > '$this->lastNotifID' AND ((`typeID` <> 76 AND " . $this->getMembers() . ") OR (`typeID` = 76 AND " . $cid_text . "))";
+        elseif($this->permission == 4) $query = "SELECT `notificationID`, `typeID`, `sentDate`, `NotificationText` FROM `notifications` "
          . "WHERE `notificationID` > '$this->lastNotifID' AND (`typeID` <> 76 OR (`typeID` = 76 AND " . $cid_text . "))";
         $result = $this->db->query($query);
         $notifArr = $this->db->fetchArray($result);
@@ -192,7 +210,7 @@ class notif_send {
             $mailtext .= ($strarr[aggressorCorpID] != NULL) ? (" from " . $strarr[corpName] . " [" . $strarr[corpTicker] . "]") : (" from Unknown Corporation");
             if($strarr[aggressorAllianceID] != NULL) $mailtext .= " (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])";
             $mailtext .= "\nShield: " . round($strarr[shieldValue]*100) . "%\n";
-        } elseif($type == 45 && $this->permission == 3){
+        } elseif($type == 45 && $this->permission > 2){
             $mailtext .= "New " . $strarr[typeName] . " anchored on " . $strarr[moonName] . " by " . $strarr[corpName] . " [" . $strarr[corpTicker] . "]";
             $mailtext .= ($strarr[allyName] != NULL) ? (" (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])\n") : ("\n");
             $mailtext .= "Old towers in system:\n";
@@ -215,7 +233,7 @@ class notif_send {
             $mailtext .= ($strarr[corpID] != NULL) ? ($strarr[corpName] . " [" . $strarr[corpTicker] . "]") : "Unknown";
             $mailtext .= ($strarr[allianceID] != NULL) ? (" (" . $strarr[allyName] . " [" . $strarr[allyTicker] . "])\n") : "\n";
         } else{
-            if(($type == 39 || $type == 40) && $this->permission == 3) $mailtext .= "Sovereignty bill late in " . $strarr[solarSystemName] . "\n";
+            if(($type == 39 || $type == 40) && $this->permission >2) $mailtext .= "Sovereignty bill late in " . $strarr[solarSystemName] . "\n";
             if($type == 78 && $this->permission > 1) $mailtext .= "Station state change in " . $strarr[solarSystemName] . "\n";
         }
         return $mailtext;
