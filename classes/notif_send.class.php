@@ -57,7 +57,7 @@ class notif_send {
     private function getMembers(){
         $query = "SELECT `allianceID` FROM `allowedList` WHERE `accessMask`>'0' AND `characterID` IS NULL AND `corporationID` IS NULL AND `allianceID` IS NOT NULL";
         $result = $this->db->query($query);
-        $tmp = $db->fetchRow($result);
+        $tmp = $this->db->fetchRow($result);
         $txt = "(";
         for($i=0; $i<count($tmp); $i++){
             $txt .= ($i == 0) ? "`allianceID` = '{$tmp[$i][0]}'" : " OR `allianceID` = '{$tmp[$i][0]}'";
