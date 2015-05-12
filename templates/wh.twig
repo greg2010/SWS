@@ -1,0 +1,60 @@
+{% extends "base.twig" %}
+
+{% block title %}Wormholes{% endblock %}
+
+{% block content %}
+    <div id="formSettings">
+        <h1>Wormholes</h1>
+            <table class="table table-condensed tablesorter" style="width: 98%; margin: 0 auto; margin-left: 5px;" id="">
+                <thead>
+                    <tr>
+                        <p class="p-container">
+                            <input type="button" name="add" id="" onclick="" value="ADD NEW" />
+                        </p>
+                    </tr>
+                    <tr align="center">
+                        <th width = "10%"><center><a id="tablehead" style="font-size: 14px;">ID </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                        <th width = "10%"><center><a id="tablehead" style="font-size: 14px;">TYPE </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                        <th width = "10%"><center><a id="tablehead" style="font-size: 14px;">AGE </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                        <th width = "13%"><center><a id="tablehead" style="font-size: 14px;">SYSTEM </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                        <th width = "13%"><center><a id="tablehead" style="font-size: 14px;">LEADS TO </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                        <th width = "12%"><center><a id="tablehead" style="font-size: 14px;">LIFE </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                        <th width = "12%"><center><a id="tablehead" style="font-size: 14px;">MASS </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                        <th width = "20%"><center><a id="tablehead" style="font-size: 14px;"> </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><center><span style="font-size: 14px;">ABC</span></center></td>
+                        <td><center><span style="font-size: 14px;">C140</span></center></td>
+                        <td><center><span style="font-size: 14px;">00:17</span></center></td>
+                        <td><center><span style="font-size: 14px;" id="danger">C-J6MT</span></center></td>
+                        <td><center><span style="font-size: 14px;" id="success">Jita</span></center></td>
+                        <td><center><span style="font-size: 14px;">Stable</span></center></td>
+                        <td><center><span style="font-size: 14px;">Destab</span></center></td>
+                        <td>
+                            <p class="p-container">
+                                <input type="button" name="EDIT" id="" onclick="" value="EDIT" />
+                                <input type="button" name="DELETE" id="danger" onclick="" value="DELETE" />
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><center><span style="font-size: 14px;">DEF</span></center></td>
+                        <td><center><span style="font-size: 14px;">M530</span></center></td>
+                        <td><center><span style="font-size: 14px;" id="danger">13:21</span></center></td>
+                        <td><center><span style="font-size: 14px;" id="danger">4M-QXK</span></center></td>
+                        <td><center><span style="font-size: 14px;" id="danger">J123753</span></center></td>
+                        <td><center><span style="font-size: 14px;" id="danger">Critical</span></center></td>
+                        <td><center><span style="font-size: 14px;">Destab</span></center></td>
+                        <td>
+                            <p class="p-container">
+                                <input type="button" name="EDIT" id="" onclick="" value="EDIT" />
+                                <input type="button" name="DELETE" id="danger" onclick="" value="DELETE" />
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    </div>
+{% endblock %}
