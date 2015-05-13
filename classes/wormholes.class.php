@@ -84,9 +84,15 @@ class wormholes{
         return $system;
     }
 
-    private function getAge($created, $life){
-        $age = 24;
-        return $age;
+    private function getAge($created, $modified, $life, $status){
+        $cdif = round(((mktime() - strtotime($created))/60)/60);
+        if($status == 0){
+            if($modified){
+                $mdif = round(((mktime() - strtotime($modified))/60)/60);
+                if((4 - $cdif) > (4 - $mdif)) return intval(4 - $mdif);
+            }
+            return intval(4 - $cdif);
+        } else return intval($life - $cdif);
     }
 
     private function getSystemID($name){
@@ -108,26 +114,36 @@ class wormholes{
         $result = $this->db->query($query);
         $assocArray = ($this->db->countRows($result) == 1) ? array($this->db->fetchAssoc($result)) : $this->db->fetchAssoc($result);
         foreach ($assocArray as $wh){
-            $type = yaml_parse($wh[type]);
-            $age = $this->getAge($wh[created], $wh[life]);
-            $system1 = yaml_parse($wh[system1]);
-            $system2 = yaml_parse($wh[system2]);
-            if($wh[mass] == 0) $mass = "Critical";
-            elseif($wh[mass] == 1) $mass = "Destab";
-            else $mass = "Stable";
-            $wormholes[] = array(
-                "wh_id" => $wh[id],
-                "ID" => $wh[signature],
-                "Scanned by" => $wh[user],
-                "Type" => $type,
-                "Age" => $age,
-                "Created" => $wh[created],
-                "Last Modified" => $wh[modified],
-                "System" => $system1,
-                "Leads To" => $system2,
-                "Life" => ($wh[life] == 0) ? "Critical" : "Stable",
-                "Mass" => $mass
-            );
+            $age = $this->getAge($wh[created], $wh[modified], $type[Life], $wh[life]);
+            if($age < 0){
+                $query = "DELETE FROM `wormholes` WHERE `id` = '{$wh[id]}'";
+                $result = $this->db->query($query);
+            } else{
+                if($age < 4 && $wh[life] == 1){
+                    $query = "UPDATE `wormholes` SET `life` = '0' WHERE `id` = '{$wh[id]}'";
+                    $result = $this->db->query($query);
+                    $life = 0;
+                } else $life = $wh[life];
+                $type = yaml_parse($wh[type]);
+                $system1 = yaml_parse($wh[system1]);
+                $system2 = yaml_parse($wh[system2]);
+                if($wh[mass] == 0) $mass = "Critical";
+                elseif($wh[mass] == 1) $mass = "Destab";
+                else $mass = "Stable";
+                $wormholes[] = array(
+                    "wh_id" => $wh[id],
+                    "ID" => $wh[signature],
+                    "Scanned by" => $wh[user],
+                    "Type" => $type,
+                    "Age" => $age,
+                    "Created" => $wh[created],
+                    "Last Modified" => $wh[modified],
+                    "System" => $system1,
+                    "Leads To" => $system2,
+                    "Life" => ($life == 0) ? "Critical" : "Stable",
+                    "Mass" => $mass
+                );
+            }
         }
         return $wormholes;
     }
