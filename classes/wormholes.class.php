@@ -21,6 +21,7 @@ class wormholes{
         $result = $this->db->query($query);
         $tmparr = $this->db->fetchAssoc($result);
         $type = array();
+        $type["Name"] = $name;
         foreach ($tmparr as $tmp){
             if($tmp[attributeID] == "1381"){
                 switch($tmp[valueInt]){
@@ -33,6 +34,8 @@ class wormholes{
                     case 7: $type["Leads To"] = "High-Sec"; break;
                     case 8: $type["Leads To"] = "Low-Sec"; break;
                     case 9: $type["Leads To"] = "Null-Sec"; break;
+                    case 12: $type["Leads To"] = "Thera"; break;
+                    case 13: $type["Leads To"] = "Shattered Wormhole Systems"; break;
                 }
             }
             if($tmp[attributeID] == "1382"){
@@ -60,16 +63,16 @@ class wormholes{
         $tmparr = $this->db->fetchAssoc($result);
         $system = array();
         $system["Name"] = $tmparr["solarSystemName"];
-        $query = "SELECT `class`, `static1`, `static1` FROM `mapWHConstellations` WHERE `id`='{$tmparr[constellationID]}'";
+        $query = "SELECT `class`, `static1`, `static2` FROM `mapWHConstellations` WHERE `id`='{$tmparr[constellationID]}'";
         $result = $this->db->query($query);
         if($this->db->hasRows($result)){
             $tmparr2 = $this->db->fetchAssoc($result);
             $system["Wormhole Class"] = $tmparr2["class"];
-            $system["Static1"] = $this->getType($tmparr2["static1"]);
+            if($tmparr2["static1"]) $system["Static1"] = $this->getType($tmparr2["static1"]);
             if($tmparr2["static2"]) $system["Static2"] = $this->getType($tmparr2["static2"]);
             $query = "SELECT `invTypes`.`typeName` FROM `mapDenormalize` LEFT JOIN `invTypes` ON `mapDenormalize`.`typeid` = `invTypes`.`typeID` WHERE `mapDenormalize`.`solarSystemID` = '$id' AND `mapDenormalize`.`groupID` = '995'";
             $result = $this->db->query($query);
-            if($this->db->hasRows($result)) $type["System Effect"] = $this->db->getMysqlResult($result);
+            if($this->db->hasRows($result)) $system["System Effect"] = $this->db->getMysqlResult($result);
         } else{
             $query = "SELECT `itemName` FROM `mapDenormalize` WHERE `itemID` = '{$tmparr[regionID]}' OR `itemID` = '{$tmparr[constellationID]}'";
             $result = $this->db->query($query);
@@ -105,10 +108,10 @@ class wormholes{
         $result = $this->db->query($query);
         $assocArray = ($this->db->countRows($result) == 1) ? array($this->db->fetchAssoc($result)) : $this->db->fetchAssoc($result);
         foreach ($assocArray as $wh){
-            $type = $this->getType($wh[type]);
+            $type = yaml_parse($wh[type]);
             $age = $this->getAge($wh[created], $wh[life]);
-            $system1 = $this->getSystemInfo($wh[system1]);
-            $system2 = $this->getSystemInfo($wh[system2]);
+            $system1 = yaml_parse($wh[system1]);
+            $system2 = yaml_parse($wh[system2]);
             if($wh[mass] == 0) $mass = "Critical";
             elseif($wh[mass] == 1) $mass = "Destab";
             else $mass = "Stable";
@@ -137,19 +140,22 @@ class wormholes{
     public function updateWH($wh_id = NULL, $ID, $Type, $System, $Leads, $Life, $Mass){
         if(!preg_match('/^\d{3}$/', $ID)) throw new Exception("Invalid signature id!", 31);
         if(!$this->checkWH($Type)) throw new Exception("Invalid wormhole type!", 32);
+        $yaml_type = yaml_emit($this->getType($Type));
         $intSystem = $this->getSystemID($System);
         if($intSystem == 0) throw new Exception("Invalid system name!", 33);
+        $yaml_system = yaml_emit($this->getSystemInfo($intSystem));
         $intLeads = $this->getSystemID($Leads);
         if($intLeads == 0) throw new Exception("Invalid target system name!", 34);
+        $yaml_leads = yaml_emit($this->getSystemInfo($intLeads));
         $date = date("Y-m-d H:i:s");
         $intLife = ($Life == "Critical") ? 0 : 1;
         if($Mass == "Critical") $intMass = 0;
         elseif($Mass == "Destab") $intMass = 1;
         else $intMass = 2;
         if($wh_id == NULL){
-            $query = "INSERT INTO `wormholes` SET `user` = '{$this->user}', `signature` = '$ID', `type` = '$Type', `created` = '$date', `system1` = '$intSystem', `system2` = '$intLeads', `life` = '$intLife', `mass` = '$intMass'";
+            $query = "INSERT INTO `wormholes` SET `user` = '{$this->user}', `signature` = '$ID', `type` = '$yaml_type', `created` = '$date', `system1` = '$yaml_system', `system2` = '$yaml_leads', `life` = '$intLife', `mass` = '$intMass'";
         } else{
-            $query = "UPDATE `wormholes` SET `user` = '{$this->user}', `signature` = '$ID', `type` = '$Type', `modified` = '$date', `system1` = '$intSystem', `system2` = '$intLeads', `life` = '$intLife', `mass` = '$intMass' WHERE `id` = '$wh_id'";
+            $query = "UPDATE `wormholes` SET `user` = '{$this->user}', `signature` = '$ID', `type` = '$yaml_type', `modified` = '$date', `system1` = '$yaml_system', `system2` = '$yaml_leads', `life` = '$intLife', `mass` = '$intMass' WHERE `id` = '$wh_id'";
         }
         $result = $this->db->query($query);
     }
