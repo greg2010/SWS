@@ -1,0 +1,163 @@
+{% extends "base.twig" %}
+
+{% block title %}Wormholes{% endblock %}
+
+{% block content %}
+    <div id="formSettings">
+        <h1>Wormholes</h1>
+        <div>
+            <center><span>Move the cursor to "ID", "Type", "Age", "System" or "Leads To" for more details</span></center>
+        </div>
+            <table class="table table-condensed tablesorter" style="width: 98%; margin: 0 auto; margin-left: 5px;" id="">
+                <thead>
+                    <tr>
+                        <p class="p-container">
+                            <input type="button" name="add" id="" onclick="" value="ADD NEW" />
+                        </p>
+                    </tr>
+                    <tr align="center">
+                        <th width = "10%"><center><a id="tablehead" style="font-size: 14px;">ID </a><i class="glyphicon glyphicon-resize-vertical" style="color:#ccc;"></i></center></th>
+                        <th width = "10%"><center><a id="tablehead" style="font-size: 14px;">TYPE </a><i class="glyphicon glyphicon-resize-vertical" style="color:#ccc;"></i></center></th>
+                        <th width = "10%"><center><a id="tablehead" style="font-size: 14px;">AGE </a><i class="glyphicon glyphicon-resize-vertical" style="color:#ccc;"></i></center></th>
+                        <th width = "13%"><center><a id="tablehead" style="font-size: 14px;">SYSTEM </a><i class="glyphicon glyphicon-resize-vertical" style="color:#ccc;"></i></center></th>
+                        <th width = "13%"><center><a id="tablehead" style="font-size: 14px;">LEADS TO </a><i class="glyphicon glyphicon-resize-vertical" style="color:#ccc;"></i></center></th>
+                        <th width = "12%"><center><a id="tablehead" style="font-size: 14px;">LIFE </a><i class="glyphicon glyphicon-resize-vertical" style="color:#ccc;"></i></center></th>
+                        <th width = "12%"><center><a id="tablehead" style="font-size: 14px;">MASS </a><i class="glyphicon glyphicon-resize-vertical" style="color:#ccc;"></i></center></th>
+                        <th width = "20%"><center><a id="tablehead" style="font-size: 14px;"></a></center></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><center><span style="font-size: 14px; cursor: help;" 
+                            title="Scanned by: atap">
+                                ABC</span></center></td>
+                        <td><center><span style="font-size: 14px; cursor: help;" 
+                            title="
+                            Life: 24 Hours
+                            Leads To: Low-Sec
+                            Max Mass: 3000 Mil Kg
+                            Max Jumpable: 1350 Mil Kg">
+                                C140</span></center></td>
+                        <td><center><span style="font-size: 14px; cursor: help;" 
+                            title="
+                            Created: 14:38 09.05.2015
+                            Last Modified: 14:46 09.05.2015">
+                                00:17</span></center></td>
+                        <td><center><span id="danger" style="font-size: 14px; cursor: help;" 
+                            title=" 
+                            Region: Insmother
+                            Constellation: QA-P7J
+                            Security Level: 0.0">
+                                C-J6MT</span></center></td>
+                        <td><center><span id="success" style="font-size: 14px; cursor: help;" 
+                            title=" 
+                            Region: 
+                            Constellation: 
+                            Security Level: ">
+                                Jita</span></center></td>
+                        <td><center><span style="font-size: 14px;">Stable</span></center></td>
+                        <td><center><span style="font-size: 14px;" id="attention">Destab</span></center></td>
+                        <td>
+                            <p class="p-container" style="height:20px;">
+                                <input type="button" name="DELETE" id="danger" onclick="" class="btnsmallwh" value="DELETE" />
+                                <input type="button" name="EDIT" id="" onclick="" class="btnsmallwh" value="EDIT" />
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><center><span style="font-size: 14px;">DEF</span></center></td>
+                        <td><center><span style="font-size: 14px;">M530</span></center></td>
+                        <td><center><span style="font-size: 14px;" id="danger">13:21</span></center></td>
+                        <td><center><span style="font-size: 14px;" id="danger">4M-QXK</span></center></td>
+                        <td><center><span id="danger" style="font-size: 14px; cursor: help;" 
+                            title=" 
+                            Wormhole Class: 4
+                            Static: U240 to Low-Sec
+                            System Effect: Red Giant">
+                                J123753</span></center></td>
+                        <td><center><span style="font-size: 14px;" id="danger">Critical</span></center></td>
+                        <td><center><span style="font-size: 14px;" id="attention">Destab</span></center></td>
+                        <td>
+                            <p class="p-container" style="height:20px;">
+                                <input type="button" name="DELETE" id="danger" onclick="" class="btnsmallwh" value="DELETE" />
+                                <input type="button" name="EDIT" id="" onclick="" class="btnsmallwh" value="EDIT" />
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    </div>
+    <form>
+        <h1 style="color: #f6c000; font-size: 20px;">ADD WORMHOLE</h1>
+        <hr />
+        <table style="margin-left: 50px;">
+            <tr>
+                <td style="width: 80px">
+                    <span>ID: ###-[###]</span>
+                </td>
+                <td style="width: 150px">
+                    <input type="text" name="ID" style="width: 150px;">
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 80px">
+                    <span>TYPE:</span>
+                </td>
+                <td style="width: 150px">
+                    <input type="text" name="Type" style="width: 150px;">
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 80px">
+                    <span>SYSTEM:</span>
+                </td>
+                <td style="width: 150px">
+                    <input type="text" name="System" style="width: 150px;">
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 80px">
+                    <span>LEADS TO:</span>
+                </td>
+                <td style="width: 150px">
+                    <input type="text" name="Leads" style="width: 150px;">
+                </td>
+            </tr>
+        </table>
+        <table style="margin-left: 50px; margin-top: 20px">
+            <tr>
+                <td style="width: 150px">
+                    <li class="dropdown" style="list-style-type: none;">
+                        <a class="dropdown-toggle" data-toggle="dropdown" role="menu" data-target="#" href="#" id="caret">
+                            LIFE:
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">STABLE</a></li>
+                            <li><a href="#">CRITICAL</a></li>
+                        </ul>
+                    </li>
+                </td>
+                <td style="width: 150px">
+                    <li class="dropdown" style="list-style-type: none;">
+                        <a class="dropdown-toggle" data-toggle="dropdown" role="menu" data-target="#" href="#" id="caret">
+                            MASS:
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">STABLE</a></li>
+                            <li><a href="#">DESTAB</a></li>
+                            <li><a href="#">CRITICAL</a></li>
+                        </ul>
+                    </li>
+                </td>
+            </tr>
+        </table>
+        <hr />
+        <div class="p-container" style="padding-left: 20px;">
+            <input type="button" class="btnsmallwh" name="CANCEL" value="CANCEL" style="margin-right:80px;">  
+            <input type="button" class="btnsmallwh" name="ADD" value="ADD" style="margin-right:50px;">
+        </div>    
+        <br>
+    </form>
+{% endblock %}

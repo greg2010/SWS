@@ -595,6 +595,12 @@ input[type=button]:hover {
             margin-right: 100px;
 }
 
+#attention {
+            border-color: #f6c000;
+            color: #f6c000;               
+}
+
+
 #SetIns {
             margin-left: 80px;
             margin-right: 80px;
@@ -639,4 +645,9 @@ table {
     height: 100%;
     font-size: 16px;
     padding: 0px 0px;
+}
+
+.btnsmallwh {
+            height: 30px;
+            width: 80px;
 }
