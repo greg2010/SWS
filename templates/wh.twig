@@ -5,9 +5,6 @@
 {% block content %}
     <div id="formSettings">
         <h1>Wormholes</h1>
-        <div>
-            <center><span>Move the cursor to "ID", "Type", "Age", "System" or "Leads To" for more details</span></center>
-        </div>
             <table class="table table-condensed tablesorter" style="width: 98%; margin: 0 auto; margin-left: 5px;" id="">
                 <thead>
                     <tr>
@@ -27,36 +24,43 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for wh in WHList%}
                     <tr>
-                        <td><center><span style="font-size: 14px; cursor: help;" 
-                            title="Scanned by: atap">
-                                ABC</span></center></td>
-                        <td><center><span style="font-size: 14px; cursor: help;" 
-                            title="
-                            Life: 24 Hours
-                            Leads To: Low-Sec
-                            Max Mass: 3000 Mil Kg
-                            Max Jumpable: 1350 Mil Kg">
-                                C140</span></center></td>
-                        <td><center><span style="font-size: 14px; cursor: help;" 
-                            title="
-                            Created: 14:38 09.05.2015
-                            Last Modified: 14:46 09.05.2015">
-                                00:17</span></center></td>
-                        <td><center><span id="danger" style="font-size: 14px; cursor: help;" 
-                            title=" 
-                            Region: Insmother
-                            Constellation: QA-P7J
-                            Security Level: 0.0">
-                                C-J6MT</span></center></td>
-                        <td><center><span id="success" style="font-size: 14px; cursor: help;" 
-                            title=" 
-                            Region: 
-                            Constellation: 
-                            Security Level: ">
-                                Jita</span></center></td>
-                        <td><center><span style="font-size: 14px;">Stable</span></center></td>
-                        <td><center><span style="font-size: 14px;" id="attention">Destab</span></center></td>
+                        <td><center><span style="font-size: 14px; cursor: help;" title="Scanned by: {{wh.Scanned_by}}">{{wh.ID}}</span></center></td>
+                        <td><center><span style="font-size: 14px; cursor: help;" title="Life: {{wh.Type.Life}} Hours
+Leads To: {{wh.Type.Leads_To}}
+Max Mass: {{wh.Type.Max_Mass / 1000000}} Mil Kg
+Max Jumpable: {{wh.Type.Max_Jumpable / 1000000}} Mil Kg">{{wh.Type.Name}}</span></center></td>
+                        <td><center><span style="font-size: 14px; cursor: help;" title="Created: {{wh.Created}}
+{% if wh.Last_Modified %}Last Modified: {{wh.Last_Modified}}{% endif %}">{{wh.Age}}</span></center></td>
+                        <td><center>{% if wh.System.Wormhole_Class %}
+                            <span id="danger" style="font-size: 14px; cursor: help;" title="Wormhole Class: {{wh.System.Wormhole_Class}}
+{% if wh.System.Static1 %}Static: {{wh.System.Static1.Name}} to {{wh.System.Static1.Leads_To}}{% if wh.System.Static2 %} and {{wh.System.Static2.Name}} to {{wh.System.Static2.Leads_To}}{% endif %}{% endif %}
+{% if wh.System.System_Effect %}System Effect: {{wh.System.System_Effect}}{% endif %}">{{wh.System.Name}}</span>
+                        {% else %}
+                            {% if wh.System.Security_Level < 0.5 and wh.System.Security_Level > 0 %}{% set id = "attention" %}
+                            {% elseif wh.System.Security_Level < 0 %}{% set id = "danger" %}
+                            {% else %}{% set id = "success" %}
+                            {% endif %}
+                            <span id="{{id}}" style="font-size: 14px; cursor: help;" title=" Region: {{wh.System.Region}}
+Constellation: {{wh.System.Constellation}}
+Security Level: {{wh.System.Security_Level}}">{{wh.System.Name}}</span>
+                        {% endif %}</center></td>
+                        <td><center>{% if wh.Leads_To.Wormhole_Class %}
+                            <span id="danger" style="font-size: 14px; cursor: help;" title="Wormhole Class: {{wh.Leads_To.Wormhole_Class}}
+{% if wh.Leads_To.Static1 %}Static: {{wh.Leads_To.Static1.Name}} to {{wh.Leads_To.Static1.Leads_To}}{% if wh.Leads_To.Static2 %} and {{wh.Leads_To.Static2.Name}} to {{wh.Leads_To.Static2.Leads_To}}{% endif %}{% endif %}
+{% if wh.Leads_To.System_Effect %}System Effect: {{wh.Leads_To.System_Effect}}{% endif %}">{{wh.Leads_To.Name}}</span>
+                        {% else %}
+                            {% if wh.Leads_To.Security_Level < 0.5 and wh.Leads_To.Security_Level > 0 %}{% set id = "attention" %}
+                            {% elseif wh.Leads_To.Security_Level < 0 %}{% set id = "danger" %}
+                            {% else %}{% set id = "success" %}
+                            {% endif %}
+                            <span id="{{id}}" style="font-size: 14px; cursor: help;" title=" Region: {{wh.Leads_To.Region}}
+Constellation: {{wh.Leads_To.Constellation}}
+Security Level: {{wh.Leads_To.Security_Level}}">{{wh.Leads_To.Name}}</span>
+                        {% endif %}</center></td>
+                        <td><center><span style="font-size: 14px;" {% if wh.Life == "Critical" %}id="danger"{% endif %}>{{wh.Life}}</span></center></td>
+                        <td><center><span style="font-size: 14px;" {% if wh.Mass == "Critical" %}id="danger"{% elseif wh.Mass == "Destab" %}id="attention"{% endif %}>{{wh.Mass}}</span></center></td>
                         <td>
                             <p class="p-container" style="height:20px;">
                                 <input type="button" name="DELETE" id="danger" onclick="" class="btnsmallwh" value="DELETE" />
@@ -64,26 +68,7 @@
                             </p>
                         </td>
                     </tr>
-                    <tr>
-                        <td><center><span style="font-size: 14px;">DEF</span></center></td>
-                        <td><center><span style="font-size: 14px;">M530</span></center></td>
-                        <td><center><span style="font-size: 14px;" id="danger">13:21</span></center></td>
-                        <td><center><span style="font-size: 14px;" id="danger">4M-QXK</span></center></td>
-                        <td><center><span id="danger" style="font-size: 14px; cursor: help;" 
-                            title=" 
-                            Wormhole Class: 4
-                            Static: U240 to Low-Sec
-                            System Effect: Red Giant">
-                                J123753</span></center></td>
-                        <td><center><span style="font-size: 14px;" id="danger">Critical</span></center></td>
-                        <td><center><span style="font-size: 14px;" id="attention">Destab</span></center></td>
-                        <td>
-                            <p class="p-container" style="height:20px;">
-                                <input type="button" name="DELETE" id="danger" onclick="" class="btnsmallwh" value="DELETE" />
-                                <input type="button" name="EDIT" id="" onclick="" class="btnsmallwh" value="EDIT" />
-                            </p>
-                        </td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
     </div>

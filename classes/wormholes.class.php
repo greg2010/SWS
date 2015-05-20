@@ -25,30 +25,30 @@ class wormholes{
         foreach ($tmparr as $tmp){
             if($tmp[attributeID] == "1381"){
                 switch($tmp[valueInt]){
-                    case 1: $type["Leads To"] = "Class 1"; break;
-                    case 2: $type["Leads To"] = "Class 2"; break;
-                    case 3: $type["Leads To"] = "Class 3"; break;
-                    case 4: $type["Leads To"] = "Class 4"; break;
-                    case 5: $type["Leads To"] = "Class 5"; break;
-                    case 6: $type["Leads To"] = "Class 6"; break;
-                    case 7: $type["Leads To"] = "High-Sec"; break;
-                    case 8: $type["Leads To"] = "Low-Sec"; break;
-                    case 9: $type["Leads To"] = "Null-Sec"; break;
-                    case 12: $type["Leads To"] = "Thera"; break;
-                    case 13: $type["Leads To"] = "Shattered Wormhole Systems"; break;
+                    case 1: $type["Leads_To"] = "Class 1"; break;
+                    case 2: $type["Leads_To"] = "Class 2"; break;
+                    case 3: $type["Leads_To"] = "Class 3"; break;
+                    case 4: $type["Leads_To"] = "Class 4"; break;
+                    case 5: $type["Leads_To"] = "Class 5"; break;
+                    case 6: $type["Leads_To"] = "Class 6"; break;
+                    case 7: $type["Leads_To"] = "High-Sec"; break;
+                    case 8: $type["Leads_To"] = "Low-Sec"; break;
+                    case 9: $type["Leads_To"] = "Null-Sec"; break;
+                    case 12: $type["Leads_To"] = "Thera"; break;
+                    case 13: $type["Leads_To"] = "Shattered Wormhole Systems"; break;
                 }
             }
             if($tmp[attributeID] == "1382"){
                 $type["Life"] = $tmp[valueInt]/60;
             }
             if($tmp[attributeID] == "1383"){
-                $type["Max Mass"] = ($tmp[valueInt]) ? $tmp[valueInt] : $tmp[valueFloat];
+                $type["Max_Mass"] = ($tmp[valueInt]) ? $tmp[valueInt] : $tmp[valueFloat];
             }
             /*if($tmp[attributeID] == "1384"){
                 $type["Mass Regeneration"] = ($tmp[valueInt]) ? $tmp[valueInt] : $tmp[valueFloat];
             }*/
             if($tmp[attributeID] == "1385"){
-                $type["Max Jumpable"] = ($tmp[valueInt]) ? $tmp[valueInt] : $tmp[valueFloat];
+                $type["Max_Jumpable"] = ($tmp[valueInt]) ? $tmp[valueInt] : $tmp[valueFloat];
             }
             /*if($tmp[attributeID] == "1457"){
                 $type["Target Distribution ID"] = $tmp[valueInt];
@@ -67,19 +67,19 @@ class wormholes{
         $result = $this->db->query($query);
         if($this->db->hasRows($result)){
             $tmparr2 = $this->db->fetchAssoc($result);
-            $system["Wormhole Class"] = $tmparr2["class"];
+            $system["Wormhole_Class"] = $tmparr2["class"];
             if($tmparr2["static1"]) $system["Static1"] = $this->getType($tmparr2["static1"]);
             if($tmparr2["static2"]) $system["Static2"] = $this->getType($tmparr2["static2"]);
             $query = "SELECT `invTypes`.`typeName` FROM `mapDenormalize` LEFT JOIN `invTypes` ON `mapDenormalize`.`typeid` = `invTypes`.`typeID` WHERE `mapDenormalize`.`solarSystemID` = '$id' AND `mapDenormalize`.`groupID` = '995'";
             $result = $this->db->query($query);
-            if($this->db->hasRows($result)) $system["System Effect"] = $this->db->getMysqlResult($result);
+            if($this->db->hasRows($result)) $system["System_Effect"] = $this->db->getMysqlResult($result);
         } else{
             $query = "SELECT `itemName` FROM `mapDenormalize` WHERE `itemID` = '{$tmparr[regionID]}' OR `itemID` = '{$tmparr[constellationID]}'";
             $result = $this->db->query($query);
             $tmparr2 = $this->db->fetchAssoc($result);
             $system["Region"] = $tmparr2[0][itemName];
             $system["Constellation"] = $tmparr2[1][itemName];
-            $system["Security Level"] = round($tmparr[security], 1);
+            $system["Security_Level"] = round($tmparr[security], 1);
         }
         return $system;
     }
@@ -114,17 +114,17 @@ class wormholes{
         $result = $this->db->query($query);
         $assocArray = ($this->db->countRows($result) == 1) ? array($this->db->fetchAssoc($result)) : $this->db->fetchAssoc($result);
         foreach ($assocArray as $wh){
+            $type = yaml_parse($wh[type]);
             $age = $this->getAge($wh[created], $wh[modified], $type[Life], $wh[life]);
             if($age < 0){
-                $query = "DELETE FROM `wormholes` WHERE `id` = '{$wh[id]}'";
-                $result = $this->db->query($query);
+                //$query = "DELETE FROM `wormholes` WHERE `id` = '{$wh[id]}'";
+                //$result = $this->db->query($query);
             } else{
                 if($age < 4 && $wh[life] == 1){
                     $query = "UPDATE `wormholes` SET `life` = '0' WHERE `id` = '{$wh[id]}'";
                     $result = $this->db->query($query);
                     $life = 0;
                 } else $life = $wh[life];
-                $type = yaml_parse($wh[type]);
                 $system1 = yaml_parse($wh[system1]);
                 $system2 = yaml_parse($wh[system2]);
                 if($wh[mass] == 0) $mass = "Critical";
@@ -133,13 +133,13 @@ class wormholes{
                 $wormholes[] = array(
                     "wh_id" => $wh[id],
                     "ID" => $wh[signature],
-                    "Scanned by" => $wh[user],
+                    "Scanned_by" => $wh[user],
                     "Type" => $type,
                     "Age" => $age,
                     "Created" => $wh[created],
-                    "Last Modified" => $wh[modified],
+                    "Last_Modified" => $wh[modified],
                     "System" => $system1,
-                    "Leads To" => $system2,
+                    "Leads_To" => $system2,
                     "Life" => ($life == 0) ? "Critical" : "Stable",
                     "Mass" => $mass
                 );
