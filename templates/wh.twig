@@ -3,30 +3,37 @@
 {% block title %}Wormholes{% endblock %}
 
 {% block content %}
+    
+    <script type="text/javascript" src="js/jquery.tablesorter.min.js"></script>
+    <script type="text/javascript" src="js/scripts.js"></script>
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    
     <div id="formSettings">
-        <h1>Wormholes</h1>
-            <table class="table table-condensed tablesorter" style="width: 98%; margin: 0 auto; margin-left: 5px;" id="">
+        <h1>Wormholes
+        <p class="p-container" style="float: left;">
+            <input type="button" name="add" id="" onclick="" value="ADD NEW" />
+        </p>
+        </h1>
+            <table class="table table-condensed tablesorter" style="width: 98%; margin: 0 auto; margin-left: 5px;" id="posmonSort">
                 <thead>
-                    <tr>
-                        <p class="p-container">
-                            <input type="button" name="add" id="" onclick="" value="ADD NEW" />
-                        </p>
-                    </tr>
+                    <tr></tr>
                     <tr align="center">
-                        <th width = "10%"><center><a id="tablehead" style="font-size: 14px;">ID </a><i class="glyphicon glyphicon-resize-vertical" style="color:#ccc;"></i></center></th>
-                        <th width = "10%"><center><a id="tablehead" style="font-size: 14px;">TYPE </a><i class="glyphicon glyphicon-resize-vertical" style="color:#ccc;"></i></center></th>
-                        <th width = "10%"><center><a id="tablehead" style="font-size: 14px;">AGE </a><i class="glyphicon glyphicon-resize-vertical" style="color:#ccc;"></i></center></th>
-                        <th width = "13%"><center><a id="tablehead" style="font-size: 14px;">SYSTEM </a><i class="glyphicon glyphicon-resize-vertical" style="color:#ccc;"></i></center></th>
-                        <th width = "13%"><center><a id="tablehead" style="font-size: 14px;">LEADS TO </a><i class="glyphicon glyphicon-resize-vertical" style="color:#ccc;"></i></center></th>
-                        <th width = "12%"><center><a id="tablehead" style="font-size: 14px;">LIFE </a><i class="glyphicon glyphicon-resize-vertical" style="color:#ccc;"></i></center></th>
-                        <th width = "12%"><center><a id="tablehead" style="font-size: 14px;">MASS </a><i class="glyphicon glyphicon-resize-vertical" style="color:#ccc;"></i></center></th>
-                        <th width = "20%"><center><a id="tablehead" style="font-size: 14px;"></a></center></th>
+                        <th width = "10%"><center><a id="tablehead" style="font-size: 14px;">ID </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                        <th width = "10%"><center><a id="tablehead" style="font-size: 14px;">TYPE </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                        <th width = "10%"><center><a id="tablehead" style="font-size: 14px;">AGE </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                        <th width = "13%"><center><a id="tablehead" style="font-size: 14px;">SYSTEM </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                        <th width = "13%"><center><a id="tablehead" style="font-size: 14px;">LEADS TO </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                        <th width = "12%"><center><a id="tablehead" style="font-size: 14px;">LIFE </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                        <th width = "12%"><center><a id="tablehead" style="font-size: 14px;">MASS </a><i class="fa fa-sort" style="color:#ccc;"></i></center></th>
+                        <th width = "10%"><center><a id="tablehead" style="font-size: 14px;"></a></center></th>
+                        <th width = "10%"><center><span class="glyphicon glyphicon-refresh" style="color:#ccc;"></span></center></th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for wh in WHList%}
                     <tr>
-                        <td><center><span style="font-size: 14px; cursor: help;" title="Scanned by: {{wh.Scanned_by}}">{{wh.ID}}</span></center></td>
+                        <td><center><span style="font-size: 14px; cursor: help;" title="Scanned by: 
+                                      {{wh.Scanned_by}}">{{wh.ID}}</span></center></td>
                         <td><center><span style="font-size: 14px; cursor: help;" title="Life: {{wh.Type.Life}} Hours
 Leads To: {{wh.Type.Leads_To}}
 Max Mass: {{wh.Type.Max_Mass / 1000000}} Mil Kg
@@ -63,8 +70,12 @@ Security Level: {{wh.Leads_To.Security_Level}}">{{wh.Leads_To.Name}}</span>
                         <td><center><span style="font-size: 14px;" {% if wh.Mass == "Critical" %}id="danger"{% elseif wh.Mass == "Destab" %}id="attention"{% endif %}>{{wh.Mass}}</span></center></td>
                         <td>
                             <p class="p-container" style="height:20px;">
-                                <input type="button" name="DELETE" id="danger" onclick="" class="btnsmallwh" value="DELETE" />
                                 <input type="button" name="EDIT" id="" onclick="" class="btnsmallwh" value="EDIT" />
+                            </p>
+                        </td>
+                        <td>
+                            <p class="p-container" style="height:20px;">
+                                <input type="button" name="DELETE" id="danger" onclick="" class="btnsmallwh" value="DELETE" />                               
                             </p>
                         </td>
                     </tr>
