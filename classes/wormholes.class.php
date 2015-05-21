@@ -11,9 +11,9 @@ class wormholes{
     }
 
     private function getUserName($id){
-        $query = "SELECT `login` FROM `users` WHERE `id`='$id'";
+        $query = "SELECT `login` FROM `users` WHERE `id` = '$id'";
         $result = $this->db->query($query);
-        return $this->db->hasRows($result);
+        return $this->db->getMysqlResult($result);
     }
 
     private function getType($name){
@@ -127,13 +127,14 @@ class wormholes{
                 } else $life = $wh[life];
                 $system1 = yaml_parse($wh[system1]);
                 $system2 = yaml_parse($wh[system2]);
+                $userName = $this->getUserName($wh[user]);
                 if($wh[mass] == 0) $mass = "Critical";
                 elseif($wh[mass] == 1) $mass = "Destab";
                 else $mass = "Stable";
                 $wormholes[] = array(
                     "wh_id" => $wh[id],
                     "ID" => $wh[signature],
-                    "Scanned_by" => $wh[user],
+                    "Scanned_by" => $userName,
                     "Type" => $type,
                     "Age" => $age,
                     "Created" => $wh[created],

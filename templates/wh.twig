@@ -6,12 +6,31 @@
     
     <script type="text/javascript" src="js/jquery.tablesorter.min.js"></script>
     <script type="text/javascript" src="js/scripts.js"></script>
+
+    <script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            PopUpHide();
+        });
+        function PopUpShow(){
+            $("#add_form").show();
+        }
+        function PopUpHide(){
+            $("#add_form").hide();
+        }
+        //function addWormhole(){
+            //location.href="updateWH.php?ID="+document.getElementsByName("ID")[0].value+"&Type="+document.getElementById("Type").value+"&System="+document.getElementById("System").value+"&Leads="+document.getElementById("Leads").value+"&Life=Stable&Mass=Stable";
+            //PopUpHide();
+        //}
+        //document.getElementById("add").onclick = addWormhole;
+    </script>
+
     <link rel="stylesheet" href="css/font-awesome.min.css">
     
     <div id="formSettings">
         <h1>Wormholes
         <p class="p-container" style="float: left;">
-            <input type="button" name="add" id="" onclick="" value="ADD NEW" />
+            <input type="button" name="add" id="" onclick="javascript:PopUpShow()" value="ADD NEW" />
         </p>
         </h1>
             <table class="table table-condensed tablesorter" style="width: 98%; margin: 0 auto; margin-left: 5px;" id="posmonSort">
@@ -32,39 +51,26 @@
                 <tbody>
                     {% for wh in WHList%}
                     <tr>
-                        <td><center><span style="font-size: 14px; cursor: help;" title="Scanned by: 
-                                      {{wh.Scanned_by}}">{{wh.ID}}</span></center></td>
-                        <td><center><span style="font-size: 14px; cursor: help;" title="Life: {{wh.Type.Life}} Hours
-Leads To: {{wh.Type.Leads_To}}
-Max Mass: {{wh.Type.Max_Mass / 1000000}} Mil Kg
-Max Jumpable: {{wh.Type.Max_Jumpable / 1000000}} Mil Kg">{{wh.Type.Name}}</span></center></td>
-                        <td><center><span style="font-size: 14px; cursor: help;" title="Created: {{wh.Created}}
-{% if wh.Last_Modified %}Last Modified: {{wh.Last_Modified}}{% endif %}">{{wh.Age}}</span></center></td>
+                        <td><center><span style="font-size: 14px; cursor: help;" title="Scanned by: {{wh.Scanned_by}}">{{wh.ID}}</span></center></td>
+                        <td><center><span style="font-size: 14px; cursor: help;" title="Life: {{wh.Type.Life}} Hours&#010;Leads To: {{wh.Type.Leads_To}}&#010;Max Mass: {{wh.Type.Max_Mass / 1000000}} Mil Kg&#010;Max Jumpable: {{wh.Type.Max_Jumpable / 1000000}} Mil Kg">{{wh.Type.Name}}</span></center></td>
+                        <td><center><span style="font-size: 14px; cursor: help;" title="Created: {{wh.Created}}&#010;{% if wh.Last_Modified %}Last Modified: {{wh.Last_Modified}}{% endif %}">{{wh.Age}}</span></center></td>
                         <td><center>{% if wh.System.Wormhole_Class %}
-                            <span id="danger" style="font-size: 14px; cursor: help;" title="Wormhole Class: {{wh.System.Wormhole_Class}}
-{% if wh.System.Static1 %}Static: {{wh.System.Static1.Name}} to {{wh.System.Static1.Leads_To}}{% if wh.System.Static2 %} and {{wh.System.Static2.Name}} to {{wh.System.Static2.Leads_To}}{% endif %}{% endif %}
-{% if wh.System.System_Effect %}System Effect: {{wh.System.System_Effect}}{% endif %}">{{wh.System.Name}}</span>
+                            <span id="danger" style="font-size: 14px; cursor: help;" title="Wormhole Class: {{wh.System.Wormhole_Class}}&#010;{% if wh.System.Static1 %}Static: {{wh.System.Static1.Name}} to {{wh.System.Static1.Leads_To}}{% if wh.System.Static2 %} and {{wh.System.Static2.Name}} to {{wh.System.Static2.Leads_To}}{% endif %}&#010;{% endif %}{% if wh.System.System_Effect %}System Effect: {{wh.System.System_Effect}}{% endif %}">{{wh.System.Name}}</span>
                         {% else %}
                             {% if wh.System.Security_Level < 0.5 and wh.System.Security_Level > 0 %}{% set id = "attention" %}
                             {% elseif wh.System.Security_Level < 0 %}{% set id = "danger" %}
                             {% else %}{% set id = "success" %}
                             {% endif %}
-                            <span id="{{id}}" style="font-size: 14px; cursor: help;" title=" Region: {{wh.System.Region}}
-Constellation: {{wh.System.Constellation}}
-Security Level: {{wh.System.Security_Level}}">{{wh.System.Name}}</span>
+                            <span id="{{id}}" style="font-size: 14px; cursor: help;" title=" Region: {{wh.System.Region}}&#010;Constellation: {{wh.System.Constellation}}&#010;Security Level: {{wh.System.Security_Level}}">{{wh.System.Name}}</span>
                         {% endif %}</center></td>
                         <td><center>{% if wh.Leads_To.Wormhole_Class %}
-                            <span id="danger" style="font-size: 14px; cursor: help;" title="Wormhole Class: {{wh.Leads_To.Wormhole_Class}}
-{% if wh.Leads_To.Static1 %}Static: {{wh.Leads_To.Static1.Name}} to {{wh.Leads_To.Static1.Leads_To}}{% if wh.Leads_To.Static2 %} and {{wh.Leads_To.Static2.Name}} to {{wh.Leads_To.Static2.Leads_To}}{% endif %}{% endif %}
-{% if wh.Leads_To.System_Effect %}System Effect: {{wh.Leads_To.System_Effect}}{% endif %}">{{wh.Leads_To.Name}}</span>
+                            <span id="danger" style="font-size: 14px; cursor: help;" title="Wormhole Class: {{wh.Leads_To.Wormhole_Class}}&#010;{% if wh.Leads_To.Static1 %}Static: {{wh.Leads_To.Static1.Name}} to {{wh.Leads_To.Static1.Leads_To}}{% if wh.Leads_To.Static2 %} and {{wh.Leads_To.Static2.Name}} to {{wh.Leads_To.Static2.Leads_To}}{% endif %}&#010;{% endif %}{% if wh.Leads_To.System_Effect %}System Effect: {{wh.Leads_To.System_Effect}}{% endif %}">{{wh.Leads_To.Name}}</span>
                         {% else %}
                             {% if wh.Leads_To.Security_Level < 0.5 and wh.Leads_To.Security_Level > 0 %}{% set id = "attention" %}
                             {% elseif wh.Leads_To.Security_Level < 0 %}{% set id = "danger" %}
                             {% else %}{% set id = "success" %}
                             {% endif %}
-                            <span id="{{id}}" style="font-size: 14px; cursor: help;" title=" Region: {{wh.Leads_To.Region}}
-Constellation: {{wh.Leads_To.Constellation}}
-Security Level: {{wh.Leads_To.Security_Level}}">{{wh.Leads_To.Name}}</span>
+                            <span id="{{id}}" style="font-size: 14px; cursor: help;" title=" Region: {{wh.Leads_To.Region}}&#010;Constellation: {{wh.Leads_To.Constellation}}&#010;Security Level: {{wh.Leads_To.Security_Level}}">{{wh.Leads_To.Name}}</span>
                         {% endif %}</center></td>
                         <td><center><span style="font-size: 14px;" {% if wh.Life == "Critical" %}id="danger"{% endif %}>{{wh.Life}}</span></center></td>
                         <td><center><span style="font-size: 14px;" {% if wh.Mass == "Critical" %}id="danger"{% elseif wh.Mass == "Destab" %}id="attention"{% endif %}>{{wh.Mass}}</span></center></td>
@@ -83,6 +89,7 @@ Security Level: {{wh.Leads_To.Security_Level}}">{{wh.Leads_To.Name}}</span>
                 </tbody>
             </table>
     </div>
+    <div class="b-popup" id="add_form"><div class="b-popup-content">
     <form>
         <h1 style="color: #f6c000; font-size: 20px;">ADD WORMHOLE</h1>
         <hr />
@@ -120,6 +127,7 @@ Security Level: {{wh.Leads_To.Security_Level}}">{{wh.Leads_To.Name}}</span>
                 </td>
             </tr>
         </table>
+        {{leads}}
         <table style="margin-left: 50px; margin-top: 20px">
             <tr>
                 <td style="width: 150px">
@@ -151,9 +159,10 @@ Security Level: {{wh.Leads_To.Security_Level}}">{{wh.Leads_To.Name}}</span>
         </table>
         <hr />
         <div class="p-container" style="padding-left: 20px;">
-            <input type="button" class="btnsmallwh" name="CANCEL" value="CANCEL" style="margin-right:80px;">  
+            <input type="button" class="btnsmallwh" name="CANCEL" value="CANCEL" style="margin-right:80px;" onclick="javascript:PopUpHide()">  
             <input type="button" class="btnsmallwh" name="ADD" value="ADD" style="margin-right:50px;">
         </div>    
         <br>
     </form>
+    </div></div>
 {% endblock %}
