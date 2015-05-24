@@ -7,7 +7,7 @@ class wormholes{
 
     public function __construct($user){
         $this->db = db::getInstance();
-        $this->user = $this->getUserName($user);
+        $this->user = $user;
     }
 
     private function getUserName($id){
@@ -172,7 +172,7 @@ class wormholes{
         if($wh_id == NULL){
             $query = "INSERT INTO `wormholes` SET `user` = '{$this->user}', `signature` = '$ID', `type` = '$yaml_type', `created` = '$date', `system1` = '$yaml_system', `system2` = '$yaml_leads', `life` = '$intLife', `mass` = '$intMass'";
         } else{
-            $query = "UPDATE `wormholes` SET `user` = '{$this->user}', `signature` = '$ID', `type` = '$yaml_type', `modified` = '$date', `system1` = '$yaml_system', `system2` = '$yaml_leads', `life` = '$intLife', `mass` = '$intMass' WHERE `id` = '$wh_id'";
+            $query = "UPDATE `wormholes` SET `signature` = '$ID', `type` = '$yaml_type', `modified` = '$date', `system1` = '$yaml_system', `system2` = '$yaml_leads', `life` = '$intLife', `mass` = '$intMass' WHERE `id` = '$wh_id'";
         }
         $result = $this->db->query($query);
     }
