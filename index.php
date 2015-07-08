@@ -28,5 +28,4 @@ if ($xmpp_result[online] > 0) {
     $toTemplate['jabber']['status'] = "Offline";
     $toTemplate['jabber']['online'] = "0";
 }
-
 require 'twigRender.php';

@@ -499,7 +499,18 @@ class db {
         }
         mysqli_stmt_close($stmt);
     }
-    
+
+    private function predefinedDeleteRestoreHash($hash) {
+        $stmt = mysqli_prepare($this->connection, "DELETE FROM `passwordRestore` WHERE `keyHash`=?");
+        mysqli_stmt_bind_param($stmt, "s", $hash);
+        $success = mysqli_stmt_execute($stmt);
+        if (mysqli_error($this->connection)) {
+            throw new Exception("predefinedDeleteRestoreHash: " . mysqli_error($this->connection), mysqli_errno($this->connection));
+        }
+        mysqli_stmt_close($stmt);
+    }
+
+
     public function getUserByLogin($login, $passwordHash) {
         $this->openConnection();
         $id = $this->predefinedMySQLLogin($login, $passwordHash);
@@ -555,6 +566,11 @@ class db {
     public function changeLogin($id, $characterName, $accessMask) {
         $this->openConnection();
         return $this->predefinedChangeLogin($id, $characterName, $accessMask);
+    }
+
+    public function DeleteRestoreHash($hash) {
+        $this->openConnection();
+        return $this->predefinedDeleteRestoreHash($hash);
     }
 
     public function deleteAPI($ownerID, $characterID) {

@@ -18,19 +18,21 @@ class restorePassword {
     private $verified;
     private $changeUserID;
     
-    private function __sleep() {
+    public function __sleep() {
         return array('verified', 'changeUserID');
     }
 
 
-    public function __construct() {
+    public function __construct($action = NULL) {
         $this->db = db::getInstance();
-        $this->generateCode();
+        if ($action == 'init') {
+            $this->generateCode();
+        }
     }
     
     private function generateCode() {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $randstring = '';
+        $randomString = '';
         for ($i = 0; $i < 10; $i++) {
             $randomString .= $characters[rand(0, strlen($characters) - 1)];
         }
@@ -40,32 +42,23 @@ class restorePassword {
     
     private function makeDBRecord() {
         try {
-            $query = "INSERT INTO `passwordRestore` SET `id` = '$this->id', `keyHash` = '$this->hash', `creationTime` = 'NOW()'";
+            $query = "INSERT INTO `passwordRestore` SET `id` = '$this->id', `keyHash` = '$this->hash', `creationTime` = NOW()";
             $this->db->query($query);
         } catch (Exception $ex) {
-            throw new Exception("Database error.", 30);
+            throw new Exception($ex, 30);
         }
     }
 
     private function setCookie() {
         setcookie('restore', $this->code, time()+config::cookie_lifetime);
     }
-
-    private function sendmail($subj, $text){
-        $subject  = '=?UTF-8?B?' . base64_encode($subj) . '?=';
-        $headers  = "MIME-Version: 1.0\r\n"; 
-        $headers .= "Content-type: text/html; charset=utf-8\r\n";
-        $headers .= "From: RADRF Web Services <mailer@coalition.redalliance.pw>\r\n";
-        $headers .= "Reply-to: No-Reply <noreply@coalition.redalliance.pw>\r\n";
-        mail($this->email, $subject, $text, $headers);
-    }
     
     public function verifyUser($inputHash) {
         $string = $_COOKIE[restore] . $_SERVER[REMOTE_ADDR];
-        $hash = hash($string);
+        $hash = hash(config::cookie_hash_type, $string);
         
         if ($hash <> $inputHash) {
-            throw new Exception ("Your code is wrong. Please try again.", 24);
+            throw new Exception ("Your code is wrong.", 24);
         }
         $query = "SELECT `id` FROM `passwordRestore` WHERE `keyHash` = '$hash' LIMIT 1";
         try {
@@ -91,13 +84,16 @@ class restorePassword {
     }
 
     public function setUserData($login, $email) {
+        if ($login == NULL || $email == NULL) {
+            throw new Exception("Please enter your login and email!", 25);
+        }
         $this->login = $login;
         $this->email = $email;
         $this->id = $this->db->getIDByName($this->login);
         if ($this->id == FALSE) {
             throw new Exception("No such user!", 21);
         }
-        $query = "SELECT `email` FROM `users` WHERE `id` = '$id'";
+        $query = "SELECT `email` FROM `users` WHERE `id` = '$this->id'";
         try {
             $dbEmail = $this->db->getMySQLResult($this->db->query($query));
         } catch (Exception $ex) {
@@ -109,22 +105,34 @@ class restorePassword {
         if ($dbEmail <> $this->email) {
             throw new Exception("Wrong email!", 23);
         }
+        $query = "SELECT * FROM `passwordRestore` WHERE `id` = '$this->id'";
+
+        if ($this->db->countRows($this->db->query($query)) > 0) {
+            throw new Exception("You've already requested password reset!", 24);
+        }
     }
     
     public function mail() {
         $this->makeDBRecord();
         $this->setCookie();
-        $subj = "RADRF Web Services Password Restoration";
-        $text = "Hello, $login!\n\n"
-                . "According to our records, you requested to reset your password password .\n"
-                . "Please click on <a href ='https://coalition.redalliance.pw/restore.php?a=step_1&hash=$this->hash'>this</a> link to change your password.\n\n"
-                . "If you did not request this, please click <a href ='https://coalition.redalliance.pw/restore.php?hash=$this->hash&action=remove'>this</a> link.\n\n"
-                . "Thank you,\n"
-                . "RADRF Web Services.";
-        $this->sendmail($subj, $text);
+        $subj = "Restore your password at Red Menace Web Services";
+        $text = "Hi, $this->login!<br><br>"
+                . "Recently you requested to reset your password.<br>.<br>"
+                . "Please click <a href ='http://coalition.redalliance.pw/restore.php?&hash=$this->hash'>here</a> to change your password.<br>"
+                . "If you did not request this, please click <a href ='http://coalition.redalliance.pw/restore.php?hash=$this->hash&action=remove'>here</a>.<br><br>"
+                . "Thanks!<br>"
+                . "Red Menace Web Services";
+
+        $email = new email();
+        $email->sendmailHtml($this->email, $subj, $text);
     }
     
     public function isVerified() {
         return $this->verified;
+    }
+
+    public function removeRequest($hash) {
+        $this->db->DeleteRestoreHash($hash);
+        setcookie('restore', 'NULL', time()-config::cookie_lifetime);
     }
 }
