@@ -2,9 +2,9 @@
 require_once 'init.php';
 session_start();
 
-$posmon = new posmon();
+
 try{
-	$wormholes = new wormholes($_GET[userID]);
+	$wormholes = new wormholes($_SESSION[userObject]->getID());
 	$wormholes->updateWH($_GET[wh_id], $_GET[ID], $_GET[Type], $_GET[System], $_GET[Leads], $_GET[Life], $_GET[Mass]);
 } catch (Exception $ex){
 	if ($ex->getCode() == 31){

@@ -18,21 +18,28 @@
         function PopUpHide(){
             $("#add_form").hide();
         }
-        //function addWormhole(){
-            //location.href="updateWH.php?ID="+document.getElementsByName("ID")[0].value+"&Type="+document.getElementById("Type").value+"&System="+document.getElementById("System").value+"&Leads="+document.getElementById("Leads").value+"&Life=Stable&Mass=Stable";
+        function addWormhole(){
+            document.location.href="updateWH.php?ID="+document.getElementsByName("ID")[0].value+"&Type="+document.getElementsByName("Type")[0].value+"&System="+document.getElementsByName("System")[0].value+"&Leads="+document.getElementsByName("Leads")[0].value+"&Life=Stable&Mass=Stable";
             //PopUpHide();
-        //}
-        //document.getElementById("add").onclick = addWormhole;
+        }
+
     </script>
 
     <link rel="stylesheet" href="css/font-awesome.min.css">
-    
+    {% if errorMsg is defined %}
+        {% set isErrorHidden = "" %}
+    {% else %}
+        {% set isErrorHidden = "hidden" %}
+    {% endif %}
     <div id="formSettings">
         <h1>Wormholes
         <p class="p-container" style="float: left;">
             <input type="button" name="add" id="" onclick="javascript:PopUpShow()" value="ADD NEW" />
         </p>
         </h1>
+        <div class="alert alert-danger" role="alert" {{isErrorHidden}}>
+        {{errorMsg}}
+        </div>
             <table class="table table-condensed tablesorter" style="width: 98%; margin: 0 auto; margin-left: 5px;" id="posmonSort">
                 <thead>
                     <tr></tr>
@@ -127,7 +134,6 @@
                 </td>
             </tr>
         </table>
-        {{leads}}
         <table style="margin-left: 50px; margin-top: 20px">
             <tr>
                 <td style="width: 150px">
@@ -160,7 +166,7 @@
         <hr />
         <div class="p-container" style="padding-left: 20px;">
             <input type="button" class="btnsmallwh" name="CANCEL" value="CANCEL" style="margin-right:80px;" onclick="javascript:PopUpHide()">  
-            <input type="button" class="btnsmallwh" name="ADD" value="ADD" style="margin-right:50px;">
+            <input type="button" class="btnsmallwh" name="ADD" value="ADD" style="margin-right:50px;" onclick="javascript:addWormhole()">
         </div>    
         <br>
     </form>
