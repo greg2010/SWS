@@ -19,7 +19,7 @@ class orgManagement {
     }
 
     public function getCorporationID($name){
-        $query = "SELECT `id` FROM `corporationList` WHERE `name` = '$name'";
+        $query = "SELECT `id` FROM `corporationList` WHERE `name` = '". $this->db->real_escape_string($name) . "'";
         $result = $this->db->query($query);
         return $this->db->getMysqlResult($result);
     }
@@ -37,7 +37,7 @@ class orgManagement {
     }
 
     public function getAllianceID($name){
-        $query = "SELECT `id` FROM `allianceList` WHERE `name` = '$name'";
+        $query = "SELECT `id` FROM `allianceList` WHERE `name` = '". $this->db->real_escape_string($name) . "'";
         $result = $this->db->query($query);
         return $this->db->getMysqlResult($result);
     }

@@ -150,18 +150,21 @@ class APIUserManagement{
                 
                 if ($permissions->hasPermission("webReg_Valid") == TRUE) {
                     //Filter alliances with access to the resources
-                    if (array_search($api[allianceID], $allianceIDList) === FALSE) {
-                        //Only one API per alliance
+//                    if (array_search($api[allianceID], $allianceIDList) === FALSE) {
+//                        //Only one API per alliance
                         $apiCorrect[] = $api;
                         $allianceIDList[] = $api[allianceID];
-                    }
+ //                   }
                 }
             }
         }
         $output = array();
-        
-        try {
-            foreach ($apiCorrect as $api) {
+        $apiPerv = "";
+        foreach ($apiCorrect as $api) {
+            if ($api[allianceID] == $apiPerv) {
+                continue 1;
+            }
+            try {
                 //TODO: REWRITE
                 $pheal = new Pheal($api[keyID], $api[vCode], "char");
                 $response = $pheal->contactList(array("characterID" => $api[characterID]));
@@ -192,21 +195,22 @@ class APIUserManagement{
                     } else {
                         $picStanding = 0;
                     }
-                    
+
                     $output[$apiOrgManagement->getAllianceName($api[allianceID])][$type][$row->contactName]["picStanding"] = $picStanding;
-                    
+
                     unset($picStanding);
-                    
                     $gotTypes = array_keys($output[$apiOrgManagement->getAllianceName($api[allianceID])]);
                     foreach ($gotTypes as $type) {
-                         arsort($output[$apiOrgManagement->getAllianceName($api[allianceID])][$type]);
+                        arsort($output[$apiOrgManagement->getAllianceName($api[allianceID])][$type]);
                     }
+                    $apiPerv = $api[allianceID];
                 }
+            } catch (\Pheal\Exceptions\PhealException $e) {
+                //throw new Exception($e->getMessage(), $e->getCode());
+                //Ignore API errors
+                //TODO: return API errors as separate list
             }
-        } catch(\Pheal\Exceptions\PhealException $e){
-            throw new Exception($e->getMessage(), $e->getCode());
         }
-        
         return $output;
     }
     
