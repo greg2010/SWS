@@ -1,5 +1,5 @@
 <?php
-require_once 'auth.php';
+require_once 'common.php';
 $_SESSION[userObject]->removeCookie();
 unset($_SESSION[userObject]);
 $_SESSION['userObject'] = new userSession();

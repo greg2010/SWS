@@ -1,6 +1,6 @@
 <?php
 $thisPage = "settings";
-require_once 'auth.php';
+require_once 'common.php';
 include 'header.php';
 
 $pageActive = "class=active";
@@ -124,11 +124,6 @@ switch ($page) {
         $toTemplate['curForm'] = 'teamspeak';
         $toTemplate['active']['teamspeak'] = $pageActive;
         $toTemplate['hasReg'] = $_SESSION[userObject]->hasTSRegistration();
-        
-        if ($_SESSION[regSuccess] == 1) {
-            $toTemplate['regSuccess'] = 1;
-            unset($_SESSION[regSuccess]);
-        }
         
         if ($toTemplate[hasReg]) {
             $TSInfo = $_SESSION[userObject]->getTSInfo();

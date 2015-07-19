@@ -19,6 +19,18 @@
             <h1>{% block pageName %}{% endblock %}</h1>
             </div>
             #}
+
+                {% if successMsg is defined %}
+                    {% set isSuccessMsgHidden = "" %}
+                {% else %}
+                    {% set isSuccessMsgHidden = "hidden" %}
+                {% endif %}
+
+                {# IDs: success2, danger#}
+                <div class="alert alert-danger" role="alert" id="success2" {{isSuccessMsgHidden}}>
+                    {{successMsg}}
+                </div>
+
                 {% block superContent %}{% endblock %}
             </div>
             </div>

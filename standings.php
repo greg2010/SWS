@@ -1,6 +1,6 @@
 <?php
 $thisPage = "standings";
-require_once 'auth.php';
+require_once 'common.php';
 include 'header.php';
 
 //$pagePermissions = array("webReg_Valid");

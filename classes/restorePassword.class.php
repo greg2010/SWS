@@ -69,7 +69,7 @@ class restorePassword {
         if ($this->db->countRows($result) <> 1) {
             throw new Exception("Something went terribly wrong. Please contact administrator to prevent the end of the world!", 30);
         }
-        $this->changeUserID = $this->db->fetchMySQLResult($result);
+        $this->changeUserID = $this->db->getMysqlResult($result);
         $this->verified = TRUE;
         return TRUE;
     }
@@ -118,8 +118,8 @@ class restorePassword {
         $subj = "Restore your password at Red Menace Web Services";
         $text = "Hi, $this->login!<br><br>"
                 . "Recently you requested to reset your password.<br>.<br>"
-                . "Please click <a href ='http://coalition.redalliance.pw/restore.php?&hash=$this->hash'>here</a> to change your password.<br>"
-                . "If you did not request this, please click <a href ='http://coalition.redalliance.pw/restore.php?hash=$this->hash&action=remove'>here</a>.<br><br>"
+                . "Please click <a href ='http://" . $_SERVER['SERVER_NAME'] ."/restorePassword.php?&hash=$this->hash'>here</a> to change your password.<br>"
+                . "If you did not request this, please click <a href ='http://" . $_SERVER['SERVER_NAME'] ."/restorePassword.php?hash=$this->hash&action=remove'>here</a>.<br><br>"
                 . "Thanks!<br>"
                 . "Red Menace Web Services";
 

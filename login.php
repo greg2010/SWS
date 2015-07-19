@@ -1,6 +1,6 @@
 <?php
 $thisPage = "login";
-require_once 'auth.php';
+require_once 'common.php';
 include 'header.php';
 
 $templateName = $thisPage;
@@ -28,7 +28,7 @@ if ($loginFormSent == 'sent') {
             $_SESSION[logObject]->setSessionInfo();
             $_SESSION[logObject]->pushToDb('login');
             
-            $_SESSION[successLogin] = "Login successful";
+            $_SESSION[successMsg] = "Login successful";
     } catch (Exception $ex) {
         $toTemplate['saveform']['login'] = $login;
         switch ($ex->getCode()) {

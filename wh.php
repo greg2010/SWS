@@ -1,7 +1,7 @@
 <?php
 
 $thisPage = "wh";
-require_once 'auth.php';
+require_once 'common.php';
 include 'header.php';
 
 $templateName = $thisPage;

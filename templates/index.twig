@@ -4,15 +4,7 @@
 
 {% block content %}
 <div class="container">
-<!--<img src='../images/start.jpg'> надо куда-то впихнуть в индекс если не залогинен-->    
-    {% if successLogin is defined %}
-        {% set isSuccessHidden = "" %}
-    {% else %}
-        {% set isSuccessHidden = "hidden" %}
-    {% endif %}
-    <div class="alert alert-danger" role="alert" id="success2" {{isSuccessHidden}}>
-        {{successLogin}}
-    </div>
+<!--<img src='../images/start.jpg'> надо куда-то впихнуть в индекс если не залогинен-->
     
     <div id="column-1">
         <div style="margin-top: 10px;">

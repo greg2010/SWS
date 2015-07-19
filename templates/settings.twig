@@ -176,14 +176,6 @@
         <div class="alert alert-danger" role="alert" {{isErrorTSHidden}}>
         {{errorMsgTS}}
         </div>
-    {% if regSuccess is defined %}
-        {% set isSuccessHidden = "" %}
-    {% else %}
-        {% set isSuccessHidden = "hidden" %}
-    {% endif %}
-    <div class="alert alert-danger" role="alert" id="success2" {{isSuccessHidden}}>
-        Registration is successful. Congratulations! There is only one step left to become full coalition member.
-    </div>
         <!--<div class="alert alert-danger" role="alert" id="success2">SUCCESS</div>-->
     <div class="inset" id="SetIns">
         <!--<span>Вот сюда надо будет вставить текст на тему того, что есть 2  варианта регистрации в ТС: с использованием Unique ID (для продвинутых пользователей) и пошагово (для неопытных)</span>-->

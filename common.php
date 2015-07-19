@@ -15,3 +15,9 @@ $toTemplate['loggedIN'] = $_SESSION[userObject]->isLoggedIn();
 if ($toTemplate[loggedIN] == 0) {
     $_SESSION[userObject]->logUserByCookie();
 }
+
+
+if (isset($_SESSION[successMsg])) {
+    $toTemplate['successMsg'] = $_SESSION[successMsg];
+    unset($_SESSION[successMsg]);
+}

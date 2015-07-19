@@ -1,6 +1,6 @@
 <?php
 $thisPage = "reg";
-require_once 'auth.php';
+require_once 'common.php';
 include 'header.php';
 $templateName = $thisPage;
 $toTemplate['saveForm']['keyID'] = $_POST[keyID];
@@ -33,7 +33,7 @@ if ($_POST[form] == 'sent') {
                 $_SESSION[userObject]->setCookieForUser();
                 
                 header("Location: /settings.php?a=teamspeak");
-                $_SESSION['regSuccess'] = 1;
+                $_SESSION['successMsg'] = "Registration is successful. Congratulations! There is only one step left to become full coalition member.";
             }
         }
     } catch (Exception $ex) {

@@ -1,7 +1,7 @@
 <?php
 
 $thisPage = "restorePassword";
-require_once 'auth.php';
+require_once 'common.php';
 include 'header.php';
 
 $templateName = $thisPage;
@@ -16,6 +16,8 @@ if ($_GET[hash]) {
         if ($_POST[form] == 'sent') {
             try {
                 $_SESSION[restore]->setNewPassword($_POST[password], $_POST[passwordRepeat]);
+                $_SESSION[restore]->removeRequest($_GET[hash]);
+                $_SESSION["successMsg"] = "Password has been successfully changed.";
                 header("Location: /login.php");
             } catch (Exception $ex) {
                 switch ($ex->getCode()) {
@@ -43,6 +45,7 @@ if ($_GET[hash]) {
                 break;
             case 31:
                 $_SESSION[restore]->removeRequest($_GET[hash]);
+                $_SESSION["successMsg"] = "Your request has been removed.";
                 header("Location: /restorePassword.php");
                 break;
         }
