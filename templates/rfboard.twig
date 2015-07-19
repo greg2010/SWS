@@ -1,0 +1,127 @@
+{% extends "base.twig" %}
+
+{% block title %}Posmon{% endblock %}
+
+{% block content %}
+<div class="container" id="formSettings">            
+        <h1>REINFORCE BOARD</h1>
+        <h2 style="font-size: 20px;"><center>ADD NEW TIMER</center></h2>
+        <table class="table table-condensed tablesorter" style="width: 70%; margin-left: 40px;">
+            <tbody>
+                <tr>
+                    <table style="width: 90%; margin-left: 40px;"> <!--шапка выбора-->
+                        <tr>
+                            <td width = "15%" style="padding: 1px;">
+                                <input type="text" name="WHAT" id="RFselect" placeholder="WHAT RFed">
+                            </td>
+                            <td width = "15%" style="padding: 1px;">
+                                <input type="text" name="OWNER" id="RFselect" placeholder="OWNER">
+                            </td>
+                            <td width = "15%" style="padding: 1px;">
+                                    <input type="text" name="SYSTEM" id="RFselect" placeholder="SYSTEM">
+                            </td>
+                            <td width = "12.5%" style="padding: 1px;">
+                                    <input type="text" name="PLANET" id="RFselect" placeholder="PLANET">
+                            </td>
+                            <td width = "12.5%" style="padding: 1px;">
+                                    <input type="text" name="MOON" id="RFselect" placeholder="MOON">
+                            </td>
+                            <td width = "10%" style="padding: 1px;">
+                                    <input type="text" name="TIMER" id="RFselect" placeholder="TIMER">
+                            </td>
+                            <td width = "10%" style="padding: 1px;">
+                            <input type="text" name="RF NUM" id="RFselect" placeholder="RF NUM">
+                            </td>
+                            <td width = "10%" style="padding: 1px;">
+                                    <input type="text" name="COMMENT" id="RFselect" placeholder="COMMENT">
+                            </td>
+                        </tr>
+                        <tr>
+                           <td><span style="margin-left: 5px;">what rfed?</span></td>
+                           <td><span style="margin-left: 5px;">owner</span></td>
+                           <td><span style="margin-left: 5px;">system</span></td>
+                           <td><span style="margin-left: 5px;">planet</span></td>
+                           <td><span style="margin-left: 5px;">moon</span></td>
+                           <td><span style="margin-left: 5px;">timer</span></td>
+                           <td><span style="margin-left: 5px;">rf number</span></td>
+                           <td><span style="margin-left: 5px;">comment</span></td>
+                        </tr>
+                    </table>
+                             <p class="p-container" style="width: 90%; margin: 20px;">
+                                    <input type="hidden" name="form" value="add">
+                                    <input type="button" name="add" value="ADD TIMER">
+                            </p>
+                </tr>
+            </tbody>
+             <hr />
+        </table>
+        <h2 style="font-size: 20px;"><center>TIMEBOARD</center></h2>
+        <table class="table table-condensed tablesorter" style="width: 75%; margin-left: 40px;">
+            <tbody> 
+                <tr>
+                    <table style="margin-left: 10px; margin-right: 10px;" id="rf1">
+                        <tr>
+                            <td width = "23%"><center><h2 id="rf3">TYPE</h2></center></td>
+                            <td width = "11%"><center><h2 id="rf3">OWNER</h2></center></td>
+                            <td width = "10%"><center><h2 id="rf3">REGION</h2></center></td>
+                            <td width = "6%"><center><h2 id="rf3">SYSTEM</h2></center></td>
+                            <td width = "5%"><center><h2 id="rf3">P-M</h2></center></td>
+                            <td width = "6%"><center><h2 id="rf3">TIMER</h2></center></td>
+                            <td width = "15%"><center><h2 id="rf3">TIMER LEFT</h2></center></td>
+                            <td width = "4%"><center><h2 id="rf3">RF N</h2></center></td>
+                            <td width = "9%"><center><h2 id="rf3">ADDED BY</h2></center></td>
+                            <td width = "7%"><center><h2 id="rf3">COMMENTS</h2></center></td>
+                            <td width = "4%"><center><h2 id="rf3">EDIT</h2></center></td>
+                        </tr>
+                        <tr>
+                            <td id="rf2"><span>Minmatar Control Tower Medium</span></td>
+                            <td id="rf2"><span>Red Alliance</span></td>
+                            <td id="rf2"><span>Scalding Pass</span></td>
+                            <td id="rf2"><center><span>1V-LI2</span></center></td>
+                            <td id="rf2"><center><span>VI - 14</span></center></td>
+                            <td id="rf2"><center><span>1d 20h</span></center></td>
+                            <td id="rf2"><center><span>2015-02-07 12:05:05</span></center></td>
+                            <td id="rf2"><center><span>1</span></center></td>
+                            <td id="rf2"><center><span>greg2010</span></center></td>
+                            <td id="rf2"><center><span>Hafium</span></center></td>
+                            <td id="rf2"><center><button id="rf4">edit</button></center></td>
+                        </tr>
+                       <tr>
+                            <td id="rf2"><span>Minmatar Control Tower Medium</span></td>
+                            <td id="rf2"><span>Red Alliance</span></td>
+                            <td id="rf2"><span>Scalding Pass</span></td>
+                            <td id="rf2"><center><span>1V-LI2</span></center></td>
+                            <td id="rf2"><center><span>VI - 14</span></center></td>
+                            <td id="rf2"><center><span>1d 20h</span></center></td>
+                            <td id="rf2"><center><span>2015-02-07 12:05:05</span></center></td>
+                            <td id="rf2"><center><span>1</span></center></td>
+                            <td id="rf2"><center><span>greg2010</span></center></td>
+                            <td id="rf2"><center><span>Hafium</span></center></td>
+                            <td id="rf2"><center><button id="rf4">edit</button></center></td>
+                        </tr>
+                        <tr>
+                            <td id="rf2"><span>Minmatar Control Tower Medium</span></td>
+                            <td id="rf2"><span>Red Alliance</span></td>
+                            <td id="rf2"><span>Scalding Pass</span></td>
+                            <td id="rf2"><center><span>1V-LI2</span></center></td>
+                            <td id="rf2"><center><span>VI - 14</span></center></td>
+                            <td id="rf2"><center><span style="color: #FF4500">OUT</span></center></td>
+                            <td id="rf2"><center><span style="color: #FF4500">OUT</span></center></td>
+                            <td id="rf2"><center><span>1</span></center></td>
+                            <td id="rf2"><center><span>greg2010</span></center></td>
+                            <td id="rf2"><center><span>Hafium</span></center></td>
+                            <td id="rf2"><center><button id="rf4">edit</button></center></td>
+                        </tr>
+                    </table>
+                </tr>
+                 
+             </tbody>
+        </table>    
+         <p class="p-container" style="width: 90%; margin: 20px;">
+                                    <input type="hidden" name="form" value="add">
+                                    <input type="button" name="add" value="ADD NEW TIMER">
+                            </p>
+</div>  
+    
+    
+{% endblock %}

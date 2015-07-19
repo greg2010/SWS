@@ -667,3 +667,83 @@ table {
     margin:15%;
     box-shadow: 0px 0px 10px #000;
 }
+
+.new-select-style-rf1 select{
+        border-radius: 0;
+        background: transparent;
+        height: 26px;
+        padding: 5px;
+        border: 0;
+        font-size: 16px;
+        line-height: 1;
+    -webkit-appearance: none;
+        width: 220px;
+        box-shadow: 0 1px 0 rgba(255,255,255,0.1);
+        border-radius:0.3em;
+   
+}
+
+.new-select-style-rf1 {
+        border: 1px solid #f6c000;
+        overflow: hidden;
+        height: 27px;
+        background: url("../images/select.png") no-repeat right;
+        width: 200px;
+}
+
+.new-select-style-rf2 select{
+        border-radius: 0;
+        background: transparent;
+        height: 26px;
+        padding: 5px;
+        border: 0;
+        font-size: 16px;
+        line-height: 1;
+    -webkit-appearance: none;
+        width: 80px;
+}
+
+.new-select-style-rf2 {
+        border: 1px solid #f6c000;
+        overflow: hidden;
+        height: 27px;
+        background: url("../images/select.png") no-repeat right;
+        width: 60px;
+    
+}
+
+
+#RFselect {
+    border: 1px solid #f6c000;
+
+        height: 27px;
+        font-size: 14px;
+        margin-bottom: 0px;
+        
+}
+
+#rf1 {
+        border-collapse: collapse; /* Убираем двойные линии между ячейками */
+        border: 2px solid #111; /* Параметры рамки */
+} 
+
+#rf2 {
+        font-size: 13px;
+        padding: 3px; /* Поля вокруг содержимого таблицы */
+        border: 1px solid #6c5603; /* Параметры рамки */
+}
+
+#rf3 {
+        font-size: 15px;
+        color: #f6c000;
+        font-weight: bold;
+        margin-bottom: 1px;
+}
+
+#rf4 {
+        background-color: #111;
+        color: #FF4500;
+        border-color: #f6c000;
+        
+    
+}
