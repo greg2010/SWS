@@ -3,5 +3,473 @@
 {% block title %}Admin Panel{% endblock %}
 
 {% block content %}
-    
+{# начало формы альянсовых доступов #}
+<div class="container">
+    <ul class="nav nav-tabs navbar-inverse" role="tablist">
+        <li><a href="active">ALLIANCE ACCESS</a></li>
+        <li><a href="#">CORPORATE ACCESS</a></li>
+        <li><a href="#">PERSONAL ROLES</a></li>
+    </ul>  
+    <div class="container" id="formSettings">            
+        <h1>ALLIANCES WITH ACCESS</h1>
+            <table class="table" style="width: 1080px; margin-left: 30px;">
+            <tbody>
+                <tr style="color: #f6c000;">
+                    <th>
+                        <h2>Alliance name</h2>
+                    </th>
+                    <th>
+                        <center><h2>Alliance ID</h2></center>
+                    </th>
+                    <th>
+                        <center><h2>Access</h2></center>
+                    </th>
+                    <th>
+                        <h2 style="float: right;">Remove access</h2>
+                    </th>  
+                </tr>
+                <tr>
+                    <th>
+                        <a href="#">Red Alliance</a>
+                    </th>
+                    <th>
+                        <center><a href="#">4568746</a></center>
+                    </th>
+                    <th>
+                        <center><a href="#" id="success">Yes</a></center>
+                    </th>
+                    <th>
+                        <center><p class="p-container" style="height: 20px;">
+                        <input type="button" name="go" id="danger" value="DELETE" disabled>
+                        </p></center>
+                    </th>  
+                </tr>
+                <tr>
+                    <th>
+                        <a href="#">Against All Authorites</a>
+                    </th>
+                    <th>
+                        <center><a href="#">4568746</a></center>
+                    </th>
+                    <th>
+                        <center><a href="#" id="success">Yes</a></center>
+                    </th>
+                    <th>
+                        <p class="p-container" style="height: 20px;">
+                        <input type="button" name="go" id="danger" value="DELETE" disabled>
+                        </p>
+                    </th>  
+                </tr>
+                <tr>
+                    <th>
+                        <a href="#">Soviet-Union</a>
+                    </th>
+                    <th>
+                        <center><a href="#">4568746</a></center>
+                    </th>
+                    <th>
+                        <center><a href="#" id="success">Yes</a></center>
+                    </th>
+                    <th>
+                        <p class="p-container" style="height: 20px;">
+                        <input type="button" name="go" id="danger" value="DELETE" disabled>
+                        </p>
+                    </th>  
+                </tr>
+            </tbody>
+            </table> 
+            <table class="table" style="width: 1080px; margin-left: 30px;">
+            <tbody>
+                <tr>
+                    <th style="width: 520px;">
+                        <h2>ADD NEW ALLIANCE</h2>
+                        <p class="p-container" style="margin-left: 0px; height: 40px; margin-bottom: 50px; width: 500px; float:right;" role="search">
+                        <label for="search">Search Alliance</label>
+                        <input type="text" class="form-control" placeholder="Search">      
+                        </p>
+                    </th>
+                    <th style="vertical-align: bottom;">
+                        <p class="p-container" style="float:left; margin-bottom: 35px; height: 30px;">
+                        <input type="button" class="btn" name="select" value="SELECT">    
+                        </p>
+                    </th>
+                    <th>
+                    </th>
+                </tr>
+                <tr>
+                    <th>
+                        <div class="amPmCheckbox">
+                        <input type="checkbox" name="allow" id="ch2" value="1" />
+                        <label for="ch2">Create TS group for <a href="#">Red Alliance</a></label>
+                        </div>
+                    </th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th><p class="p-container" style="margin-left: 50px;">
+                        <input type="hidden" name="form" value="add">
+                        <input type="button" name="add" value="ADD">
+                        </p>
+                    </th> 
+                </tr>
+            </tbody>
+            </table>
+    </div>
+</div>
+{# конец формы альянсовых доступов #}
+{# начало формы корпоративных доступов #}
+<div class="container">
+    <ul class="nav nav-tabs navbar-inverse" role="tablist">
+        <li><a href="#">ALLIANCE ACCESS</a></li>
+        <li><a href="active">CORPORATE ACCESS</a></li>
+        <li><a href="#">PERSONAL ROLES</a></li>
+    </ul>  
+    <div class="container" id="formSettings">            
+        <h1>CORPORATION ACCESS</h1>
+            <table class="table" style="width: 1080px; margin-left: 30px;">
+            <tbody>
+                <tr style="color: #f6c000;">
+                    <th>
+                        <h2>Corporation name</h2>
+                    </th>
+                    <th>
+                        <h2>Ticker</h2>
+                    </th>
+                    <th>
+                        <h2>Alliance</h2>
+                    </th>
+                    <th>
+                        <center><h2>Access</h2></center>
+                    </th>
+                    <th>
+                        <h2 style="float: right;">Remove access</h2>
+                    </th>  
+                </tr>
+                <tr>
+                    <th>
+                        <a href="#">Red Concil</a>
+                    </th>
+                    <th>
+                        <a href="#">REDHC</a>
+                    </th>
+                    <th>
+                        <a href="#">Red Alliance</a>
+                    </th>
+                    <th>
+                        <center><a href="#" id="success">Yes</a></center>
+                    </th>
+                    <th>
+                        <center><p class="p-container" style="height: 20px;">
+                        <input type="button" name="go" id="danger" value="DELETE" disabled>
+                        </p></center>
+                    </th>  
+                </tr>
+                <tr>
+                    <th>
+                        <a href="#">Rage and Terror</a>
+                    </th>
+                    <th>
+                        <a href="#">RAT</a>
+                    </th>
+                    <th>
+                        <a href="#">Against ALL Authorities</a>
+                    </th>
+                    <th>
+                        <center><a href="#" id="success">Yes</a></center>
+                    </th>
+                    <th>
+                        <p class="p-container" style="height: 20px;">
+                        <input type="button" name="go" id="danger" value="DELETE" disabled>
+                        </p>
+                    </th>  
+                </tr>
+                <tr>
+                    <th>
+                        <a href="#">The Black Company G.C.</a>
+                    </th>
+                    <th>
+                        <a href="#">TBCOM</a>
+                    </th>
+                    <th>
+                        <a href="#">Soviet-Union</a>
+                    </th>
+                    <th>
+                        <center><a href="#" id="success">Yes</a></center>
+                    </th>
+                    <th>
+                        <p class="p-container" style="height: 20px;">
+                        <input type="button" name="go" id="danger" value="DELETE" disabled>
+                        </p>
+                    </th>  
+                </tr>
+            </tbody>
+            </table> 
+            <table class="table" style="width: 1080px; margin-left: 30px;">
+            <tbody>
+                <tr>
+                    <th style="width: 520px;">
+                        <h2>ADD NEW CORPORATION</h2>
+                        <p class="p-container" style="margin-left: 0px; height: 40px; margin-bottom: 50px; width: 500px; float:right;" role="search">
+                            <label for="search">Search Corporation</label>
+                            <input type="text" class="form-control" placeholder="Search" id="search">      
+                        </p>
+                    </th>
+                    <th style="vertical-align: bottom;">
+                        <p class="p-container" style="float:left; margin-bottom: 35px; height: 30px;">
+                            <input type="button" name="select" value="SELECT">    
+                        </p>
+                    </th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th>
+                        <p class="p-container" style="margin-left: 50px;">
+                            <input type="hidden" name="form" value="add">
+                            <input type="button" name="add" value="ADD">
+                        </p>
+                    </th> 
+                </tr>
+            </tbody>
+            </table>     
+    </div>
+</div>
+{# конец формы корпоративных доступов #}
+{# начало формы персональных ролей #}
+<div class="container">
+    <ul class="nav nav-tabs navbar-inverse" role="tablist">
+        <li><a href="#">ALLIANCE ACCESS</a></li>
+        <li><a href="#">CORPORATE ACCESS</a></li>
+        <li><a href="active">PERSONAL ROLES</a></li>
+    </ul>  
+    <div class="container" id="formSettings">            
+        <h1>PERSONAL ROLES</h1>
+            <table class="table" style="width: 1080px; margin-left: 30px;">
+            <tbody>
+                <tr style="color: #f6c000;">
+                    <th>
+                        <h2>Nickname</h2>
+                    </th>
+                    <th>
+                        <h2>Corporation</h2>
+                    </th>
+                    <th>
+                        <h2>Alliance</h2>
+                    </th>
+                    <th>
+                        <center><h2>Roles</h2></center>
+                    </th>
+                    <th>
+                    </th>  
+                </tr>
+                <tr>
+                    <th>
+                        <a href="#">MAUUU</a>
+                    </th>
+                    <th>
+                        <a href="#">REDHC</a>
+                    </th>
+                    <th>
+                        <a href="#">Red Alliance</a>
+                    </th>
+                    <th>
+                        <center><a href="#" id="success">Group 1</a></center>
+                        <center><a href="#" id="success">Group 2</a></center>
+                    </th>
+                    <th>
+                        <center><p class="p-container" style="height: 20px;">
+                            <input type="button" name="go" value="EDIT" disabled>
+                        </p></center>
+                    </th>  
+                </tr>
+                <tr>
+                    <th>
+                        <a href="#">greg2010</a>
+                    </th>
+                    <th>
+                        <a href="#">BUACO</a>
+                    </th>
+                    <th>
+                        <a href="#">Red alliance</a>
+                    </th>
+                    <th>
+                        <center><a href="#" id="success">Group 1</a></center>
+                        <center><a href="#" id="success">Group 2</a></center>
+                        <center><a href="#" id="success">Group 3</a></center>
+                    </th>
+                    <th>
+                        <center><p class="p-container" style="height: 20px;">
+                            <input type="button" class="btnsmall" name="go" value="EDIT" disabled>
+                        </p></center>
+                    </th>  
+                </tr>
+                <tr>
+                    <th>
+                        <a href="#">x Bland</a>
+                    </th>
+                    <th>
+                        <a href="#">RUSSO</a>
+                    </th>
+                    <th>
+                        <a href="#">Dream Fleet</a>
+                    </th>
+                    <th>
+                        <center><a href="#" id="success">Group 1</a></center>
+                    </th>
+                    <th>
+                        <center><p class="p-container" style="height: 20px;">
+                            <input type="button" name="go" value="EDIT" disabled>
+                        </p></center>
+                    </th>  
+                </tr>
+            </tbody>
+            </table> 
+            <table class="table" style="width: 1080px; margin-left: 30px;">
+            <tbody>
+                <tr>
+                    <th style="width: 520px;">
+                        <h2>ADD NEW CHARACTER</h2>
+                        <p class="p-container" style="margin-left: 0px; height: 40px; margin-bottom: 50px; width: 500px; float:right;" role="search">
+                            <label for="search">Search Character</label>
+                            <input type="text" class="form-control" placeholder="Search" id="search">      
+                        </p>
+                    </th>
+                    <th style="vertical-align: bottom;">
+                        <p class="p-container" style="float:left; margin-bottom: 35px; height: 30px;">
+                            <input type="button" name="select" value="SELECT">    
+                        </p>
+                    </th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th>
+                        <p class="p-container" style="margin-left: 50px;">
+                            <input type="hidden" name="form" value="add">
+                            <input type="button" name="add" value="ADD">
+                        </p>
+                    </th> 
+                </tr>
+            </tbody>
+            </table>    
+    </div>
+</div>
+{# конец формы персональных ролей #}  
+{# начало формы добавления/удаления персональных доступов #}
+<form>
+  <h1 style="color: #f6c000; font-size: 20px;">ADD / DELETE ACCESS</h1>
+    <div>
+        <center><h2>greg2010 | BUACO | RED</h2></center>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="web" class="checkboxLabel main_street_input" id="ch1" value="1" />
+        <label for="ch1">WEB ACCESS</label>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="jabber" class="checkboxLabel main_street_input" id="ch2" value="1" />
+        <label for="ch2">JABBER ACCESS</label>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="teamspeak" class="checkboxLabel main_street_input" id="ch3" value="1" />
+        <label for="ch3">TEAMSPEAK ACCESS</label>
+    </div>
+<hr />
+    <div class="p-container" style="padding-left: 30px;">
+        <input type="button" name="apply" value="APPLY" style="margin-right:100px;">  
+        <input type="button" name="back" value="BACK" style="margin-right:50px;">
+    </div>
+<br>
+</form>
+{# конец формы добавления/удаления персональных доступов #}
+<form>
+  <h1 style="color: #f6c000; font-size: 20px;">ADD / DELETE ROLES</h1>
+    <div>
+        <center><h2>greg2010 | BUACO | RED</h2></center>
+    </div>
+<hr />
+    <div class="amCheckbox">
+        <input type="checkbox" name="webReg_Valid" class="checkboxLabel main_street_input" id="ch1" value="1" />
+        <label for="ch1">webReg_Valid</label>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="webReg_AdminPanel" class="checkboxLabel main_street_input" id="ch2" value="1" />
+        <label for="ch2">webReg_AdminPanel</label>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="posMon_Valid" class="checkboxLabel main_street_input" id="ch3" value="1" />
+        <label for="ch3">posMon_Valid</label>
+    </div>
+<hr />   
+    <div class="amCheckbox">
+        <input type="checkbox" name="XMPP_Valid" class="checkboxLabel main_street_input" id="ch4" value="1" />
+        <label for="ch4">XMPP_Valid</label>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="XMPP_RoamingFC" class="checkboxLabel main_street_input" id="ch5" value="1" />
+        <label for="ch5">XMPP_RoamingFC</label>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="XMPP_FleetCom" class="checkboxLabel main_street_input" id="ch6" value="1" />
+        <label for="ch6">XMPP_FleetCom</label>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="XMPP_Overmind" class="checkboxLabel main_street_input" id="ch7" value="1" />
+        <label for="ch7">XMPP_Overmind</label>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="XMPP_Dreadnought" class="checkboxLabel main_street_input" id="ch8" value="1" />
+        <label for="ch8">XMPP_Dreadnought</label>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="XMPP_Carrier" class="checkboxLabel main_street_input" id="ch9" value="1" />
+        <label for="ch9">XMPP_Carrier</label>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="XMPP_Supercarrier" class="checkboxLabel main_street_input" id="ch10" value="1" />
+        <label for="ch10">XMPP_Supercarrier</label>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="XMPP_Titan" class="checkboxLabel main_street_input" id="ch11" value="1" />
+        <label for="ch11">XMPP_Titan</label>
+    </div>
+<hr />
+    <div class="amCheckbox">
+        <input type="checkbox" name="TS_Valid" class="checkboxLabel main_street_input" id="ch12" value="1" />
+        <label for="ch12">TS_Valid</label>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="TS_Mute" class="checkboxLabel main_street_input" id="ch13" value="1" />
+        <label for="ch13">TS_Mute</label>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="TS_ChannelCom" class="checkboxLabel main_street_input" id="ch14" value="1" />
+        <label for="ch14">TS_ChannelCom</label>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="TS_FleetCom" class="checkboxLabel main_street_input" id="ch15" value="1" />
+        <label for="ch15">TS_FleetCom</label>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="TS_RoamingFC" class="checkboxLabel main_street_input" id="ch16" value="1" />
+        <label for="ch16">TS_RoamingFC</label>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="TS_Overmind" class="checkboxLabel main_street_input" id="ch17" value="1" />
+        <label for="ch17">TS_Overmind</label>
+    </div>
+    <div class="amCheckbox">
+        <input type="checkbox" name="TS_serverAdmin" class="checkboxLabel main_street_input" id="ch18" value="1" />
+        <label for="ch18">TS_serverAdmin</label>
+    </div>
+<hr />
+    <div class="p-container" style="padding-left: 30px;">
+        <input type="button" name="apply" value="APPLY" style="margin-right:100px;">  
+        <input type="button" name="back" value="BACK" style="margin-right:50px;">
+    </div>
+<br>
+</form>
+{# начало формы добавления/удаления персональных ролей #}
+
+{# конец формы добавления/удаления персональных ролей #}
 {% endblock %}
