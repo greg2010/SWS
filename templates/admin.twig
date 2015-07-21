@@ -359,115 +359,116 @@
 {# начало формы добавления/удаления персональных доступов #}
 <form>
   <h1 style="color: #f6c000; font-size: 20px;">ADD / DELETE ACCESS</h1>
-    <div>
-        <center><h2>greg2010 | BUACO | RED</h2></center>
+    <div style="margin: 20px;">
+        <center><span>greg2010 | BUACO | RED</span></center>
+<hr />
+    <div class="amPmCheckbox">
+        <input type="checkbox" name="web" class="checkboxLabel main_street_input" id="ch01" value="1" />
+        <label for="ch01">WEB ACCESS</label>
     </div>
-    <div class="amCheckbox">
-        <input type="checkbox" name="web" class="checkboxLabel main_street_input" id="ch1" value="1" />
-        <label for="ch1">WEB ACCESS</label>
+    <div class="amPmCheckbox">
+        <input type="checkbox" name="jabber" class="checkboxLabel main_street_input" id="ch02" value="1" />
+        <label for="ch02">JABBER ACCESS</label>
     </div>
-    <div class="amCheckbox">
-        <input type="checkbox" name="jabber" class="checkboxLabel main_street_input" id="ch2" value="1" />
-        <label for="ch2">JABBER ACCESS</label>
-    </div>
-    <div class="amCheckbox">
-        <input type="checkbox" name="teamspeak" class="checkboxLabel main_street_input" id="ch3" value="1" />
-        <label for="ch3">TEAMSPEAK ACCESS</label>
+    <div class="amPmCheckbox">
+        <input type="checkbox" name="teamspeak" class="checkboxLabel main_street_input" id="ch03" value="1" />
+        <label for="ch03">TEAMSPEAK ACCESS</label>
     </div>
 <hr />
-    <div class="p-container" style="padding-left: 30px;">
-        <input type="button" name="apply" value="APPLY" style="margin-right:100px;">  
-        <input type="button" name="back" value="BACK" style="margin-right:50px;">
+    <div class="p-container">
+        <input type="button" name="apply" value="APPLY">  
+        <input type="button" name="back" value="BACK" style="margin-right:10px;">
     </div>
 <br>
+</div>
 </form>
 {# конец формы добавления/удаления персональных доступов #}
 <form>
   <h1 style="color: #f6c000; font-size: 20px;">ADD / DELETE ROLES</h1>
-    <div>
-        <center><h2>greg2010 | BUACO | RED</h2></center>
-    </div>
+    <div style="margin: 20px;">
+        <center><span>greg2010 | BUACO | RED</span></center>
 <hr />
-    <div class="amCheckbox">
+    <div class="amPmCheckbox">
         <input type="checkbox" name="webReg_Valid" class="checkboxLabel main_street_input" id="ch1" value="1" />
         <label for="ch1">webReg_Valid</label>
     </div>
-    <div class="amCheckbox">
-        <input type="checkbox" name="webReg_AdminPanel" class="checkboxLabel main_street_input" id="ch2" value="1" />
-        <label for="ch2">webReg_AdminPanel</label>
+    <div class="amPmCheckbox">
+        <input type="checkbox" name="webReg_AdminPanel" class="checkboxLabel main_street_input" id="ch19" value="1" />
+        <label for="ch19">webReg_AdminPanel</label>
     </div>
-    <div class="amCheckbox">
+    <div class="amPmCheckbox">
         <input type="checkbox" name="posMon_Valid" class="checkboxLabel main_street_input" id="ch3" value="1" />
         <label for="ch3">posMon_Valid</label>
     </div>
 <hr />   
-    <div class="amCheckbox">
+    <div class="amPmCheckbox">
         <input type="checkbox" name="XMPP_Valid" class="checkboxLabel main_street_input" id="ch4" value="1" />
         <label for="ch4">XMPP_Valid</label>
     </div>
-    <div class="amCheckbox">
+    <div class="amPmCheckbox">
         <input type="checkbox" name="XMPP_RoamingFC" class="checkboxLabel main_street_input" id="ch5" value="1" />
         <label for="ch5">XMPP_RoamingFC</label>
     </div>
-    <div class="amCheckbox">
+    <div class="amPmCheckbox">
         <input type="checkbox" name="XMPP_FleetCom" class="checkboxLabel main_street_input" id="ch6" value="1" />
         <label for="ch6">XMPP_FleetCom</label>
     </div>
-    <div class="amCheckbox">
+    <div class="amPmCheckbox">
         <input type="checkbox" name="XMPP_Overmind" class="checkboxLabel main_street_input" id="ch7" value="1" />
         <label for="ch7">XMPP_Overmind</label>
     </div>
-    <div class="amCheckbox">
+    <div class="amPmCheckbox">
         <input type="checkbox" name="XMPP_Dreadnought" class="checkboxLabel main_street_input" id="ch8" value="1" />
         <label for="ch8">XMPP_Dreadnought</label>
     </div>
-    <div class="amCheckbox">
+    <div class="amPmCheckbox">
         <input type="checkbox" name="XMPP_Carrier" class="checkboxLabel main_street_input" id="ch9" value="1" />
         <label for="ch9">XMPP_Carrier</label>
     </div>
-    <div class="amCheckbox">
+    <div class="amPmCheckbox">
         <input type="checkbox" name="XMPP_Supercarrier" class="checkboxLabel main_street_input" id="ch10" value="1" />
         <label for="ch10">XMPP_Supercarrier</label>
     </div>
-    <div class="amCheckbox">
+    <div class="amPmCheckbox">
         <input type="checkbox" name="XMPP_Titan" class="checkboxLabel main_street_input" id="ch11" value="1" />
         <label for="ch11">XMPP_Titan</label>
     </div>
 <hr />
-    <div class="amCheckbox">
+    <div class="amPmCheckbox">
         <input type="checkbox" name="TS_Valid" class="checkboxLabel main_street_input" id="ch12" value="1" />
         <label for="ch12">TS_Valid</label>
     </div>
-    <div class="amCheckbox">
+    <div class="amPmCheckbox">
         <input type="checkbox" name="TS_Mute" class="checkboxLabel main_street_input" id="ch13" value="1" />
         <label for="ch13">TS_Mute</label>
     </div>
-    <div class="amCheckbox">
+    <div class="amPmCheckbox">
         <input type="checkbox" name="TS_ChannelCom" class="checkboxLabel main_street_input" id="ch14" value="1" />
         <label for="ch14">TS_ChannelCom</label>
     </div>
-    <div class="amCheckbox">
+    <div class="amPmCheckbox">
         <input type="checkbox" name="TS_FleetCom" class="checkboxLabel main_street_input" id="ch15" value="1" />
         <label for="ch15">TS_FleetCom</label>
     </div>
-    <div class="amCheckbox">
+    <div class="amPmCheckbox">
         <input type="checkbox" name="TS_RoamingFC" class="checkboxLabel main_street_input" id="ch16" value="1" />
         <label for="ch16">TS_RoamingFC</label>
     </div>
-    <div class="amCheckbox">
+    <div class="amPmCheckbox">
         <input type="checkbox" name="TS_Overmind" class="checkboxLabel main_street_input" id="ch17" value="1" />
         <label for="ch17">TS_Overmind</label>
     </div>
-    <div class="amCheckbox">
+    <div class="amPmCheckbox">
         <input type="checkbox" name="TS_serverAdmin" class="checkboxLabel main_street_input" id="ch18" value="1" />
         <label for="ch18">TS_serverAdmin</label>
     </div>
 <hr />
-    <div class="p-container" style="padding-left: 30px;">
-        <input type="button" name="apply" value="APPLY" style="margin-right:100px;">  
-        <input type="button" name="back" value="BACK" style="margin-right:50px;">
+    <div class="p-container">
+        <input type="button" name="apply" value="APPLY">  
+        <input type="button" name="back" value="BACK" style="margin-right:10px;">
     </div>
 <br>
+    </div>
 </form>
 {# начало формы добавления/удаления персональных ролей #}
 

@@ -647,12 +647,15 @@ table {
     padding: 0px 0px;
 }
 
+.btnsmall {
+            width: 60px;
+            height: 30px;
+} 
+
 .btnsmallwh {
             height: 30px;
             width: 80px;
 }
-
-
 
 
 .b-popup{
