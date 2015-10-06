@@ -350,6 +350,9 @@ class userSession {
                 if ($i == 1) {
                     $this->settings[jabberNotif] = 1;
                 }
+                if ($i == 2) {
+                    $this->settings[crestNotif] = 1;
+                }
             }
         }
     }
@@ -366,6 +369,9 @@ class userSession {
         }
         if ($settingsArr[jabber] == 1) {
             $mask = $mask | 2;
+        }
+        if ($settingsArr[crest] == 1) {
+            $mask = $mask | 4;
         }
         $query = "UPDATE `users` SET `settingsMask` = '$mask' WHERE `id` = '$this->id'";
         $this->db->query($query);

@@ -198,6 +198,9 @@ switch ($page) {
                     if($_POST[jabbernotif]) {
                         $settingsArr[jabber] = 1;
                     };
+                    if($_POST[crestnotif]) {
+                        $settingsArr[crest] = 1;
+                    };
                     $_SESSION[userObject]->setUserSettings($settingsArr);
                 } catch (Exception $ex) {
 
@@ -263,6 +266,9 @@ switch ($page) {
         }
         if ($settings[jabberNotif]) {
             $toTemplate['saveForm']['jabberChecked'] = 'checked';
+        }
+        if ($settings[crestNotif]) {
+            $toTemplate['saveForm']['crestChecked'] = 'checked';
         }
 }
 
