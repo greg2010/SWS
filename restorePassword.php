@@ -51,14 +51,34 @@ if ($_GET[hash]) {
         }
     }
 } else {
-    //Ask for email and login, if fine redirect to s1
-    if ($_POST[form] == 'sent') {
+    if ($_POST[remail] == 'do' || $_GET[remail] == 'do') {
+        try {
+            $_SESSION[restore]->mail();
+            $toTemplate['success'] = TRUE;
+            $toTemplate['remail'] = TRUE;
+        } catch (Exception $ex) {
+            //21,22,23,24,30
+            switch ($ex->getCode()) {
+                case 21:
+                case 22:
+                case 23:
+                case 24:
+                case 25:
+                    $toTemplate['errorMsg'] = $ex->getMessage();
+                    break;
+                case 30:
+                    $toTemplate["errorMsg"] = "Internal server error. Please contact server administrators ASAP to resolve this issue! Please convey this information to server administator:" . $ex->getMessage();
+                    break;
+            }
+        }
+        //Ask for email and login, if fine redirect to s1
+    } elseif ($_POST[form] == 'sent') {
         $login = $_POST[login];
         $email = $_POST[email];
         $_SESSION['restore'] = new restorePassword(init);
         try {
             $_SESSION[restore]->setUserData($login, $email);
-            $_SESSION[restore]->mail();
+            $_SESSION[restore]->prepEmail();
             $toTemplate['success'] = TRUE;
         } catch (Exception $ex) {
             //21,22,23,24,30
@@ -67,6 +87,7 @@ if ($_GET[hash]) {
                 case 22:
                 case 23:
                 case 24:
+                    header("Location: /restorePassword.php?remail=do");
                 case 25:
                     $toTemplate['errorMsg'] = $ex->getMessage();
                     break;

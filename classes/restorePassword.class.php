@@ -19,9 +19,12 @@ class restorePassword {
     private $changeUserID;
     
     public function __sleep() {
-        return array('verified', 'changeUserID');
+        return array('verified', 'changeUserID', 'id', 'login', 'email');
     }
 
+    public function __wakeup() {
+        $this->db = db::getInstance();
+    }
 
     public function __construct($action = NULL) {
         $this->db = db::getInstance();
@@ -111,10 +114,14 @@ class restorePassword {
             throw new Exception("You've already requested password reset!", 24);
         }
     }
-    
-    public function mail() {
+
+    public function prepEmail() {
         $this->makeDBRecord();
         $this->setCookie();
+        $this->mail();
+    }
+
+    public function mail() {
         $subj = "Restore your password at Red Menace Web Services";
         $text = "Hi, $this->login!<br><br>"
                 . "Recently you requested to reset your password.<br>.<br>"
