@@ -1,0 +1,48 @@
+{% extends "base.twig" %}
+
+{% block title %}TeamSpeak log{% endblock %}
+
+{% block content %}
+<div class="container">
+	<h1>ONE nickname DIFFERENT ip or uniq</h1>
+	<table class="table table-condensed tablesorter" style="width: 70%; margin-left: 40px;">
+	<tr>
+		<th>nickname</th>
+		<th>uniq</th>
+		<th>connect IP</th>
+		<th></th>
+		<th>time</th>
+	</tr>
+	{% for user in ts_by_name %}
+	<tr>
+		<td>{{ user.client_nickname|escape }}</td>
+		<td style="font-size: 0.8em">{{ user.client_unique_identifier|escape }}</td>
+		<td>{{ user.connection_client_ip|escape }}</td>
+		<td>{{ user.client_country|escape }}</td>
+		<td>{{ user.connection_time|escape }}</td>
+	</tr>
+	{% endfor %}
+	</table>
+
+	<h1>ONE uniq DIFFERENT ip or nickname</h1>
+	<table class="table table-condensed tablesorter" style="width: 70%; margin-left: 40px;">
+	<tr>
+		<th>uniq</th>
+		<th>nickname</th>
+		<th>connect IP</th>
+		<th></th>
+		<th>time</th>
+	</tr>
+	{% for user in ts_by_uniq %}
+	<tr>
+		<td style="font-size: 0.8em">{{ user.client_unique_identifier|escape }}</td>
+		<td>{{ user.client_nickname|escape }}</td>
+		<td>{{ user.connection_client_ip|escape }}</td>
+		<td>{{ user.client_country|escape }}</td>
+		<td>{{ user.connection_time|escape }}</td>
+	</tr>
+	{% endfor %}
+	</table>
+
+</div>
+{% endblock %}
