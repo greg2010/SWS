@@ -136,7 +136,8 @@ class memberTracking {
                     } else{
                         $SS = $this->getSS($superCap[locationID]);
                         $region = $this->getRegion($superCap[locationID]);
-                        $query = "INSERT INTO `superCapitalList` SET `characterID` = '{$superCap[characterID]}', `characterName` = '{$superCap[name]}', `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}',
+                        $charName = $this->db->real_escape_string($superCap[name]);
+                        $query = "INSERT INTO `superCapitalList` SET `characterID` = '{$superCap[characterID]}', `characterName` = '$charName', `corporationID` = '{$this->keyInfo[corporationID]}', `allianceID` = '{$this->keyInfo[allianceID]}',
                              `logonDateTime` = '{$superCap[logonDateTime]}', `logoffDateTime` = '{$superCap[logoffDateTime]}', `locationID` = '{$superCap[locationID]}', `SS` = '$SS', `locationName` = '{$superCap[location]}',
                              `regionName` = '$region', `shipTypeID` = '{$superCap[shipTypeID]}', `shipTypeName` = '{$superCap[shipType]}', `shipClass` = '$shipClass'";
                         $result = $this->db->query($query);
