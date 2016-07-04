@@ -1,0 +1,41 @@
+{% extends "baseNoAuth.twig" %}
+
+{% block title %}Registration Page{% endblock %}
+
+{% block content %}
+    {% if errorMsg is defined %}
+        {% set isErrorHidden = "" %}
+    {% else %}
+        {% set isErrorHidden = "hidden" %}
+    {% endif %}
+    
+<script type="text/javascript" src="js/scripts.js"></script>
+  {#{% if fromPost == '1' %} {# Проверка что юзер действительно пришел из формы. #}
+    {#{% if success == '1' %} {# Проверка на успешность логина #}
+        {# Вывод сообщения об успешной регистрации и редиректим (куда?) #}
+    {#{% elseif %}
+        {# Вывод сообщения о неудачной попытке регистрации (на стороне сервера). #}
+    {#{% endif %}
+{#{% elseif %} #}
+    
+<form>
+    <h1 style="color: #f6c000; font-size: 20px;">PASSWORD RECOVERY</h1>
+        <div>
+            <center><h2>To recover your password, enter your user name and e-mail, specified during registration and push "receive password" button. Your password will be send to your e-mail.</h2></center>
+        </div>
+        <p>
+            <label for="username">ENTER YOUR USER NAME</label>
+            <input type="text" name="username" style="width: 360px; margin-left: 20px;">
+        </p>
+        <p>
+            <label for="email">ENTER YOUR E-MAIL</label>
+            <input type="text" name="email" style="width: 360px; margin-left: 20px;">
+        </p>
+<hr />
+        <div class="p-container" style="padding-left: 30px;">
+            <input type="button" class="btn" name="receivepass" value="RECEIVE PASSWORD" style="margin-right:100px;">  
+        </div>
+</form>
+    
+     
+{% endblock %}

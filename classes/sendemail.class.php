@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /*
   * Project: class_email
   * File name: SendEmail.php
@@ -77,18 +77,18 @@ class SendEmail{
     //Please don't change the values below. Use the appropriate set_* function
     //from within your code instead.
     //
-    $this->server = 'mail.team-voice.com';
-    $this->port = '25';
+    $this->server = 'mail.megatel.md';
+    $this->port = '2525';
     $this->user = null;
     $this->pw = null;
     $this->server_ehlo = array();
     $this->type = 1; // 1= custom smtp() class THIS CLASS  0= PHP mail()
 #    $this->hostname = php_uname('n'); //best guess, some server may require a valid rdns name
     $this->hostname = 'redalliance.pw'; //best guess, some server may require a valid rdns name
-    $this->content_type = 'text/plain'; //html e-mails are evil!
+    $this->content_type = 'text/html'; //html e-mails are evil!
     $this->crypto = 'starttls'; //this should be fine for most servers
     $this->smtp_try = true; //if true try starttls, tls:// or ssl:// before the connection fails
-    $this->set_sender('redalliance.pw', 'admin@redalliance.pw');
+    $this->set_sender('redalliance.pw', 'administrator@redalliance.pw');
     $this->set_headers(); //create the default headers
   }
 
@@ -188,7 +188,7 @@ $proto = $_SERVER['SERVER_PROTOCOL'];
       //load default headers
       $this->headers = "Rm-info: $rm_add , $proto \r\n"
     		."MIME-Version: 1.0\r\n"
-    		."Reply-To: admin@redalliance.pw\r\n"
+    		."Reply-To: administrator@redalliance.pw\r\n"
                   ."Content-type: $this->content_type; charset=UTF-8; format=flowed\r\n"
                   ."Content-Transfer-Encoding: base64\r\n"
                   ."X-Mailer: coalition.redalliance.pw";

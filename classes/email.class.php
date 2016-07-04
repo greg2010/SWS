@@ -6,17 +6,20 @@ class email {
 
     public function sendmail($email, $subj, $text){
         $e = new SendEmail();
-        $e->set_auth('coalition@redalliance.pw', 'coalmailred2234');
-        $e->set_sender('Red Menace Coalition Services','admin@redalliance.pw');
+    	$e->set_headers( "Date: " . date('r', time()) . "\r\n" . 'Message-ID: <' . md5(time()) . '@redalliance.pw>' . "\r\n" );
+        $e->set_auth('coalition@megatel.md', 'hDQFV82TwD');
+        $e->set_sender('Red Menace Coalition Services','administrator@redalliance.pw');
+        $e->set_content_type('text/html');
         $e->mail($email, $subj, $text);
     }
 
     public function sendmailHtml($email, $subj, $text){
         $e = new SendEmail();
+        $e->set_headers( null );
+        $e->set_headers( "\r\nDate: " . date('r', time()) . "\r\n" . 'Message-ID: <' . md5(time()) . '@redalliance.pw>' . "\r\n", true );
         $e->set_content_type('text/html');
-        $e->set_headers(null);
-        $e->set_auth('coalition@redalliance.pw', 'coalmailred2234');
-        $e->set_sender('Red Menace Coalition Services','admin@redalliance.pw');
+        $e->set_auth('coalition@megatel.md', 'hDQFV82TwD');
+        $e->set_sender('Red Menace Coalition Services','administrator@redalliance.pw');
         $e->mail($email, $subj, $text);
     }
 
